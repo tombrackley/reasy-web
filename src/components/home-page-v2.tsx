@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandFacebook, IconBrandInstagram, IconBrandX, IconBrandLinkedin, IconBrandYoutube, IconBrandTiktok, IconMenu2 } from "@tabler/icons-react"
+import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandFacebook, IconBrandInstagram, IconBrandLinkedin, IconBrandYoutube, IconBrandTiktok, IconMenu2 } from "@tabler/icons-react"
 
 
 import logoImg from "@/assets/reasy-logo.svg"
@@ -1194,12 +1194,11 @@ function Footer() {
     { label: "For Buyers", href: "#buyers" },
   ]
   const socials = [
-    { icon: IconBrandFacebook, label: "Facebook" },
-    { icon: IconBrandInstagram, label: "Instagram" },
-    { icon: IconBrandX, label: "X" },
-    { icon: IconBrandLinkedin, label: "LinkedIn" },
-    { icon: IconBrandYoutube, label: "YouTube" },
-    { icon: IconBrandTiktok, label: "TikTok" },
+    { icon: IconBrandFacebook, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61583180562641" },
+    { icon: IconBrandInstagram, label: "Instagram", href: "https://www.instagram.com/reasy.com.au" },
+    { icon: IconBrandLinkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/heyreasy/" },
+    { icon: IconBrandYoutube, label: "YouTube", href: "https://www.youtube.com/@heyreasy" },
+    { icon: IconBrandTiktok, label: "TikTok", href: "https://www.tiktok.com/@reasy.com.au" },
   ]
 
   return (
@@ -1228,10 +1227,12 @@ function Footer() {
         </nav>
 
         <div className="flex items-center gap-8">
-          {socials.map(({ icon: Icon, label }) => (
+          {socials.map(({ icon: Icon, label, href }) => (
             <a
               key={label}
-              href="#"
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label={label}
               className="text-[#47474f] hover:text-foreground transition-colors"
             >
