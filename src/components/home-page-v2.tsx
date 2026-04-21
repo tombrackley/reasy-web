@@ -1240,10 +1240,12 @@ function Footer() {
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-[#7a7a7a]">
+        <div className="flex flex-col items-center gap-2 text-sm text-[#7a7a7a]">
           <p>&copy; 2026 Reasy Pty Ltd. All rights reserved.</p>
-          <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
-          <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
+          <div className="flex items-center gap-6">
+            <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
+            <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
+          </div>
         </div>
       </div>
 
