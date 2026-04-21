@@ -593,7 +593,7 @@ function BentoGrid() {
                 Flat fee, not commission
               </h3>
               <p className="text-[15px] text-[#1e2124] leading-relaxed">
-                Traditional agents take ~2.5% of your sale price. Reasy charges a flat fee of just $3,077 — no matter how much your home sells for.
+                Traditional agents take ~2.5% of your sale price. Reasy charges a flat fee of just $3,077, no matter how much your home sells for.
               </p>
             </div>
           </div>
@@ -977,7 +977,7 @@ function FAQs() {
     {
       question: "How much does Reasy cost?",
       answer:
-        "Reasy uses a simple gated pricing model. You pay $79 to publish your listing, $999 when you accept your first expression of interest, and $1,999 at settlement. That's a total of $3,077 — compared to tens of thousands in traditional agent commissions.",
+        "Reasy uses a simple gated pricing model. You pay $79 to publish your listing, $999 when you accept your first expression of interest, and $1,999 at settlement. That's a total of $3,077, compared to tens of thousands in traditional agent commissions.",
     },
     {
       question: "Do I need a real estate agent?",

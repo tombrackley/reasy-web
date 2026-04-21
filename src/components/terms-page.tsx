@@ -22,9 +22,9 @@ export function TermsPage() {
       <h2>5. Fees</h2>
       <p>Reasy uses a gated pricing model. Applicable fees are:</p>
       <ul>
-        <li><strong>Listing fee</strong> — payable when you publish your listing, covering identity verification, title search, and listing setup;</li>
-        <li><strong>Accept first EOI fee</strong> — payable when you accept your first expression of interest, unlocking full platform features;</li>
-        <li><strong>Settlement fee</strong> — payable on completion of settlement, confirmed by your conveyancer.</li>
+        <li><strong>Listing fee:</strong> payable when you publish your listing, covering identity verification, title search, and listing setup;</li>
+        <li><strong>Accept first EOI fee:</strong> payable when you accept your first expression of interest, unlocking full platform features;</li>
+        <li><strong>Settlement fee:</strong> payable on completion of settlement, confirmed by your conveyancer.</li>
       </ul>
       <p>All fees are displayed in Australian dollars and are inclusive of GST unless stated otherwise. Fees are non-refundable except where required by law. We may change our fees from time to time; changes will apply only to new listings created after the change takes effect.</p>
 

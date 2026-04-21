@@ -36,11 +36,11 @@ export function PrivacyPage() {
       <h2>4. Disclosure of your information</h2>
       <p>We may disclose your personal information to:</p>
       <ul>
-        <li><strong>Other users</strong> — for example, a seller's listing details are visible to buyers, and buyer enquiries are sent to the relevant seller;</li>
-        <li><strong>Conveyancers and solicitors</strong> — when you progress to the legal stage of a transaction, with your consent;</li>
-        <li><strong>Service providers</strong> — including hosting, payment processing, email, analytics, identity verification, and customer support providers who assist us in operating the Services;</li>
-        <li><strong>Regulators and authorities</strong> — where required by law or to protect our legal rights;</li>
-        <li><strong>Business successors</strong> — in the event of a merger, acquisition, or sale of assets.</li>
+        <li><strong>Other users:</strong> for example, a seller's listing details are visible to buyers, and buyer enquiries are sent to the relevant seller;</li>
+        <li><strong>Conveyancers and solicitors:</strong> when you progress to the legal stage of a transaction, with your consent;</li>
+        <li><strong>Service providers:</strong> including hosting, payment processing, email, analytics, identity verification, and customer support providers who assist us in operating the Services;</li>
+        <li><strong>Regulators and authorities:</strong> where required by law or to protect our legal rights;</li>
+        <li><strong>Business successors:</strong> in the event of a merger, acquisition, or sale of assets.</li>
       </ul>
       <p>We do not sell your personal information.</p>
 
