@@ -58,9 +58,14 @@ function Nav() {
           scrolled ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
       >
-        <div className="flex items-center">
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="flex items-center cursor-pointer"
+          aria-label="Back to top"
+        >
           <img src={logoWhiteImg} alt="Reasy" className="h-6 translate-y-[2px]" />
-        </div>
+        </button>
 
         <div className="hidden md:flex items-center gap-5 text-[15px] font-medium text-white absolute left-1/2 -translate-x-1/2">
           <NavLinks className="hover:opacity-70 transition-opacity" />
@@ -103,9 +108,14 @@ function Nav() {
           scrolled ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
       >
-        <div className="flex items-center">
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="flex items-center cursor-pointer"
+          aria-label="Back to top"
+        >
           <img src={logoImg} alt="Reasy" className="h-6 translate-y-[2px]" />
-        </div>
+        </button>
 
         <div className="hidden md:flex items-center gap-4 text-[13px] font-medium text-brand-dark whitespace-nowrap">
           <NavLinks className="hover:opacity-70 transition-opacity" />
@@ -1230,9 +1240,11 @@ function Footer() {
           ))}
         </div>
 
-        <p className="text-sm text-[#7a7a7a]">
-          &copy; 2026 Reasy Pty Ltd. All rights reserved.
-        </p>
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-[#7a7a7a]">
+          <p>&copy; 2026 Reasy Pty Ltd. All rights reserved.</p>
+          <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
+          <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
+        </div>
       </div>
 
       {/* Large masked tagline */}

@@ -146,3 +146,28 @@
     overflow-x: hidden;
     }
 }
+
+.prose-reasy {
+  @apply text-[16px] leading-[1.7] text-[#1e2124];
+}
+.prose-reasy h2 {
+  @apply text-[22px] font-medium text-[#020a0f] mt-12 mb-3 leading-[1.3];
+}
+.prose-reasy h3 {
+  @apply text-[17px] font-medium text-[#020a0f] mt-8 mb-2 leading-[1.4];
+}
+.prose-reasy p {
+  @apply mb-4;
+}
+.prose-reasy ul {
+  @apply mb-4 space-y-2 list-disc pl-6;
+}
+.prose-reasy li {
+  @apply leading-[1.6];
+}
+.prose-reasy a {
+  @apply text-primary underline underline-offset-2 hover:text-primary/80 transition-colors;
+}
+.prose-reasy strong {
+  @apply font-semibold text-[#020a0f];
+}
