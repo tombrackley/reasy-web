@@ -1,9 +1,7 @@
+import { HomePageV2 } from "@/components/home-page-v2"
+
 function App() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-4xl font-bold">Reasy Prototype</h1>
-    </div>
-  )
+  return <HomePageV2 />
 }
 
 export default App
