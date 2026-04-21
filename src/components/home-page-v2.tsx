@@ -1056,7 +1056,7 @@ function WaitlistCTA() {
       <div className="max-w-[1200px] mx-auto">
         <div className="bg-white rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 min-h-[544px] border border-[#e6e6eb]">
           {/* Left — Form */}
-          <div className="p-10 lg:p-14 flex flex-col justify-center">
+          <div className="p-5 lg:p-14 flex flex-col justify-center">
             <h2 className="font-serif text-3xl md:text-[40px] leading-[1.3] text-[#020a0f] mb-3">
               Join the waitlist
             </h2>
