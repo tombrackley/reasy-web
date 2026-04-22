@@ -163,24 +163,51 @@ function HeroSection() {
       <div className="bg-[linear-gradient(180deg,#4E82C1_30%,#FFF_75%)] pt-32 pb-0 text-center px-4">
         {/* Headline */}
         <h1 className="font-serif text-5xl md:text-[64px] leading-[1.2] text-white mb-6">
-          Buy or Sell Your Home,
-          <br />
-          <span className="relative isolate inline-block">
-            Keep the Commission.
-            <svg
-              className="absolute bottom-0 left-0 w-full -z-10"
-              viewBox="0 0 473 8"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M2 6C80 2 200 2 471 6"
-                stroke="#A5C2FF"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-            </svg>
+          {/* Mobile: 3 lines, underline under "Commission" */}
+          <span className="md:hidden">
+            Buy or Sell Your
+            <br />
+            Home, Keep the
+            <br />
+            <span className="relative isolate inline-block">
+              Commission
+              <svg
+                className="absolute bottom-0 left-0 w-full -z-10"
+                viewBox="0 0 473 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M2 6C80 2 200 2 471 6"
+                  stroke="#A5C2FF"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+          </span>
+          {/* Desktop: 2 lines, underline under "Keep the Commission." */}
+          <span className="hidden md:inline">
+            Buy or Sell Your Home,
+            <br />
+            <span className="relative isolate inline-block">
+              Keep the Commission.
+              <svg
+                className="absolute bottom-0 left-0 w-full -z-10"
+                viewBox="0 0 473 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M2 6C80 2 200 2 471 6"
+                  stroke="#A5C2FF"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
           </span>
         </h1>
 
@@ -589,12 +616,24 @@ function BentoGrid() {
           <div className="relative overflow-hidden rounded-2xl bg-white ring-1 ring-black/5">
             <img src={bentoImg2} alt="" className="h-[280px] w-full object-cover rounded-t-2xl" />
             <div className="p-8">
-              <h3 className="text-lg font-medium text-[#020a0f] mb-2">
-                Flat fee, not commission
-              </h3>
-              <p className="text-[15px] text-[#1e2124] leading-relaxed">
-                Traditional agents take ~2.5% of your sale price. Reasy charges a flat fee of just $3,077, no matter how much your home sells for.
-              </p>
+              {/* Mobile copy */}
+              <div className="lg:hidden">
+                <h3 className="text-lg font-medium text-[#020a0f] mb-2">
+                  Flat fee, not commission
+                </h3>
+                <p className="text-[15px] text-[#1e2124] leading-relaxed">
+                  Traditional agents take ~2.5% of your sale price. Reasy charges a flat fee of just $3,077, no matter how much your home sells for.
+                </p>
+              </div>
+              {/* Desktop copy */}
+              <div className="hidden lg:block">
+                <h3 className="text-lg font-medium text-[#020a0f] mb-2">
+                  Step-by-step guidance through the entire sale
+                </h3>
+                <p className="text-[15px] text-[#1e2124] leading-relaxed">
+                  From listing to settlement, Reasy walks you through each stage with clear explanations, checklists, and prompts so you always know what to do next.
+                </p>
+              </div>
             </div>
           </div>
         </div>
