@@ -21,9 +21,9 @@ import bentoImg2 from "@/assets/Container-1.png"
 import bentoImg3 from "@/assets/Container-2.png"
 import bentoImg4 from "@/assets/Container-3.png"
 import bentoImg5 from "@/assets/Container-4.png"
-import browseIcon from "@/assets/browse-icon.svg"
-import chatIcon from "@/assets/chat-icon.svg"
-import processIcon from "@/assets/process-icon.svg"
+import buyersInfo1 from "@/assets/reasy-buyers-info-01.png"
+import buyersCard2 from "@/assets/reasy-buyers-card-2.png"
+import buyersCard3 from "@/assets/reasy-buyers-card-3.png"
 import listQuietlyImg from "@/assets/list-quietly-test-waters.png"
 
 // --- Nav ---
@@ -460,9 +460,9 @@ function HowItWorks() {
 
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         {steps.map((step, i) => (
-          <div key={i} className="flex flex-col">
+          <div key={i} className="flex flex-col-reverse md:flex-col">
             {step.illustration}
-            <div className="mt-4">
+            <div className="mb-4 md:mb-0 md:mt-4">
               <h3 className="text-base font-medium text-[#020a0f] mb-2">
                 {step.title}
               </h3>
@@ -957,7 +957,7 @@ function ForBuyers() {
         "Discover properties listed directly by sellers, often before they hit mainstream portals. Get early access to homes you won't find anywhere else.",
       color: "bg-[#dceeff]",
       titleColor: "text-[#2b7de9]",
-      icon: browseIcon,
+      image: buyersInfo1,
     },
     {
       title: "Enquire directly",
@@ -965,7 +965,7 @@ function ForBuyers() {
         "Skip the agent and communicate directly with the seller. Ask questions, arrange inspections, and negotiate on your own terms.",
       color: "bg-[#e8ffe0]",
       titleColor: "text-[#3ba526]",
-      icon: chatIcon,
+      image: buyersCard2,
     },
     {
       title: "Guided process",
@@ -973,7 +973,7 @@ function ForBuyers() {
         "From building inspections to finance pre-approval, Reasy guides you through every step so nothing gets missed.",
       color: "bg-[#ece5ff]",
       titleColor: "text-[#7c5cdb]",
-      icon: processIcon,
+      image: buyersCard3,
     },
   ]
 
@@ -996,8 +996,8 @@ function ForBuyers() {
               <p className="text-[15px] text-[#1e2124] leading-relaxed mb-6">
                 {card.description}
               </p>
-              <div className={cn("rounded-2xl h-[200px] mt-auto flex items-center justify-center", card.color)}>
-                <img src={card.icon} alt="" className="size-[60px]" />
+              <div className={cn("rounded-2xl h-[240px] mt-auto flex items-center justify-center overflow-hidden", card.color)}>
+                <img src={card.image} alt="" className="h-full w-auto max-w-full object-contain" />
               </div>
             </div>
           ))}
