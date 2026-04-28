@@ -622,24 +622,12 @@ function BentoGrid() {
           <div className="relative overflow-hidden rounded-2xl bg-white ring-1 ring-black/5">
             <img src={bentoImg2} alt="" className="h-[280px] w-full object-cover rounded-t-2xl" />
             <div className="p-8">
-              {/* Mobile copy */}
-              <div className="lg:hidden">
-                <h3 className="text-lg font-medium text-[#020a0f] mb-2">
-                  Flat fee, not commission
-                </h3>
-                <p className="text-[15px] text-[#1e2124] leading-relaxed">
-                  Traditional agents take ~2.5% of your sale price. Reasy charges a flat fee of just $3,077, no matter how much your home sells for.
-                </p>
-              </div>
-              {/* Desktop copy */}
-              <div className="hidden lg:block">
-                <h3 className="text-lg font-medium text-[#020a0f] mb-2">
-                  Step-by-step guidance through the entire sale
-                </h3>
-                <p className="text-[15px] text-[#1e2124] leading-relaxed">
-                  From listing to settlement, Reasy walks you through each stage with clear explanations, checklists, and prompts so you always know what to do next.
-                </p>
-              </div>
+              <h3 className="text-lg font-medium text-[#020a0f] mb-2">
+                Step-by-step guidance through the entire sale
+              </h3>
+              <p className="text-[15px] text-[#1e2124] leading-relaxed">
+                From listing to settlement, Reasy walks you through each stage with clear explanations, checklists, and prompts so you always know what to do next.
+              </p>
             </div>
           </div>
         </div>
