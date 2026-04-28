@@ -16,11 +16,11 @@ import avatar3 from "@/assets/avatar-3.jpg"
 import avatar4 from "@/assets/avatar-4.jpg"
 import avatar5 from "@/assets/avatar-5.jpg"
 import avatar6 from "@/assets/avatar-6.jpg"
-import bentoImg1 from "@/assets/Container.png"
+import bentoImg1 from "@/assets/keep-track-sale.png"
 import bentoImg2 from "@/assets/Container-1.png"
 import bentoImg3 from "@/assets/Container-2.png"
 import bentoImg4 from "@/assets/Container-3.png"
-import bentoImg5 from "@/assets/Container-4.png"
+import bentoImg5 from "@/assets/everything in one place-1.png"
 import buyersInfo1 from "@/assets/reasy-buyers-info-01.png"
 import buyersCard2 from "@/assets/reasy-buyers-card-2.png"
 import buyersCard3 from "@/assets/reasy-buyers-card-3.png"
@@ -1031,7 +1031,7 @@ function FAQs() {
     {
       question: "How do buyers find my listing?",
       answer:
-        "Your property is listed on the Reasy platform where buyers can browse and enquire. We're also working on syndication to major property portals to maximise your reach.",
+        "Your property is listed on the Reasy platform where buyers can browse and enquire.",
     },
     {
       question: "What happens if I change my mind?",
@@ -1292,7 +1292,7 @@ function Footer() {
       {/* Large masked tagline */}
       <div className="mt-8 overflow-hidden pb-4 -mx-4">
         <p
-          className="font-serif text-[clamp(80px,18vw,280px)] leading-[0.9] text-center tracking-tight bg-gradient-to-b from-primary/30 to-primary/5 bg-clip-text text-transparent select-none whitespace-nowrap"
+          className="font-serif text-[clamp(2rem,11.5vw,280px)] leading-[0.9] text-center tracking-[-0.04em] bg-gradient-to-b from-primary/30 to-primary/5 bg-clip-text text-transparent select-none whitespace-nowrap"
         >
           real estate. easy.
         </p>
