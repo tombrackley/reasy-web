@@ -227,11 +227,11 @@ function HeroSection() {
         </a>
 
         {/* Dashboard screenshot */}
-        <div className="max-w-[1200px] mx-auto mt-16 bg-[#f8f8f8] rounded-2xl p-2.5">
+        <div className="max-w-[1200px] mx-auto mt-16 bg-[#f8f8f8] rounded-[2rem] md:rounded-2xl p-2.5">
           <img
             src={mobileDashImg}
             alt="Reasy dashboard"
-            className="w-full rounded-xl md:hidden"
+            className="w-full rounded-[1.625rem] md:hidden"
           />
           <img
             src={dashImg}
