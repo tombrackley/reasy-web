@@ -6,6 +6,7 @@ import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandFacebook, 
 import logoImg from "@/assets/reasy-logo.svg"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import dashImg from "@/assets/reasy-dash.png"
+import mobileDashImg from "@/assets/Mobile-Dash-Reasy.png"
 import aerialImg from "@/assets/hero-aerial.jpg"
 import property1Img from "@/assets/property-1.jpg"
 import property2Img from "@/assets/property-2.jpg"
@@ -228,9 +229,14 @@ function HeroSection() {
         {/* Dashboard screenshot */}
         <div className="max-w-[1200px] mx-auto mt-16 bg-[#f8f8f8] rounded-2xl p-2.5">
           <img
+            src={mobileDashImg}
+            alt="Reasy dashboard"
+            className="w-full rounded-xl md:hidden"
+          />
+          <img
             src={dashImg}
             alt="Reasy dashboard"
-            className="w-full rounded-xl"
+            className="w-full rounded-xl hidden md:block"
           />
         </div>
       </div>
