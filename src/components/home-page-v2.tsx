@@ -5,7 +5,7 @@ import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandFacebook, 
 
 import logoImg from "@/assets/reasy-logo.svg"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
-import dashImg from "@/assets/reasy-dash.png"
+import dashImg from "@/assets/reasy-dashboard.png"
 import mobileDashImg from "@/assets/Mobile-Dash-Reasy.png"
 import aerialImg from "@/assets/hero-aerial.jpg"
 import property1Img from "@/assets/property-1.jpg"
@@ -25,7 +25,7 @@ import bentoImg5 from "@/assets/everything in one place-1.png"
 import buyersInfo1 from "@/assets/reasy-buyers-info-01.png"
 import buyersCard2 from "@/assets/reasy-buyers-card-2.png"
 import buyersCard3 from "@/assets/reasy-buyers-card-3.png"
-import listQuietlyImg from "@/assets/list-quietly-test-waters.png"
+import listQuietlyImg from "@/assets/private-listing-with-reasy.png"
 
 // --- Nav ---
 
@@ -214,7 +214,7 @@ function HeroSection() {
 
         {/* Subtitle */}
         <p className="text-lg text-white/90 max-w-[640px] mx-auto mb-10 leading-relaxed">
-          Reasy connects real buyers and sellers and guides every step from first
+          Reasy connects verified buyers and sellers and guides every step from first
           enquiry to signed contract, without an agent.
         </p>
 
