@@ -8,9 +8,6 @@ import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import dashImg from "@/assets/reasy-dashboard.png"
 import mobileDashImg from "@/assets/Mobile-Dash-Reasy.png"
 import aerialImg from "@/assets/hero-aerial.jpg"
-import property1Img from "@/assets/property-1.jpg"
-import property2Img from "@/assets/property-2.jpg"
-import property3Img from "@/assets/property-3.jpg"
 import avatar1 from "@/assets/avatar-1.jpg"
 import avatar2 from "@/assets/avatar-2.jpg"
 import avatar3 from "@/assets/avatar-3.jpg"
@@ -239,115 +236,6 @@ function HeroSection() {
             className="w-full rounded-xl hidden md:block"
           />
         </div>
-      </div>
-    </section>
-  )
-}
-
-// --- Property Carousel ---
-
-const properties = [
-  {
-    image: property1Img,
-    names: "Michelle",
-    solo: true,
-    location: "Paddington, NSW",
-    price: "offers above $2.1m",
-    savings: "$49k",
-  },
-  {
-    image: property2Img,
-    names: "Warren & Nolene",
-    location: "Peregian Springs, QLD",
-    price: "offers over $1.2m",
-    savings: "$33k",
-  },
-  {
-    image: property3Img,
-    names: "David & Priya",
-    location: "Brighton, VIC",
-    price: "offers over $1.4m",
-    savings: "$32k",
-  },
-]
-
-export function PropertyCarousel() {
-  const [activeIndex, setActiveIndex] = useState(0)
-
-  // Auto-rotate every 10 seconds
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % properties.length)
-    }, 10000)
-    return () => clearInterval(timer)
-  }, [])
-
-  // Build display order: [prev, active, next]
-  const prevIndex =
-    (activeIndex - 1 + properties.length) % properties.length
-  const nextIndex = (activeIndex + 1) % properties.length
-  const displayOrder = [prevIndex, activeIndex, nextIndex]
-
-  return (
-    <section className="relative py-8 overflow-hidden">
-      <div className="flex items-center justify-center gap-7">
-        {displayOrder.map((propertyIndex, position) => {
-          const property = properties[propertyIndex]
-          const isActive = position === 1
-          return (
-            <div
-              key={propertyIndex}
-              onClick={() => !isActive && setActiveIndex(propertyIndex)}
-              className={cn(
-                "relative flex-shrink-0 rounded-2xl overflow-hidden transition-all duration-700",
-                isActive
-                  ? "w-[min(1148px,80vw)] h-[585px] opacity-100 shadow-[0px_4px_20px_0px_rgba(0,0,0,0.15)]"
-                  : "w-[min(1148px,80vw)] h-[585px] opacity-20 hidden lg:block cursor-pointer"
-              )}
-            >
-              {/* Property image */}
-              <img
-                src={property.image}
-                alt={`Property by ${property.names}`}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-[rgba(32,38,83,0.1)]" />
-
-              {/* Info card */}
-              <div className="absolute left-[23px] bottom-[23px] bg-white rounded-xl p-4 shadow-[0px_6px_20px_0px_rgba(0,0,0,0.15)] w-[391px] max-w-[calc(100%-46px)] overflow-hidden">
-                <div className="flex flex-col gap-4">
-                  {property.solo ? (
-                    <img src={avatar4} alt="" className="size-9 rounded-full object-cover" />
-                  ) : (
-                    <div className="flex -space-x-2">
-                      <img src={avatar4} alt="" className="size-9 rounded-full ring-2 ring-white object-cover" />
-                      <img src={avatar5} alt="" className="size-9 rounded-full ring-2 ring-white object-cover" />
-                    </div>
-                  )}
-                  <p className="text-[18px] font-medium text-[#1e2124] leading-[25.2px] tracking-[-0.36px]">
-                    {property.solo
-                      ? <>{property.names} is looking to sell her home in {property.location}{" "}</>
-                      : <>{property.names} are selling their home in {property.location}{" "}</>
-                    }
-                    <span className="text-[rgba(30,33,36,0.5)]">
-                      looking for {property.price}
-                    </span>
-                  </p>
-                  {isActive && (
-                    <div className="inline-flex self-start items-center justify-center h-[30px] px-3 rounded-full bg-[rgba(91,243,217,0.12)]">
-                      <span className="text-[14px] font-medium text-[#008261] tracking-[-0.28px]">
-                        est. savings{" "}
-                        <span className="font-semibold">
-                          {property.savings}
-                        </span>
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )
-        })}
       </div>
     </section>
   )
@@ -1297,7 +1185,7 @@ function Footer() {
 
 // --- Main Home Page ---
 
-export function HomePageV2() {
+export function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       <Nav />

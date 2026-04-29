@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { HomePageV2 } from "@/components/home-page-v2"
+import { HomePage } from "@/components/home-page"
 import { PrivacyPage } from "@/components/privacy-page"
 import { TermsPage } from "@/components/terms-page"
 
@@ -18,7 +18,7 @@ function App() {
 
   if (path === "/privacy") return <PrivacyPage />
   if (path === "/terms") return <TermsPage />
-  return <HomePageV2 />
+  return <HomePage />
 }
 
 export default App
