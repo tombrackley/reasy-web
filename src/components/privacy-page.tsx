@@ -4,7 +4,7 @@ export function PrivacyPage() {
   return (
     <LegalLayout title="Privacy Policy" lastUpdated="21 April 2026">
       <p>
-        Reasy Pty Ltd (ABN pending) ("Reasy", "we", "us", "our") respects your privacy and is committed to handling your personal information in accordance with the Australian Privacy Principles set out in the <em>Privacy Act 1988</em> (Cth). This Privacy Policy explains how we collect, use, disclose, store, and protect personal information when you use the Reasy platform, website, and related services (together, the "Services").
+        Reasy Pty Ltd (ABN 28 690 177 434) ("Reasy", "we", "us", "our") respects your privacy and is committed to handling your personal information in accordance with the Australian Privacy Principles set out in the <em>Privacy Act 1988</em> (Cth). This Privacy Policy explains how we collect, use, disclose, store, and protect personal information when you use the Reasy platform, website, and related services (together, the "Services").
       </p>
 
       <h2>1. Information we collect</h2>

@@ -4,7 +4,7 @@ export function TermsPage() {
   return (
     <LegalLayout title="Terms and Conditions" lastUpdated="21 April 2026">
       <p>
-        These Terms and Conditions ("Terms") govern your access to and use of the Reasy platform, website, and related services (together, the "Services"), provided by Reasy Pty Ltd (ABN pending) ("Reasy", "we", "us", "our"). By creating an account or using the Services, you agree to be bound by these Terms. If you do not agree, you must not use the Services.
+        These Terms and Conditions ("Terms") govern your access to and use of the Reasy platform, website, and related services (together, the "Services"), provided by Reasy Pty Ltd (ABN 28 690 177 434) ("Reasy", "we", "us", "our"). By creating an account or using the Services, you agree to be bound by these Terms. If you do not agree, you must not use the Services.
       </p>
 
       <h2>1. The Services</h2>

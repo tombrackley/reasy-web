@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandFacebook, IconBrandInstagram, IconBrandLinkedin, IconBrandYoutube, IconBrandTiktok, IconMenu2 } from "@tabler/icons-react"
+import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandInstagram, IconBrandYoutube, IconBrandTiktok, IconMenu2 } from "@tabler/icons-react"
 
 
 import logoImg from "@/assets/reasy-logo.svg"
@@ -13,7 +13,6 @@ import avatar2 from "@/assets/avatar-2.jpg"
 import avatar3 from "@/assets/avatar-3.jpg"
 import avatar4 from "@/assets/avatar-4.jpg"
 import avatar5 from "@/assets/avatar-5.jpg"
-import avatar6 from "@/assets/avatar-6.jpg"
 import bentoImg1 from "@/assets/keep-track-sale.png"
 import bentoImg2 from "@/assets/selling-assistant.png"
 import bentoImg3 from "@/assets/tak-directly-with-buyers.png"
@@ -23,6 +22,9 @@ import buyersInfo1 from "@/assets/reasy-buyers-info-01.png"
 import buyersCard2 from "@/assets/reasy-buyers-card-2.png"
 import buyersCard3 from "@/assets/reasy-buyers-card-3.png"
 import listQuietlyImg from "@/assets/private-listing-with-reasy.png"
+import dailyMailLogo from "@/assets/daily-mail-logo.png"
+import yahooFinanceLogo from "@/assets/yahoo-finance-logo.png"
+import buyerAvatar from "@/assets/buyer-avatar.png"
 
 // --- Nav ---
 
@@ -241,6 +243,30 @@ function HeroSection() {
   )
 }
 
+// --- Featured In ---
+
+function FeaturedIn() {
+  return (
+    <section className="py-20 px-4">
+      <div className="max-w-[1200px] mx-auto flex flex-col items-center gap-8">
+        <p className="text-[12px] font-medium text-[#7a7a7a]">As featured in</p>
+        <div className="flex items-center justify-center gap-8">
+          <img src={dailyMailLogo} alt="Daily Mail" className="h-6 w-auto object-contain" />
+          <img src={yahooFinanceLogo} alt="Yahoo Finance" className="h-6 w-auto object-contain" />
+        </div>
+        <a
+          href="https://www.instagram.com/agents_want_me_cancelled"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[12px] text-[#7a7a7a]/60 hover:text-foreground transition-colors"
+        >
+          @agents_want_me_cancelled
+        </a>
+      </div>
+    </section>
+  )
+}
+
 // --- How It Works ---
 
 function HowItWorksIllustration1() {
@@ -300,7 +326,7 @@ function HowItWorksIllustration3() {
 
       {/* Buyer — bottom left */}
       <div className="absolute left-[11%] top-[72%] bg-white border border-[#e6e6e5] rounded-xl p-3 flex flex-col items-center gap-2.5 w-[32%]">
-        <img src={avatar6} alt="" className="size-6 rounded-full object-cover" />
+        <img src={buyerAvatar} alt="" className="size-6 rounded-full object-cover" />
         <p className="text-xs text-[#7a7a7a]">Buyer</p>
       </div>
 
@@ -342,7 +368,7 @@ function HowItWorks() {
       illustration: <HowItWorksIllustration3 />,
       title: "Contract & Settlement",
       description:
-        "We connect you with qualified conveyancers to handle the legal side while you stay in control.",
+        "Invite your own conveyancer to your Reasy workspace to handle the legal side while you stay in control.",
     },
   ]
 
@@ -501,7 +527,7 @@ function BentoGrid() {
                 Keep track and progress your sale
               </h3>
               <p className="text-[15px] text-[#1e2124] leading-relaxed">
-                Reasy keeps your listing moving, tracking enquiries, nudging activity between you and interested buyers, and telling you exactly what to do next at every stage.
+                Reasy keeps your listing moving, tracking enquiries, nudging activity between you and interested buyers and telling you exactly what to do next at every stage.
               </p>
             </div>
           </div>
@@ -514,7 +540,7 @@ function BentoGrid() {
                 Step-by-step guidance through the entire sale
               </h3>
               <p className="text-[15px] text-[#1e2124] leading-relaxed">
-                From listing to settlement, Reasy walks you through each stage with clear explanations, checklists, and prompts so you always know what to do next.
+                From listing to settlement, Reasy walks you through each stage with clear explanations, checklists and prompts so you always know what to do next.
               </p>
             </div>
           </div>
@@ -543,7 +569,7 @@ function BentoGrid() {
                 Connected to conveyancers
               </h3>
               <p className="text-[15px] text-[#1e2124] leading-relaxed">
-                When it's time for contracts, we connect you with qualified conveyancers who handle the legal formalities.
+                Invite your conveyancer to the Reasy workspace, they will have access to all documents and communication to handle legal formalities on your behalf.
               </p>
             </div>
           </div>
@@ -556,7 +582,7 @@ function BentoGrid() {
                 Everything in one place
               </h3>
               <p className="text-[15px] text-[#1e2124] leading-relaxed">
-                Track enquiries, manage offers, and store documents in your dashboard. No scattered emails or phone calls.
+                Track enquiries, manage offers and store documents in your dashboard. No scattered emails or phone calls.
               </p>
             </div>
           </div>
@@ -580,9 +606,10 @@ function WhyChooseReasy() {
   const reasyItems = [
     "Keep more of the money from your sale",
     "Full control of the sale",
+    "Direct communication between buyers and sellers - no gatekeeping",
     "Clear communication and documentation in one place",
     "Transparent guidance through entire process",
-    "Legal and formalities still handled by the experts",
+    "Legal and formalities handled by your conveyancer",
   ]
 
   return (
@@ -597,9 +624,7 @@ function WhyChooseReasy() {
             A modern approach to selling your property
           </h2>
           <p className="text-[17px] text-[#1e2124] max-w-[600px] mx-auto leading-relaxed">
-            We believe selling your home shouldn't cost you tens of thousands in
-            commission. Reasy gives you the tools, guidance, and connections to
-            do it yourself -- properly.
+            Zero agent commission. Reasy guides you through every step.
           </p>
         </div>
 
@@ -633,8 +658,7 @@ function WhyChooseReasy() {
               With Reasy
             </h3>
             <p className="text-[15px] text-[#1e2124] leading-[21px] mb-8">
-              A flat fee model that saves you thousands while guiding you
-              through every step.
+              Zero agent commission. Reasy guides you through every step.
             </p>
             <div className="h-px bg-[#e6e6eb] mb-8" />
             <div className="space-y-[20px]">
@@ -666,11 +690,11 @@ function WhyChooseReasy() {
 // --- Savings Calculator ---
 
 function SavingsCalculator() {
-  const [homeValue, setHomeValue] = useState([1000000])
-  const GATE_1 = 79      // Go Live
-  const GATE_2 = 999     // Accept EOI
-  const GATE_3 = 1999    // Settlement
-  const REASY_TOTAL = GATE_1 + GATE_2 + GATE_3 // $3,077
+  const [homeValue, setHomeValue] = useState([1650000])
+  const PUBLISH_LISTING = 99
+  const PLATFORM_FEE = 999
+  const SETTLEMENT = 1099
+  const REASY_TOTAL = PUBLISH_LISTING + PLATFORM_FEE + SETTLEMENT
   const AGENT_RATE = 0.025
 
   const { traditionalFee, savings } = useMemo(() => {
@@ -689,25 +713,68 @@ function SavingsCalculator() {
       maximumFractionDigits: 0,
     }).format(val)
 
-  return (
-    <section id="savings" className="bg-[#202653] py-20 px-8 text-center">
-        {/* Headline */}
-        <h2 className="font-serif text-3xl md:text-[40px] leading-[1.3] mb-12">
-          <span className="text-white">Sellers using Reasy</span>
-          <br />
-          <span className="text-[#6ef5df]">save an average of $20k - $50k</span>
-          <br />
-          <span className="text-white">compared to traditional fees</span>
-        </h2>
+  const bullets = [
+    "No commissions. Ever.",
+    "No hidden fees.",
+    "A fraction of traditional agent fees.",
+  ]
 
-        {/* Slider section */}
-        <div className="max-w-[476px] mx-auto mb-12">
-          <p className="text-[15px] font-medium text-white/40 mb-3">
-            What is your home value?
+  return (
+    <section id="savings" className="bg-[#202653] py-32 px-4">
+      <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        {/* Left column — Copy */}
+        <div>
+          <p className="font-['Roboto_Mono_Variable'] text-[13px] font-semibold uppercase leading-[15.6px] text-[#6ef5df] mb-6 tracking-[0.08em]">
+            Savings with Reasy
           </p>
-          <div className="mb-6 flex justify-center">
-            <div className="inline-flex items-baseline">
-              <span className="text-[26px] font-medium text-white">$</span>
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-[56px] leading-[1.1] text-white mb-8">
+            See how much you could{" "}
+            <span className="text-[#6ef5df]">save.</span>
+          </h2>
+          <p className="text-[17px] text-white/60 leading-relaxed mb-6">
+            Traditional agents charge{" "}
+            <span className="text-white">~2.5% of your home sale price.</span>{" "}
+            With Reasy, you pay only for what you use.
+          </p>
+          <p className="text-[17px] text-[#6ef5df] leading-relaxed mb-8">
+            Sellers using Reasy save an average of $20k - $50k compared to
+            traditional fees.
+          </p>
+          <ul className="space-y-2 mb-12">
+            {bullets.map((item) => (
+              <li
+                key={item}
+                className="flex items-center gap-2.5 text-[15px] text-white"
+              >
+                <span className="size-1.5 rounded-full bg-[#6ef5df] flex-shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-[14px] text-white/40 leading-relaxed">
+            We're building this with our founding users, slashing costs for
+            buyers and sellers for good.
+          </p>
+        </div>
+
+        {/* Right column — Calculator card */}
+        <div className="bg-white/[0.04] rounded-3xl p-8 lg:p-10 border border-white/10">
+          {/* Big savings number + label */}
+          <div className="flex items-baseline gap-4 mb-8">
+            <p className="font-serif text-[#77ffdc] text-[48px] md:text-[64px] leading-none tracking-[-0.02em]">
+              {formatCurrency(savings)}
+            </p>
+            <div className="text-white/50 text-[13px] leading-[1.4]">
+              <p>Estimated savings</p>
+              <p>vs traditional agent</p>
+            </div>
+          </div>
+
+          {/* Home value slider */}
+          <div className="border-t border-white/10 pt-6 mb-6">
+            <p className="text-white/50 text-[13px] mb-1">Your home value</p>
+            <div className="inline-flex items-baseline mb-4">
+              <span className="text-[24px] font-medium text-white">$</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -719,112 +786,117 @@ function SavingsCalculator() {
                     setHomeValue([Math.min(Math.max(num, 0), 10000000)])
                   }
                 }}
-                style={{ width: `${homeValue[0].toLocaleString("en-AU").length * 0.65}em` }}
-                className="text-[26px] font-medium text-white bg-transparent border-none outline-none appearance-none min-w-[80px]"
+                style={{
+                  width: `${homeValue[0].toLocaleString("en-AU").length * 0.65}em`,
+                }}
+                className="text-[24px] font-medium text-white bg-transparent border-none outline-none appearance-none min-w-[80px]"
               />
             </div>
-          </div>
-          <div className="relative w-full">
-            {/* Track background */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-[3px] rounded-full bg-white/20" />
-            {/* Track fill */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 left-0 h-[3px] rounded-full bg-white/60"
-              style={{ width: `${((homeValue[0] - 200000) / (5000000 - 200000)) * 100}%` }}
-            />
-            <input
-              type="range"
-              min={200000}
-              max={5000000}
-              step={50000}
-              value={homeValue[0]}
-              onChange={(e) => setHomeValue([Number(e.target.value)])}
-              className="relative w-full h-6 appearance-none bg-transparent cursor-pointer
-                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[15px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white
-                [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:size-[15px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:border-0
-                [&::-webkit-slider-runnable-track]:appearance-none [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-[3px]
-                [&::-moz-range-track]:appearance-none [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:h-[3px]"
-            />
-          </div>
-          <div className="flex justify-between mt-2">
-            <span className="text-xs font-medium text-white/30">$200K</span>
-            <span className="text-xs font-medium text-white/30">$5M</span>
-          </div>
-        </div>
-
-        {/* Savings card */}
-        <div className="max-w-[480px] mx-auto bg-white/5 rounded-2xl p-12">
-          <div className="text-center mb-12">
-            <p className="font-serif text-5xl text-[#77ffdc] mb-1">
-              {formatCurrency(savings)}
-            </p>
-            <p className="text-[15px] font-medium text-white/40">
-              Estimated savings
-            </p>
+            <div className="relative w-full">
+              <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-[3px] rounded-full bg-white/20" />
+              <div
+                className="absolute top-1/2 -translate-y-1/2 left-0 h-[3px] rounded-full bg-white/60"
+                style={{
+                  width: `${((homeValue[0] - 200000) / (10000000 - 200000)) * 100}%`,
+                }}
+              />
+              <input
+                type="range"
+                min={200000}
+                max={10000000}
+                step={5000}
+                value={homeValue[0]}
+                onChange={(e) => setHomeValue([Number(e.target.value)])}
+                className="relative w-full h-6 appearance-none bg-transparent cursor-pointer
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[15px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:mt-[-6px]
+                  [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:size-[15px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:border-0
+                  [&::-webkit-slider-runnable-track]:appearance-none [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-[3px]
+                  [&::-moz-range-track]:appearance-none [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:h-[3px]"
+              />
+            </div>
+            <div className="flex justify-between mt-2">
+              <span className="text-xs font-medium text-white/30">$200K</span>
+              <span className="text-xs font-medium text-white/30">$10M</span>
+            </div>
           </div>
 
-          <div className="space-y-3 max-w-[300px] mx-auto text-sm font-medium text-white">
-            <div className="flex items-center justify-between">
-              <span className="opacity-30">Traditional agent ~2.5%</span>
-              <span className="opacity-30 line-through">
-                {formatCurrency(traditionalFee)}
+          {/* Traditional agent line */}
+          <div className="border-t border-white/10 pt-5 pb-6 flex items-center justify-between">
+            <span className="text-white/50 text-[14px]">
+              Traditional agent ~2.5%
+            </span>
+            <span className="text-white/50 text-[14px] line-through">
+              {formatCurrency(traditionalFee)}
+            </span>
+          </div>
+
+          {/* Sellers / Buyers split card */}
+          <div className="grid grid-cols-2 border border-white/10 rounded-2xl mb-6 overflow-hidden">
+            {/* Sellers */}
+            <div className="p-5 border-r border-white/10 flex flex-col">
+              <span className="inline-flex items-center self-start px-2.5 py-1 border border-[#6ef5df]/40 rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#6ef5df] mb-4">
+                SELLERS
               </span>
-            </div>
-            <div className="h-px bg-white/10" />
-            <div className="flex items-center justify-between text-white/50">
-              <span className="inline-flex items-center gap-1.5">
-                Publish listing
-                <span className="relative group">
-                  <span className="inline-flex items-center justify-center size-[13px] -translate-y-[1px] rounded-full border border-white/30 text-[9px] text-white/50 cursor-help" style={{ lineHeight: 0 }}>i</span>
-                  <span className="absolute top-1/2 -translate-y-1/2 left-full ml-2 w-[220px] p-3 rounded-lg bg-white text-[#1e2124] text-[14px] text-left leading-[1.5] shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-10">
-                    Pay once to publish your listing. Covers KYC verification, title search, and listing setup.
+              <div className="flex justify-between text-[14px] text-white mb-1.5">
+                <span className="inline-flex items-center gap-1.5">
+                  Publish listing
+                  <span className="relative group">
+                    <span
+                      className="inline-flex items-center justify-center size-[14px] -translate-y-[1px] rounded-full border border-white/30 text-[9px] text-white/50 cursor-help"
+                      style={{ lineHeight: 0 }}
+                    >
+                      i
+                    </span>
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[220px] p-3 rounded-lg bg-white text-[#1e2124] text-[13px] text-left leading-[1.5] shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-10">
+                      $99 compliance (KYC + title search)
+                    </span>
                   </span>
                 </span>
-              </span>
-              <span>{formatCurrency(GATE_1)}</span>
+                <span>{formatCurrency(PUBLISH_LISTING)}</span>
+              </div>
+              <div className="flex justify-between text-[14px]">
+                <span className="text-white/70">Platform fee</span>
+                <span className="text-[#6ef5df]">waived</span>
+              </div>
+              <p className="text-[13px] text-white/50 leading-[1.4] mt-2">
+                Exclusive to founding members, we are waiving our platform fees.
+              </p>
             </div>
-            <div className="flex items-center justify-between text-white/50">
-              <span className="inline-flex items-center gap-1.5">
-                Accept first EOI
-                <span className="relative group">
-                  <span className="inline-flex items-center justify-center size-[13px] -translate-y-[1px] rounded-full border border-white/30 text-[9px] text-white/50 cursor-help" style={{ lineHeight: 0 }}>i</span>
-                  <span className="absolute top-1/2 -translate-y-1/2 left-full ml-2 w-[220px] p-3 rounded-lg bg-white text-[#1e2124] text-[14px] text-left leading-[1.5] shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-10">
-                    One-time fee when you accept your first expression of interest. Unlocks all buyer EOIs and AI-assisted tools.
-                  </span>
-                </span>
+
+            {/* Buyers */}
+            <div className="p-5 flex flex-col">
+              <span className="inline-flex items-center self-start px-2.5 py-1 border border-[#a5c2ff]/40 rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#a5c2ff] mb-4">
+                BUYERS
               </span>
-              <span>{formatCurrency(GATE_2)}</span>
-            </div>
-            <div className="flex items-center justify-between text-white/50">
-              <span className="inline-flex items-center gap-1.5">
-                Settlement
-                <span className="relative group">
-                  <span className="inline-flex items-center justify-center size-[13px] -translate-y-[1px] rounded-full border border-white/30 text-[9px] text-white/50 cursor-help" style={{ lineHeight: 0 }}>i</span>
-                  <span className="absolute top-1/2 -translate-y-1/2 left-full ml-2 w-[220px] p-3 rounded-lg bg-white text-[#1e2124] text-[14px] text-left leading-[1.5] shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-10">
-                    Facilitation fee charged when your conveyancer confirms settlement. Only pay when the sale completes.
-                  </span>
-                </span>
-              </span>
-              <span>{formatCurrency(GATE_3)}</span>
-            </div>
-            <div className="h-px bg-white/10" />
-            <div className="flex items-center justify-between">
-              <span>Reasy total</span>
-              <span>{formatCurrency(REASY_TOTAL)}</span>
+              <p className="text-[14px] text-white font-medium mb-0.5">
+                Completely free
+              </p>
+              <p className="text-[13px] text-white/50 leading-[1.4]">
+                to browse, search, and make offers.
+              </p>
+              <p className="text-[12px] text-white/35 mt-auto pt-3">
+                No account fees.
+              </p>
             </div>
           </div>
-        </div>
 
-        {/* CTA */}
-        <div className="mt-12">
+          {/* CTA */}
           <a
             href="#waitlist"
-            className="inline-flex items-center gap-2 px-4 py-3 rounded-full text-[15px] font-semibold text-brand-dark bg-white border border-[#e6e6eb] hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-4 rounded-full bg-white text-brand-dark text-[15px] font-semibold hover:bg-white/90 transition-colors"
           >
-            Join the waitlist to save
+            Become a Founding User
             <IconArrowRight className="size-4" />
           </a>
+
+          {/* Beta disclaimer */}
+          <p className="text-[12px] text-white/40 leading-[1.5] mt-6 text-center">
+            * We are currently launching our Beta. All pricing, processes and
+            functionality are under review as we build the platform and develop
+            towards public launch.
+          </p>
         </div>
+      </div>
     </section>
   )
 }
@@ -866,7 +938,7 @@ function ForBuyers() {
           For Buyers
         </p>
         <h2 className="font-serif text-4xl md:text-5xl text-[#020a0f] max-w-[600px] mb-16">
-          Buying a home shouldn't require an agent either
+          Buying a home shouldn't require dealing with an agent either
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -1104,10 +1176,122 @@ function WaitlistCTA() {
   )
 }
 
+// --- Contact Dialog ---
+
+function ContactDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  useEffect(() => {
+    if (!open) return
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.body.style.overflow = "hidden"
+    window.addEventListener("keydown", handleKey)
+    return () => {
+      document.body.style.overflow = ""
+      window.removeEventListener("keydown", handleKey)
+    }
+  }, [open, onClose])
+
+  if (!open) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-[520px] bg-white rounded-3xl border border-[#e6e6eb] shadow-[0px_24px_64px_-12px_rgba(0,0,0,0.18)] p-6 md:p-10 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute top-4 right-4 size-9 rounded-full bg-[#f6f6f8] hover:bg-[#ececef] flex items-center justify-center text-[#47474f] transition-colors"
+        >
+          <IconX className="size-4" />
+        </button>
+
+        <h2 className="font-serif text-3xl md:text-[36px] leading-[1.2] text-[#020a0f] mb-3">
+          Get in touch
+        </h2>
+        <p className="text-[15px] text-[#1e2124] leading-relaxed mb-8">
+          Have a question or want to chat? Send us a message and we'll get
+          back to you.
+        </p>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            onClose()
+          }}
+          className="space-y-4"
+        >
+          <div>
+            <label htmlFor="contact-name" className="text-sm font-medium text-[#020a0f] mb-2 block">
+              Name
+            </label>
+            <input
+              id="contact-name"
+              type="text"
+              placeholder="Your name"
+              className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="contact-email" className="text-sm font-medium text-[#020a0f] mb-2 block">
+              Email
+            </label>
+            <input
+              id="contact-email"
+              type="email"
+              placeholder="you@example.com"
+              className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="contact-postcode" className="text-sm font-medium text-[#020a0f] mb-2 block">
+              Postcode
+            </label>
+            <input
+              id="contact-postcode"
+              type="text"
+              placeholder="e.g. 4573"
+              inputMode="numeric"
+              maxLength={4}
+              className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="contact-message" className="text-sm font-medium text-[#020a0f] mb-2 block">
+              Message
+            </label>
+            <textarea
+              id="contact-message"
+              rows={4}
+              placeholder="How can we help?"
+              className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors resize-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3.5 rounded-full bg-primary text-white text-[15px] font-semibold hover:bg-primary/90 transition-colors mt-2"
+          >
+            Send message
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 // --- Footer ---
 
 function Footer() {
-  const [copied, setCopied] = useState(false)
+  const [contactOpen, setContactOpen] = useState(false)
   const links = [
     { label: "How it works", href: "#how-it-works" },
     { label: "Benefits", href: "#benefits" },
@@ -1115,58 +1299,125 @@ function Footer() {
     { label: "For Buyers", href: "#buyers" },
   ]
   const socials = [
-    { icon: IconBrandFacebook, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61583180562641" },
-    { icon: IconBrandInstagram, label: "Instagram", href: "https://www.instagram.com/reasy.com.au" },
-    { icon: IconBrandLinkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/heyreasy/" },
+    { icon: IconBrandInstagram, label: "Instagram", href: "https://www.instagram.com/agents_want_me_cancelled?igsh=aTBud3F5cHQzb2Iz&utm_source=qr" },
+    { icon: IconBrandTiktok, label: "TikTok", href: "https://www.tiktok.com/@agentswantmecancelled?_r=1&_t=ZS-95xMn4ARczX" },
     { icon: IconBrandYoutube, label: "YouTube", href: "https://www.youtube.com/@heyreasy" },
-    { icon: IconBrandTiktok, label: "TikTok", href: "https://www.tiktok.com/@reasy.com.au" },
   ]
 
-  return (
-    <footer className="pt-24 pb-16 px-4 bg-[#fefcf8]">
-      <div className="max-w-[1200px] mx-auto flex flex-col items-center gap-8">
-        <nav className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
-          {links.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-[15px] font-medium text-[#47474f] hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText("info@reasy.com.au")
-              setCopied(true)
-              setTimeout(() => setCopied(false), 2000)
-            }}
-            className="text-[15px] font-medium text-[#47474f] hover:text-foreground transition-colors"
-          >
-            {copied ? "Email copied!" : "Contact Us"}
-          </button>
-        </nav>
+  const eyebrow =
+    "font-['Roboto_Mono_Variable'] text-[13px] font-semibold uppercase tracking-[0.04em] text-[#47474f]/60 mb-5"
+  const linkClass =
+    "text-[15px] font-medium text-[#47474f] hover:text-foreground transition-colors"
 
-        <div className="flex items-center gap-8">
-          {socials.map(({ icon: Icon, label, href }) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              className="text-[#47474f] hover:text-foreground transition-colors"
-            >
-              <Icon className="size-5" stroke={1.5} />
-            </a>
-          ))}
+  return (
+    <>
+    <footer className="pt-24 pb-16 px-4 bg-[#fefcf8]">
+      <div className="max-w-[1200px] mx-auto">
+        {/* Top: 4-column grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr] gap-12 lg:gap-10 pb-12">
+          {/* Brand */}
+          <div>
+            <img src={logoImg} alt="Reasy" className="h-7 w-auto mb-6" />
+            <p className="text-[15px] text-[#47474f] leading-[1.5] mb-6">
+              Real estate, made easy.
+              <br />
+              Sell your home without an agent.
+            </p>
+            <div className="flex items-center gap-6">
+              {socials.map(({ icon: Icon, label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="text-[#47474f] hover:text-foreground transition-colors"
+                >
+                  <Icon className="size-5" stroke={1.5} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Platform */}
+          <div>
+            <p className={eyebrow}>Platform</p>
+            <ul className="space-y-3">
+              {links.map((link) => (
+                <li key={link.label}>
+                  <a href={link.href} className={linkClass}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <p className={eyebrow}>Company</p>
+            <ul className="space-y-3">
+              <li>
+                <button
+                  onClick={() => setContactOpen(true)}
+                  className={cn(linkClass, "text-left")}
+                >
+                  Contact Us
+                </button>
+              </li>
+              <li>
+                <a href="/privacy" className={linkClass}>
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a href="/terms" className={linkClass}>
+                  Terms of Service
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Connect */}
+          <div>
+            <p className={eyebrow}>Connect</p>
+            <ul className="space-y-3">
+              {socials.map(({ label, href }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClass}
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
         </div>
 
-        <div className="flex flex-col items-center gap-2 text-sm text-[#7a7a7a]">
-          <p>&copy; 2026 Reasy Pty Ltd. All rights reserved.</p>
-          <div className="flex items-center gap-6">
-            <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
+        {/* Bottom row */}
+        <div className="border-t border-[#e6e6eb] pt-6 flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+          <p className="text-[12px] text-[#7a7a7a] leading-[1.7] md:w-1/2">
+            Reasy operates as a digital platform and does not act as a real
+            estate agent or conveyancer. Any services that require licensing
+            are carried out by external, qualified professionals. Results can
+            differ and are influenced by market conditions and the choices
+            made by users.
+          </p>
+          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-8 text-[14px] text-[#7a7a7a]">
+            <p>&copy; 2026 Reasy Pty Ltd. All rights reserved.</p>
+            <div className="flex items-center gap-6">
+              <a href="/privacy" className="hover:text-foreground transition-colors">
+                Privacy
+              </a>
+              <a href="/terms" className="hover:text-foreground transition-colors">
+                Terms
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -1180,6 +1431,8 @@ function Footer() {
         </p>
       </div>
     </footer>
+    <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
+    </>
   )
 }
 
@@ -1191,6 +1444,7 @@ export function HomePage() {
       <Nav />
       <main>
         <HeroSection />
+        <FeaturedIn />
         <HowItWorks />
         <BentoGrid />
         <WhyChooseReasy />
