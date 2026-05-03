@@ -1,13 +1,13 @@
 import { useState, useMemo, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandInstagram, IconBrandYoutube, IconBrandTiktok, IconMenu2 } from "@tabler/icons-react"
+import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandInstagram, IconBrandYoutube, IconBrandTiktok, IconMenu2, IconChartBar, IconSparkles, IconInbox, IconFileText } from "@tabler/icons-react"
 
 
 import logoImg from "@/assets/reasy-logo.svg"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import dashImg from "@/assets/reasy-dashboard.png"
 import mobileDashImg from "@/assets/Mobile-Dash-Reasy.png"
-import aerialImg from "@/assets/hero-aerial.jpg"
+import aerialImg from "@/assets/gold-coast-reasy-launch-platform.png"
 import avatar1 from "@/assets/avatar-1.jpg"
 import avatar2 from "@/assets/avatar-2.jpg"
 import avatar3 from "@/assets/avatar-3.jpg"
@@ -18,13 +18,14 @@ import bentoImg2 from "@/assets/selling-assistant.png"
 import bentoImg3 from "@/assets/tak-directly-with-buyers.png"
 import bentoImg4 from "@/assets/Container-3.png"
 import bentoImg5 from "@/assets/everything in one place-1.png"
-import buyersInfo1 from "@/assets/reasy-buyers-info-01.png"
-import buyersCard2 from "@/assets/reasy-buyers-card-2.png"
+import browsePrivatelyImg from "@/assets/browse-privatley.png"
+import enquireDirectlyImg from "@/assets/enquire-directly.png"
 import buyersCard3 from "@/assets/reasy-buyers-card-3.png"
 import listQuietlyImg from "@/assets/private-listing-with-reasy.png"
 import dailyMailLogo from "@/assets/daily-mail-logo.png"
 import yahooFinanceLogo from "@/assets/yahoo-finance-logo.png"
 import buyerAvatar from "@/assets/buyer-avatar.png"
+import aiPricingImg from "@/assets/reasy-ai-pricing-tools.jpg"
 
 // --- Nav ---
 
@@ -592,6 +593,84 @@ function BentoGrid() {
   )
 }
 
+// --- AI Assistance ---
+
+function AIAssistance() {
+  const features = [
+    {
+      icon: IconChartBar,
+      title: "Smart pricing",
+      description:
+        "Comparable sales analysis, demand signals and price-strategy suggestions so you know what to list at and where you're likely to land.",
+    },
+    {
+      icon: IconSparkles,
+      title: "Listing & marketing",
+      description:
+        "Drafts your listing copy, recommends photos and gets your property in front of the right buyers across the channels that matter.",
+    },
+    {
+      icon: IconInbox,
+      title: "Enquiry triage",
+      description:
+        "Sorts buyer enquiries by intent, drafts reply suggestions and reminds you to follow up so warm leads never go cold.",
+    },
+    {
+      icon: IconFileText,
+      title: "Documents & deadlines",
+      description:
+        "Tracks contracts, disclosures, signatures and key dates from listing through to settlement so nothing slips.",
+    },
+  ]
+
+  return (
+    <section id="ai" className="py-32 px-4">
+      <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        {/* Left: pricing tool image */}
+        <div>
+          <img
+            src={aiPricingImg}
+            alt="Reasy AI pricing tool on iPhone"
+            className="w-full h-auto"
+          />
+        </div>
+
+        {/* Right: info */}
+        <div>
+          <p className="font-['Roboto_Mono_Variable'] text-[13px] font-semibold uppercase leading-[15.6px] text-primary mb-1">
+            Reasy AI
+          </p>
+          <h2 className="font-serif text-4xl md:text-5xl text-[#020a0f] mb-5 leading-[1.1]">
+            Reasy AI does the heavy lifting
+          </h2>
+          <p className="text-[17px] text-[#1e2124] leading-relaxed mb-10">
+            From pricing to settlement, Reasy keeps you on top of every detail
+            so you never feel out of your depth.
+          </p>
+
+          <div className="space-y-6">
+            {features.map(({ icon: Icon, title, description }) => (
+              <div key={title} className="flex gap-4">
+                <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                  <Icon className="size-5" stroke={1.75} />
+                </div>
+                <div>
+                  <h3 className="text-[16px] font-medium text-[#020a0f] mb-1">
+                    {title}
+                  </h3>
+                  <p className="text-[14px] text-[#1e2124]/70 leading-[1.6]">
+                    {description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // --- Why Choose Reasy ---
 
 function WhyChooseReasy() {
@@ -834,7 +913,7 @@ function SavingsCalculator() {
           <div className="grid grid-cols-2 border border-white/10 rounded-2xl mb-6 overflow-hidden">
             {/* Sellers */}
             <div className="p-5 border-r border-white/10 flex flex-col">
-              <span className="inline-flex items-center self-start px-2.5 py-1 border border-[#6ef5df]/40 rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#6ef5df] mb-4">
+              <span className="inline-flex items-center self-start px-2.5 py-1 bg-[#6ef5df] rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#202653] mb-4">
                 SELLERS
               </span>
               <div className="flex justify-between text-[14px] text-white mb-1.5">
@@ -865,7 +944,7 @@ function SavingsCalculator() {
 
             {/* Buyers */}
             <div className="p-5 flex flex-col">
-              <span className="inline-flex items-center self-start px-2.5 py-1 border border-[#a5c2ff]/40 rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#a5c2ff] mb-4">
+              <span className="inline-flex items-center self-start px-2.5 py-1 bg-[#a5c2ff] rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#202653] mb-4">
                 BUYERS
               </span>
               <p className="text-[14px] text-white font-medium mb-0.5">
@@ -908,23 +987,23 @@ function ForBuyers() {
     {
       title: "Browse privately",
       description:
-        "Discover properties listed directly by sellers, often before they hit mainstream portals. Get early access to homes you won't find anywhere else.",
+        "Discover properties listed directly by sellers, off-market before they hit mainstream portals. Get early access to homes you won't find anywhere else.",
       color: "bg-[#dceeff]",
       titleColor: "text-[#2b7de9]",
-      image: buyersInfo1,
+      image: browsePrivatelyImg,
     },
     {
       title: "Enquire directly",
       description:
-        "Skip the agent and communicate directly with the seller. Ask questions, arrange inspections, and negotiate on your own terms.",
+        "Skip the agent and communicate directly with the seller. Ask questions, arrange inspections submit offers and negotiate on your own terms.",
       color: "bg-[#e8ffe0]",
       titleColor: "text-[#3ba526]",
-      image: buyersCard2,
+      image: enquireDirectlyImg,
     },
     {
       title: "Guided process",
       description:
-        "From building inspections to finance pre-approval, Reasy guides you through every step so nothing gets missed.",
+        "Reasy guides you through the entire process with checklists and next steps, from discovery all the way through to settlement.",
       color: "bg-[#ece5ff]",
       titleColor: "text-[#7c5cdb]",
       image: buyersCard3,
@@ -970,22 +1049,22 @@ function FAQs() {
     {
       question: "How much does Reasy cost?",
       answer:
-        "Reasy uses a simple gated pricing model. You pay $79 to publish your listing, $999 when you accept your first expression of interest, and $1,999 at settlement. That's a total of $3,077, compared to tens of thousands in traditional agent commissions.",
+        "Sellers only pay $99 to publish their listing on Reasy. This covers KYC, title check and verification. We're still finalising our full pricing structure as we build the platform together with our founding users during Beta. What will never change: Reasy charges no commission and never will.",
     },
     {
       question: "Do I need a real estate agent?",
       answer:
-        "No. Reasy is designed for people who want to sell their home without a traditional agent. The platform guides you through the entire process, and when you need legal support, we connect you with a qualified conveyancer.",
+        "No. Reasy is designed for people who want to sell their home without a traditional agent, to avoid paying thousands of dollars in agent fees. The platform guides you through the entire process, and when you need legal support, we allow you to add your conveyancer to the Reasy workspace, so all communication and negotiation happens in one place not scattered across multiple lines of communication in different places.",
     },
     {
       question: "Is it legal to sell my own home without an agent?",
       answer:
-        "Yes, absolutely. In Australia, there is no legal requirement to use a real estate agent to sell your property. You do need a conveyancer or solicitor to handle the legal transfer, and Reasy helps you connect with one at the right time.",
+        "Yes, absolutely. In Australia, there is no legal requirement to use a real estate agent to sell your property. It's advised to use a conveyancer to handle the legal aspects. Reasy allows you to invite your conveyancer to the Reasy workspace so all communication and document sharing happens in one place not spread across multiple platforms like Email, Text, Whatsapp etc.",
     },
     {
       question: "How do buyers find my listing?",
       answer:
-        "Your property is listed on the Reasy platform where buyers can browse and enquire.",
+        "Your property is listed on the Reasy platform where buyers can browse and enquire directly with you, no gate keeping or middlemen to hide offers or communication. You stay in control throughout the entire process. Reasy does not list in the major portals saving you Heaps of Dollars while serving your property listing to Thousands of buyers who want access to properties that aren't gate kept by Real Estate agents and Middlemen.",
     },
     {
       question: "What happens if I change my mind?",
@@ -995,7 +1074,7 @@ function FAQs() {
     {
       question: "When is Reasy launching?",
       answer:
-        "We're currently in pre-launch. Join the waitlist to be one of the first to use Reasy when we go live. Early members will get priority access and special pricing.",
+        "We're finalising our Beta Launch. Join the waitlist to be one of the first to use Reasy when we go live. Founding members will get priority access and special pricing, limited spots. First in, best dressed.",
     },
   ]
 
@@ -1124,7 +1203,7 @@ function WaitlistCTA() {
             </div>
           </div>
 
-          {/* Email & Postcode */}
+          {/* Email & location */}
           <div className="grid grid-cols-1 gap-4">
             <div>
               <label htmlFor="email" className="text-sm font-medium text-[#020a0f] mb-2 block">
@@ -1137,19 +1216,42 @@ function WaitlistCTA() {
                 className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
               />
             </div>
-            <div>
-              <label htmlFor="postcode" className="text-sm font-medium text-[#020a0f] mb-2 block">
-                Postcode
-              </label>
-              <input
-                id="postcode"
-                type="text"
-                placeholder="e.g. 4573"
-                inputMode="numeric"
-                maxLength={4}
-                className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
-              />
-            </div>
+            {interest === "selling" ? (
+              <div>
+                <label htmlFor="postcode" className="text-sm font-medium text-[#020a0f] mb-2 block">
+                  Postcode
+                </label>
+                <input
+                  id="postcode"
+                  type="text"
+                  placeholder="e.g. 4573"
+                  inputMode="numeric"
+                  maxLength={4}
+                  className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                />
+              </div>
+            ) : (
+              <div>
+                <label className="text-sm font-medium text-[#020a0f] mb-2 block">
+                  Top cities you'd like to buy in
+                </label>
+                <p className="text-[13px] text-[#7a7a7a] mb-3">
+                  Tell us where you're searching so we can let you know when matching listings go live.
+                </p>
+                <div className="space-y-2.5">
+                  {[1, 2, 3].map((n) => (
+                    <input
+                      key={n}
+                      id={`buy-city-${n}`}
+                      type="text"
+                      placeholder={`City ${n}${n === 1 ? " (e.g. Brisbane)" : ""}`}
+                      autoComplete="off"
+                      className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Submit */}
@@ -1447,6 +1549,7 @@ export function HomePage() {
         <FeaturedIn />
         <HowItWorks />
         <BentoGrid />
+        <AIAssistance />
         <WhyChooseReasy />
         <SavingsCalculator />
         <ForBuyers />
