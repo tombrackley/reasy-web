@@ -877,7 +877,7 @@ function SavingsCalculator() {
                 className="text-[24px] font-medium text-white bg-transparent border-none outline-none appearance-none min-w-[80px]"
               />
             </div>
-            <div className="relative w-full">
+            <div className="relative w-full h-6">
               <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-[3px] rounded-full bg-white/20" />
               <div
                 className="absolute top-1/2 -translate-y-1/2 left-0 h-[3px] rounded-full bg-white/60"
@@ -892,10 +892,13 @@ function SavingsCalculator() {
                 step={5000}
                 value={homeValue[0]}
                 onChange={(e) => setHomeValue([Number(e.target.value)])}
-                className="relative w-full h-6 appearance-none bg-transparent cursor-pointer
-                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[15px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md
-                  [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:size-[15px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:border-0
-                  [&::-webkit-slider-runnable-track]:appearance-none [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-[3px]
+                className="absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[22px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md
+                  md:[&::-webkit-slider-thumb]:size-[16px]
+                  [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:size-[22px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:border-0
+                  md:[&::-moz-range-thumb]:size-[16px]
+                  [&::-webkit-slider-runnable-track]:appearance-none [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-[22px]
+                  md:[&::-webkit-slider-runnable-track]:h-[16px]
                   [&::-moz-range-track]:appearance-none [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:h-[3px]"
               />
             </div>
@@ -922,7 +925,7 @@ function SavingsCalculator() {
               <span className="inline-flex items-center self-start px-2.5 py-1 bg-[#6ef5df] rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#202653] mb-4">
                 SELLERS
               </span>
-              <div className="flex justify-between text-[14px] text-white mb-1.5">
+              <div className="flex flex-col-reverse items-start md:flex-row md:items-center md:justify-between text-[14px] text-white mb-1.5">
                 <span className="inline-flex items-center gap-1.5">
                   Publish listing
                   <span className="relative group">
@@ -939,7 +942,8 @@ function SavingsCalculator() {
                 </span>
                 <span>{formatCurrency(PUBLISH_LISTING)}</span>
               </div>
-              <div className="flex justify-between text-[14px]">
+              <p className="md:hidden text-[14px] text-white/70">Platform fee waived</p>
+              <div className="hidden md:flex md:items-center md:justify-between text-[14px]">
                 <span className="text-white/70">Platform fee</span>
                 <span className="text-[#6ef5df]">waived</span>
               </div>
