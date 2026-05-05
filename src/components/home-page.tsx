@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandInstagram, IconBrandYoutube, IconBrandTiktok, IconMenu2, IconChartBar, IconSparkles, IconInbox, IconFileText } from "@tabler/icons-react"
 
@@ -778,9 +778,22 @@ function WhyChooseReasy() {
 
 function SavingsCalculator() {
   const [homeValue, setHomeValue] = useState([1650000])
+  const [tipOpen, setTipOpen] = useState(false)
+  const tipRef = useRef<HTMLSpanElement>(null)
   const PUBLISH_LISTING = 99
   const REASY_TOTAL = PUBLISH_LISTING
   const AGENT_RATE = 0.025
+
+  useEffect(() => {
+    if (!tipOpen) return
+    const handler = (e: PointerEvent) => {
+      if (tipRef.current && !tipRef.current.contains(e.target as Node)) {
+        setTipOpen(false)
+      }
+    }
+    document.addEventListener("pointerdown", handler)
+    return () => document.removeEventListener("pointerdown", handler)
+  }, [tipOpen])
 
   const { traditionalFee, savings } = useMemo(() => {
     const val = homeValue[0]
@@ -928,21 +941,30 @@ function SavingsCalculator() {
               <div className="flex flex-col-reverse items-start md:flex-row md:items-center md:justify-between text-[14px] text-white mb-1.5">
                 <span className="inline-flex items-center gap-1.5">
                   Publish listing
-                  <button
-                    type="button"
-                    aria-label="Publish listing details"
-                    className="relative group p-0 bg-transparent border-0 appearance-none focus:outline-none"
+                  <span
+                    ref={tipRef}
+                    className="relative inline-flex"
+                    onMouseEnter={() => setTipOpen(true)}
+                    onMouseLeave={() => setTipOpen(false)}
                   >
-                    <span
-                      className="inline-flex items-center justify-center size-[14px] -translate-y-[1px] rounded-full border border-white/30 text-[9px] text-white/50 cursor-pointer"
+                    <button
+                      type="button"
+                      aria-label="Publish listing details"
+                      onClick={() => setTipOpen((o) => !o)}
+                      className="inline-flex items-center justify-center size-[14px] -translate-y-[1px] rounded-full border border-white/30 text-[9px] text-white/50 cursor-pointer p-0 bg-transparent appearance-none focus:outline-none"
                       style={{ lineHeight: 0 }}
                     >
                       i
-                    </span>
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[220px] p-3 rounded-lg bg-white text-[#1e2124] text-[13px] text-left leading-[1.5] shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus:opacity-100 group-focus:pointer-events-auto transition-opacity duration-200 z-20">
+                    </button>
+                    <span
+                      className={cn(
+                        "absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[220px] p-3 rounded-lg bg-white text-[#1e2124] text-[13px] text-left leading-[1.5] shadow-lg transition-opacity duration-200 z-20",
+                        tipOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                      )}
+                    >
                       $99 compliance (KYC + title search)
                     </span>
-                  </button>
+                  </span>
                 </span>
                 <span>{formatCurrency(PUBLISH_LISTING)}</span>
               </div>
