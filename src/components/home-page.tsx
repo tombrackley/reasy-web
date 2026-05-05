@@ -922,7 +922,7 @@ function SavingsCalculator() {
           <div className="grid grid-cols-1 md:grid-cols-2 border border-white/10 rounded-2xl mb-6 overflow-hidden">
             {/* Sellers */}
             <div className="p-5 border-b md:border-b-0 md:border-r border-white/10 flex flex-col">
-              <span className="inline-flex items-center self-start px-2.5 py-1 bg-[#6ef5df] rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#202653] mb-4">
+              <span className="inline-flex items-center self-start h-5 px-2.5 bg-[#6ef5df] rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#202653] mb-4">
                 SELLERS
               </span>
               <div className="flex flex-col-reverse items-start md:flex-row md:items-center md:justify-between text-[14px] text-white mb-1.5">
@@ -954,7 +954,7 @@ function SavingsCalculator() {
 
             {/* Buyers */}
             <div className="p-5 flex flex-col">
-              <span className="inline-flex items-center self-start px-2.5 py-1 bg-[#a5c2ff] rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#202653] mb-4">
+              <span className="inline-flex items-center self-start h-5 px-2.5 bg-[#a5c2ff] rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#202653] mb-4">
                 BUYERS
               </span>
               <p className="text-[14px] text-white font-medium mb-0.5">
