@@ -1006,9 +1006,10 @@ function SavingsCalculator() {
 
           {/* Beta disclaimer */}
           <p className="text-[12px] text-white/40 leading-[1.5] mt-6 text-center">
-            * We are currently launching our Beta. All pricing, processes and
-            functionality are under review as we build the platform and develop
-            towards public launch.
+            * We are currently launching our Beta. Platform fees have been waived.
+            Platform functionality and processes will be under constant review
+            based on founding members/users feedback as we build and develop the
+            platform toward public launch.
           </p>
         </div>
       </div>
