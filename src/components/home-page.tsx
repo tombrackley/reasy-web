@@ -771,9 +771,7 @@ function WhyChooseReasy() {
 function SavingsCalculator() {
   const [homeValue, setHomeValue] = useState([1650000])
   const PUBLISH_LISTING = 99
-  const PLATFORM_FEE = 999
-  const SETTLEMENT = 1099
-  const REASY_TOTAL = PUBLISH_LISTING + PLATFORM_FEE + SETTLEMENT
+  const REASY_TOTAL = PUBLISH_LISTING
   const AGENT_RATE = 0.025
 
   const { traditionalFee, savings } = useMemo(() => {
@@ -887,7 +885,7 @@ function SavingsCalculator() {
                 value={homeValue[0]}
                 onChange={(e) => setHomeValue([Number(e.target.value)])}
                 className="relative w-full h-6 appearance-none bg-transparent cursor-pointer
-                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[15px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:mt-[-6px]
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[15px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md
                   [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:size-[15px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:border-0
                   [&::-webkit-slider-runnable-track]:appearance-none [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-[3px]
                   [&::-moz-range-track]:appearance-none [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:h-[3px]"
