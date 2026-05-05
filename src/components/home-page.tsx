@@ -919,7 +919,7 @@ function SavingsCalculator() {
           </div>
 
           {/* Sellers / Buyers split card */}
-          <div className="grid grid-cols-1 md:grid-cols-2 border border-white/10 rounded-2xl mb-6 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 border border-white/10 rounded-2xl mb-6">
             {/* Sellers */}
             <div className="p-5 border-b md:border-b-0 md:border-r border-white/10 flex flex-col">
               <span className="inline-flex items-center self-start h-5 px-2.5 bg-[#6ef5df] rounded-full font-['Roboto_Mono_Variable'] text-[10px] font-semibold tracking-[0.04em] text-[#202653] mb-4">
@@ -928,17 +928,21 @@ function SavingsCalculator() {
               <div className="flex flex-col-reverse items-start md:flex-row md:items-center md:justify-between text-[14px] text-white mb-1.5">
                 <span className="inline-flex items-center gap-1.5">
                   Publish listing
-                  <span className="relative group">
+                  <button
+                    type="button"
+                    aria-label="Publish listing details"
+                    className="relative group p-0 bg-transparent border-0 appearance-none focus:outline-none"
+                  >
                     <span
-                      className="inline-flex items-center justify-center size-[14px] -translate-y-[1px] rounded-full border border-white/30 text-[9px] text-white/50 cursor-help"
+                      className="inline-flex items-center justify-center size-[14px] -translate-y-[1px] rounded-full border border-white/30 text-[9px] text-white/50 cursor-pointer"
                       style={{ lineHeight: 0 }}
                     >
                       i
                     </span>
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[220px] p-3 rounded-lg bg-white text-[#1e2124] text-[13px] text-left leading-[1.5] shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-10">
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[220px] p-3 rounded-lg bg-white text-[#1e2124] text-[13px] text-left leading-[1.5] shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus:opacity-100 group-focus:pointer-events-auto transition-opacity duration-200 z-20">
                       $99 compliance (KYC + title search)
                     </span>
-                  </span>
+                  </button>
                 </span>
                 <span>{formatCurrency(PUBLISH_LISTING)}</span>
               </div>
