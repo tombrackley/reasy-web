@@ -219,12 +219,20 @@ function HeroSection() {
         </p>
 
         {/* CTA */}
-        <a
-          href="#waitlist"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[15px] font-semibold text-primary bg-white hover:bg-white/90 transition-colors"
-        >
-          Get Early Access
-        </a>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="#waitlist"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[15px] font-semibold text-primary bg-white hover:bg-white/90 transition-colors"
+          >
+            Get Early Access
+          </a>
+          <a
+            href="#savings"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[15px] font-semibold text-white border border-white/60 hover:bg-white/10 transition-colors"
+          >
+            How much could I save?
+          </a>
+        </div>
 
         {/* Dashboard screenshot */}
         <div className="max-w-[1200px] mx-auto mt-16 bg-[#f8f8f8] rounded-[2rem] md:rounded-2xl p-2.5">
