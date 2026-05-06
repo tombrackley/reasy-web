@@ -858,7 +858,7 @@ function SavingsCalculator() {
         {/* Right column — Calculator card */}
         <div className="bg-white/[0.04] rounded-3xl p-8 lg:p-10 border border-white/10">
           {/* Big savings number + label */}
-          <div className="flex items-baseline gap-4 mb-8">
+          <div className="flex flex-col items-start gap-2 md:flex-row md:items-baseline md:gap-4 mb-8">
             <p className="font-serif text-[#77ffdc] text-[48px] md:text-[64px] leading-none tracking-[-0.02em]">
               {formatCurrency(savings)}
             </p>
