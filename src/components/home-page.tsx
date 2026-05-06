@@ -862,9 +862,9 @@ function SavingsCalculator() {
             <p className="font-serif text-[#77ffdc] text-[48px] md:text-[64px] leading-none tracking-[-0.02em]">
               {formatCurrency(savings)}
             </p>
-            <div className="text-white/50 text-[13px] leading-[1.4]">
-              <p>Estimated savings</p>
-              <p>vs traditional agent</p>
+            <div className="text-white/50 text-[13px] leading-[1.4] whitespace-nowrap">
+              <p>Estimated savings<span className="md:hidden"> vs traditional agent</span></p>
+              <p className="hidden md:block">vs traditional agent</p>
             </div>
           </div>
 
