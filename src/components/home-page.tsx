@@ -858,14 +858,13 @@ function SavingsCalculator() {
         {/* Right column — Calculator card */}
         <div className="bg-white/[0.04] rounded-3xl p-8 lg:p-10 border border-white/10">
           {/* Big savings number + label */}
-          <div className="flex flex-col items-start gap-2 md:flex-row md:items-baseline md:gap-4 mb-8">
+          <div className="flex flex-col items-start gap-2 mb-8">
             <p className="font-serif text-[#77ffdc] text-[48px] md:text-[64px] leading-none tracking-[-0.02em]">
               {formatCurrency(savings)}
             </p>
-            <div className="text-white/50 text-[13px] leading-[1.4] whitespace-nowrap">
-              <p>Estimated savings<span className="md:hidden"> vs traditional agent</span></p>
-              <p className="hidden md:block">vs traditional agent</p>
-            </div>
+            <p className="text-white/50 text-[13px] leading-[1.4] whitespace-nowrap">
+              Estimated savings vs traditional agent
+            </p>
           </div>
 
           {/* Home value slider */}
@@ -1101,7 +1100,7 @@ function FAQs() {
     {
       question: "How do buyers find my listing?",
       answer:
-        "Your property is listed on the Reasy platform where buyers can browse and enquire directly with you, no gate keeping or middlemen to hide offers or communication. You stay in control throughout the entire process. Reasy does not list in the major portals saving you Heaps of Dollars while serving your property listing to Thousands of buyers who want access to properties that aren't gate kept by Real Estate agents and Middlemen.",
+        "Your property lives on Reasy, where real buyers browse, enquire and talk directly to you. No agent filtering any messages. No middleman deciding which offers to present. You stay in control throughout the entire process. And because we skip the major portals (the ones charging you at least $5,000+ to advertise your home) you save a fortune. Your listing still reaches thousands of verified buyers who are actively looking but they just don't have to go through an expensive gatekeeper to find you or your property.",
     },
     {
       question: "What happens if I change my mind?",
@@ -1240,8 +1239,34 @@ function WaitlistCTA() {
             </div>
           </div>
 
-          {/* Email & location */}
+          {/* Name, email & location */}
           <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="first-name" className="text-sm font-medium text-[#020a0f] mb-2 block">
+                  First name
+                </label>
+                <input
+                  id="first-name"
+                  type="text"
+                  autoComplete="given-name"
+                  placeholder="Jane"
+                  className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                />
+              </div>
+              <div>
+                <label htmlFor="last-name" className="text-sm font-medium text-[#020a0f] mb-2 block">
+                  Last name
+                </label>
+                <input
+                  id="last-name"
+                  type="text"
+                  autoComplete="family-name"
+                  placeholder="Smith"
+                  className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                />
+              </div>
+            </div>
             <div>
               <label htmlFor="email" className="text-sm font-medium text-[#020a0f] mb-2 block">
                 Email
