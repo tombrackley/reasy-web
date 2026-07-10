@@ -177,3 +177,21 @@
   animation: marquee 70s linear infinite;
   will-change: transform;
 }
+
+/* Row "impact" entrance for the alternative home dashboard */
+@keyframes rowImpact {
+  0%   { opacity: 0; transform: translateY(16px) scale(0.985); background-color: rgba(79,125,221,0.10); }
+  55%  { opacity: 1; transform: translateY(-2px) scale(1.008); }
+  100% { opacity: 1; transform: translateY(0) scale(1); background-color: transparent; }
+}
+.row-impact {
+  opacity: 0;
+  animation-name: rowImpact;
+  animation-duration: 0.55s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .row-impact { animation: none; opacity: 1; }
+}
