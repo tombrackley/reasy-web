@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 import { IconArrowRight, IconHeartFilled, IconCheck, IconX, IconClock } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import buyerDashImg from "@/assets/reasy-buyer-dashboard.png"
+import buyerDashMobileImg from "@/assets/reasy-buyer-dashboard-mobile.png"
 
 // Doors open 1 October 2026, Australian eastern time
 const LAUNCH = new Date("2026-10-01T00:00:00+10:00")
@@ -235,9 +236,14 @@ function WhatIsAgentless() {
         {/* Full-width product screenshot */}
         <div className="mt-6 w-full overflow-hidden rounded-2xl border-2 border-white">
           <img
+            src={buyerDashMobileImg}
+            alt="Reasy buyer dashboard showing a listing summary and direct chat with the seller"
+            className="block w-full md:hidden"
+          />
+          <img
             src={buyerDashImg}
             alt="Reasy buyer dashboard showing a listing summary and direct chat with the seller"
-            className="block w-full"
+            className="hidden w-full md:block"
           />
         </div>
       </div>

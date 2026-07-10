@@ -1609,9 +1609,8 @@ function WelcomeOverlay() {
   const [entered, setEntered] = useState(false)
 
   useEffect(() => {
-    if (sessionStorage.getItem("reasy-welcome-seen")) return
+    // Shows on every load (for stakeholder demos)
     const timer = setTimeout(() => {
-      sessionStorage.setItem("reasy-welcome-seen", "1")
       setVisible(true)
       requestAnimationFrame(() => setEntered(true))
     }, 2500)
