@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { HomePage } from "@/components/home-page"
+import { BuyersPage } from "@/components/buyers-page"
 import { PrivacyPage } from "@/components/privacy-page"
 import { TermsPage } from "@/components/terms-page"
 
@@ -16,6 +17,7 @@ function App() {
     window.scrollTo(0, 0)
   }, [path])
 
+  if (path === "/for-buyers") return <BuyersPage />
   if (path === "/privacy") return <PrivacyPage />
   if (path === "/terms") return <TermsPage />
   return <HomePage />
