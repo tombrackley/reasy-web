@@ -2,6 +2,7 @@ import { useState, useEffect, type ReactNode, type MouseEvent } from "react"
 import { cn } from "@/lib/utils"
 import { IconArrowRight, IconHeartFilled, IconCheck, IconX, IconClock } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
+import buyerDashImg from "@/assets/reasy-buyer-dashboard.png"
 
 // Doors open 1 October 2026, Australian eastern time
 const LAUNCH = new Date("2026-10-01T00:00:00+10:00")
@@ -231,9 +232,13 @@ function WhatIsAgentless() {
           ))}
         </div>
 
-        {/* Full-width image placeholder (desktop ratio) */}
-        <div className="mt-6 flex aspect-video w-full items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white">
-          <span className="text-sm font-medium text-[#0a1628]/30">Image placeholder</span>
+        {/* Full-width product screenshot */}
+        <div className="mt-6 w-full overflow-hidden rounded-2xl border-2 border-white">
+          <img
+            src={buyerDashImg}
+            alt="Reasy buyer dashboard showing a listing summary and direct chat with the seller"
+            className="block w-full"
+          />
         </div>
       </div>
     </section>
