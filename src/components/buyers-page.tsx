@@ -306,12 +306,15 @@ function JoinAgentless() {
   return (
     <section id="join" className="px-6 pb-28 md:px-14">
       <div className="mx-auto max-w-[640px]">
-        <Badge>Join #agentless</Badge>
+        <div className="text-center">
+          <Badge>Join #agentless</Badge>
 
-        <h2 className="mt-6 font-serif text-4xl leading-[1.15] md:text-[44px]">
-          Be <span className="text-[#8fb8e8]">first in line</span> when the doors
-          open.
-        </h2>
+          <h2 className="mt-6 font-serif text-4xl leading-[1.15] md:text-[44px]">
+            Be <span className="text-[#8fb8e8]">first in line</span>
+            <br />
+            when the doors open.
+          </h2>
+        </div>
 
         <form onSubmit={(e) => e.preventDefault()} className="mt-10 space-y-5">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
