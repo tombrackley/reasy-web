@@ -4,6 +4,7 @@ import { IconArrowRight, IconHeartFilled, IconCheck, IconX, IconClock } from "@t
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import buyerDashImg from "@/assets/reasy-buyer-dashboard.png"
 import buyerDashMobileImg from "@/assets/reasy-buyer-dashboard-mobile.png"
+import { Reveal } from "@/components/reveal"
 
 // Doors open 1 October 2026, Australian eastern time
 const LAUNCH = new Date("2026-10-01T00:00:00+10:00")
@@ -448,10 +449,10 @@ export function BuyersPage() {
           </p>
         </section>
 
-        <WhatPeopleAreSaying />
-        <WhatIsAgentless />
-        <OldWayVsAgentless />
-        <JoinAgentless />
+        <Reveal><WhatPeopleAreSaying /></Reveal>
+        <Reveal><WhatIsAgentless /></Reveal>
+        <Reveal><OldWayVsAgentless /></Reveal>
+        <Reveal><JoinAgentless /></Reveal>
       </main>
     </div>
   )

@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
+import { Reveal } from "@/components/reveal"
 import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandInstagram, IconBrandYoutube, IconBrandTiktok, IconMenu2, IconChartBar, IconSparkles, IconInbox, IconFileText } from "@tabler/icons-react"
 
 
@@ -1712,15 +1713,15 @@ export function HomePage() {
       <Nav />
       <main>
         <HeroSection />
-        <FeaturedIn />
-        <HowItWorks />
-        <BentoGrid />
-        <AIAssistance />
-        <WhyChooseReasy />
-        <SavingsCalculator />
-        <ForBuyers />
-        <FAQs />
-        <WaitlistCTA />
+        <Reveal><FeaturedIn /></Reveal>
+        <Reveal><HowItWorks /></Reveal>
+        <Reveal><BentoGrid /></Reveal>
+        <Reveal><AIAssistance /></Reveal>
+        <Reveal><WhyChooseReasy /></Reveal>
+        <Reveal><SavingsCalculator /></Reveal>
+        <Reveal><ForBuyers /></Reveal>
+        <Reveal><FAQs /></Reveal>
+        <Reveal><WaitlistCTA /></Reveal>
       </main>
       <Footer />
     </div>
