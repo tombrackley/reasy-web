@@ -1613,7 +1613,7 @@ function WelcomeOverlay() {
     const timer = setTimeout(() => {
       setVisible(true)
       requestAnimationFrame(() => setEntered(true))
-    }, 2500)
+    }, 1200)
     return () => clearTimeout(timer)
   }, [])
 
