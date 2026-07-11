@@ -168,3 +168,38 @@
 .prose-reasy strong {
   @apply font-semibold text-[#020a0f];
 }
+/* Continuous marquee (used on the buyers page comment wall) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 70s linear infinite;
+  will-change: transform;
+}
+
+/* Row "impact" entrance for the alternative home dashboard */
+@keyframes rowImpact {
+  0%   { opacity: 0; transform: translateY(16px) scale(0.985); background-color: rgba(79,125,221,0.10); }
+  55%  { opacity: 1; transform: translateY(-2px) scale(1.008); }
+  100% { opacity: 1; transform: translateY(0) scale(1); background-color: transparent; }
+}
+.row-impact {
+  opacity: 0;
+  animation-name: rowImpact;
+  animation-duration: 0.55s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .row-impact { animation: none; opacity: 1; }
+}
+
+/* Alt home hero gradient — indigo up top, light bloom lower-left */
+.home-alt-gradient {
+  background:
+    radial-gradient(58% 48% at 44% 84%, rgba(242, 247, 253, 0.92) 0%, rgba(242, 247, 253, 0) 58%),
+    radial-gradient(75% 65% at 92% -8%, rgba(63, 92, 214, 0.55) 0%, rgba(63, 92, 214, 0) 55%),
+    linear-gradient(0deg, #a8c6ea 0%, #7ba2e2 34%, #5478e0 68%, #4463d8 100%);
+}

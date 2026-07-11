@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
+import { Reveal } from "@/components/reveal"
+import { WelcomeOverlay } from "@/components/welcome-overlay"
 import { IconX, IconCheck, IconArrowRight, IconChevronRight, IconBrandInstagram, IconBrandYoutube, IconBrandTiktok, IconMenu2, IconChartBar, IconSparkles, IconInbox, IconFileText } from "@tabler/icons-react"
 
 
@@ -35,7 +37,7 @@ function NavLinks({ className, onClick }: { className?: string; onClick?: () => 
       <a href="#how-it-works" className={className} onClick={onClick}>How it works</a>
       <a href="#benefits" className={className} onClick={onClick}>Benefits</a>
       <a href="#savings" className={className} onClick={onClick}>Savings Calculator</a>
-      <a href="#buyers" className={className} onClick={onClick}>For Buyers</a>
+      <a href="/for-buyers" className={className} onClick={onClick}>For Buyers</a>
     </>
   )
 }
@@ -1460,7 +1462,7 @@ function Footer() {
     { label: "How it works", href: "#how-it-works" },
     { label: "Benefits", href: "#benefits" },
     { label: "Savings Calculator", href: "#savings" },
-    { label: "For Buyers", href: "#buyers" },
+    { label: "For Buyers", href: "/for-buyers" },
   ]
   const socials = [
     { icon: IconBrandInstagram, label: "Instagram", href: "https://www.instagram.com/agents_want_me_cancelled?igsh=aTBud3F5cHQzb2Iz&utm_source=qr" },
@@ -1605,18 +1607,19 @@ function Footer() {
 export function HomePage() {
   return (
     <div className="min-h-screen bg-white">
+      <WelcomeOverlay />
       <Nav />
       <main>
         <HeroSection />
-        <FeaturedIn />
-        <HowItWorks />
-        <BentoGrid />
-        <AIAssistance />
-        <WhyChooseReasy />
-        <SavingsCalculator />
-        <ForBuyers />
-        <FAQs />
-        <WaitlistCTA />
+        <Reveal><FeaturedIn /></Reveal>
+        <Reveal><HowItWorks /></Reveal>
+        <Reveal><BentoGrid /></Reveal>
+        <Reveal><AIAssistance /></Reveal>
+        <Reveal><WhyChooseReasy /></Reveal>
+        <Reveal><SavingsCalculator /></Reveal>
+        <Reveal><ForBuyers /></Reveal>
+        <Reveal><FAQs /></Reveal>
+        <Reveal><WaitlistCTA /></Reveal>
       </main>
       <Footer />
     </div>
