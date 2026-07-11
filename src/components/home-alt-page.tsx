@@ -8,6 +8,7 @@ import {
   IconStar,
   IconArrowsSort,
   IconMenu2,
+  IconChevronDown,
 } from "@tabler/icons-react"
 import { WelcomeOverlay } from "@/components/welcome-overlay"
 import logoImg from "@/assets/reasy-logo.svg"
@@ -102,14 +103,21 @@ function OffersDashboard() {
 
         {/* Filter row */}
         <div className="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Filter dropdown on mobile */}
+          <div className="flex w-fit items-center gap-2 rounded-full border border-primary/40 bg-primary/[0.06] px-4 py-1.5 text-sm font-medium text-primary md:hidden">
+            All
+            <IconChevronDown className="size-4" />
+          </div>
+
+          {/* Filter tabs inline on desktop (no wrapping) */}
+          <div className="hidden items-center gap-2 md:flex">
             <span className="rounded-full border border-primary/40 bg-primary/[0.06] px-4 py-1.5 text-sm font-medium text-primary">
               All
             </span>
             {["Cash", "Finance", "Subject to sale"].map((t) => (
               <span
                 key={t}
-                className="rounded-full border border-black/[0.08] px-4 py-1.5 text-sm text-slate-500"
+                className="whitespace-nowrap rounded-full border border-black/[0.08] px-4 py-1.5 text-sm text-slate-500"
               >
                 {t}
               </span>

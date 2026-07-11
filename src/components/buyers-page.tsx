@@ -378,6 +378,16 @@ function JoinAgentless() {
             Free to join. We respect your privacy.
           </p>
         </form>
+
+        <p className="mt-12 text-center text-sm text-white/35">
+          Interested in selling with Reasy?{" "}
+          <a
+            href="/home#waitlist"
+            className="font-medium text-white/60 underline underline-offset-2 transition-colors hover:text-white/80"
+          >
+            Get in touch
+          </a>
+        </p>
       </div>
     </section>
   )
@@ -493,15 +503,10 @@ export function BuyersPage() {
       <div className="h-11" />
 
       <header className="flex items-center justify-between px-6 py-6 md:px-14">
-        <a href="/" className="inline-flex items-center" aria-label="Back to home">
+        <a href="/home-alt" className="inline-flex items-center" aria-label="Reasy home">
           <img src={logoWhiteImg} alt="Reasy" className="h-6" />
         </a>
-        <a
-          href="/"
-          className="inline-flex items-center rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-        >
-          For Sellers
-        </a>
+        <span className="text-[15px] font-medium text-white/50">#agentless</span>
       </header>
 
       <main>
@@ -539,7 +544,7 @@ export function BuyersPage() {
 
           <div className="mt-12">
             <a
-              href="/#waitlist"
+              href="/home#waitlist"
               className="inline-flex items-center gap-2 rounded-full bg-[#a9cef0] px-8 py-4 text-[15px] font-semibold text-[#0a1628] transition-colors hover:bg-[#bcd9f4]"
             >
               Get Early Access <IconArrowRight className="size-4" />
