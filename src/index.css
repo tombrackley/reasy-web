@@ -196,10 +196,10 @@
   .row-impact { animation: none; opacity: 1; }
 }
 
-/* Alt home hero gradient — indigo up top, light bloom lower-left */
+/* Alt home hero gradient — reasy navy up top through the logo blue (#4F7DDD), light bloom below */
 .home-alt-gradient {
   background:
-    radial-gradient(58% 48% at 44% 84%, rgba(242, 247, 253, 0.92) 0%, rgba(242, 247, 253, 0) 58%),
-    radial-gradient(75% 65% at 92% -8%, rgba(63, 92, 214, 0.55) 0%, rgba(63, 92, 214, 0) 55%),
-    linear-gradient(0deg, #a8c6ea 0%, #7ba2e2 34%, #5478e0 68%, #4463d8 100%);
+    radial-gradient(58% 48% at 44% 84%, rgba(244, 246, 253, 0.9) 0%, rgba(244, 246, 253, 0) 58%),
+    radial-gradient(78% 70% at 90% -10%, rgba(22, 34, 72, 0.55) 0%, rgba(22, 34, 72, 0) 55%),
+    linear-gradient(0deg, #cdddf6 0%, #7ba8e6 32%, #4f7ddd 62%, #2c4a9e 82%, #1c2c55 100%);
 }

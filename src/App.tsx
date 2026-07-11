@@ -18,11 +18,12 @@ function App() {
     window.scrollTo(0, 0)
   }, [path])
 
-  if (path === "/home-alt") return <HomeAltPage />
+  if (path === "/home") return <HomePage />
   if (path === "/for-buyers") return <BuyersPage />
   if (path === "/privacy") return <PrivacyPage />
   if (path === "/terms") return <TermsPage />
-  return <HomePage />
+  if (path === "/home-alt") return <HomeAltPage />
+  return <HomeAltPage />
 }
 
 export default App
