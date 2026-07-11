@@ -1,6 +1,6 @@
 import { useState, useEffect, type ReactNode, type MouseEvent } from "react"
 import { cn } from "@/lib/utils"
-import { IconArrowRight, IconHeartFilled, IconCheck, IconX, IconClock } from "@tabler/icons-react"
+import { IconArrowRight, IconHeartFilled, IconCheck, IconX, IconClock, IconBrandInstagram } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import buyerDashImg from "@/assets/reasy-buyer-dashboard.png"
 import buyerDashMobileImg from "@/assets/reasy-buyer-dashboard-mobile.png"
@@ -425,7 +425,10 @@ function PersonBehindThis() {
 
           {/* Right — story */}
           <div>
-            <Badge>@agentswantmecancelled</Badge>
+            <div className="flex items-center gap-2 text-white/70">
+              <IconBrandInstagram className="size-5" stroke={1.75} />
+              <span className="text-[15px] font-medium">@agentswantmecancelled</span>
+            </div>
             <h2 className="mt-5 font-serif text-4xl leading-[1.1] text-white md:text-5xl">
               Hey. I'm Warren.
             </h2>
