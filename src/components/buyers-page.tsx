@@ -5,6 +5,8 @@ import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import buyerDashImg from "@/assets/reasy-buyer-dashboard.png"
 import buyerDashMobileImg from "@/assets/reasy-buyer-dashboard-mobile.png"
 import { Reveal } from "@/components/reveal"
+import dailyMailLogo from "@/assets/daily-mail-logo.png"
+import yahooFinanceLogo from "@/assets/yahoo-finance-logo.png"
 
 // Doors open 1 October 2026, Australian eastern time
 const LAUNCH = new Date("2026-10-01T00:00:00+10:00")
@@ -381,6 +383,103 @@ function JoinAgentless() {
   )
 }
 
+// --- The person behind this ---
+
+function PersonBehindThis() {
+  return (
+    <section className="px-6 pb-24 md:px-14">
+      <div className="mx-auto max-w-[1100px]">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+          {/* Left — photo + Instagram card */}
+          <div>
+            <div className="flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02]">
+              <span className="text-sm text-white/30">Founder photo</span>
+            </div>
+
+            <div className="relative -mt-16 mr-6 rounded-2xl bg-white p-4 text-[#0a1628] shadow-[0_24px_60px_rgba(0,0,0,0.45)] md:mr-12">
+              <div className="flex gap-4">
+                <div className="size-14 shrink-0 rounded-full bg-slate-200" />
+                <div>
+                  <p className="text-[15px] font-semibold">agents_want_me_cancelled</p>
+                  <div className="mt-2 flex gap-6">
+                    {[
+                      ["42", "posts"],
+                      ["11.9K", "followers"],
+                      ["457", "following"],
+                    ].map(([value, label]) => (
+                      <div key={label}>
+                        <p className="text-sm font-semibold leading-none">{value}</p>
+                        <p className="mt-1 text-xs text-[#0a1628]/50">{label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-3 space-y-0.5 text-[13px] leading-relaxed">
+                <p>agentswantmecancelled@gmail.com</p>
+                <p>Exposing 🇦🇺 real estate dirty secrets 🤫</p>
+                <p>Follow before I'm cancelled 👇</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right — story */}
+          <div>
+            <Badge>@agentswantmecancelled</Badge>
+            <h2 className="mt-5 font-serif text-4xl leading-[1.1] text-white md:text-5xl">
+              Hey. I'm Warren.
+            </h2>
+            <div className="mt-6 space-y-5 text-[15px] leading-relaxed text-white/70">
+              <p>
+                <span className="font-semibold text-white">Here's what happened:</span>{" "}
+                I'm an entrepreneur. I build things. Buying my first home in
+                Australia was an absolute nightmare. When I couldn't find a
+                platform that let buyers and sellers talk directly without an
+                agent sitting in the middle, filtering offers, fabricating
+                competing bids and charging $40,000 for the privilege… I decided
+                to build it myself. I tried to sell my home without an agent to
+                fund the launch of Reasy.
+              </p>
+              <p>
+                <span className="font-semibold text-white">I started posting about it.</span>{" "}
+                Agents lost their minds. My follower count went from nothing to
+                15K+ in weeks. +1.5 million views. Hundreds of comments from
+                people saying the exact same thing:{" "}
+                <span className="italic text-[#7ba4dd]">
+                  "why doesn't a platform exist already?"
+                </span>
+              </p>
+              <p>
+                That's why I'm building Reasy. Not as a side project. As the thing
+                I'm betting everything on. The industry doesn't want this to exist
+                and that's exactly why it has to.
+              </p>
+              <p className="text-white/50">Doors open 1 October. Get in early.</p>
+            </div>
+
+            {/* As featured in */}
+            <div className="mt-10 flex flex-col items-start gap-4">
+              <p className="text-sm font-medium text-white/50">As featured in</p>
+              <div className="flex items-center gap-8">
+                <img
+                  src={dailyMailLogo}
+                  alt="Daily Mail"
+                  className="h-6 w-auto object-contain opacity-70 brightness-0 invert"
+                />
+                <img
+                  src={yahooFinanceLogo}
+                  alt="Yahoo Finance"
+                  className="h-6 w-auto object-contain opacity-70 brightness-0 invert"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // --- Page ---
 
 export function BuyersPage() {
@@ -450,6 +549,7 @@ export function BuyersPage() {
         </section>
 
         <Reveal><WhatPeopleAreSaying /></Reveal>
+        <Reveal><PersonBehindThis /></Reveal>
         <Reveal><WhatIsAgentless /></Reveal>
         <Reveal><OldWayVsAgentless /></Reveal>
         <Reveal><JoinAgentless /></Reveal>

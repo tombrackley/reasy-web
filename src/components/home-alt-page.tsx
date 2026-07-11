@@ -63,30 +63,6 @@ function MatchBadge({ score }: { score: number }) {
   )
 }
 
-function StatCard({
-  label,
-  value,
-  accent,
-}: {
-  label: string
-  value: string
-  accent?: boolean
-}) {
-  return (
-    <div className="rounded-xl border border-black/[0.06] bg-white px-5 py-3">
-      <p className="text-xs text-slate-500">{label}</p>
-      <p
-        className={cn(
-          "mt-1 text-xl font-semibold",
-          accent ? "text-emerald-600" : "text-[#0f1524]"
-        )}
-      >
-        {value}
-      </p>
-    </div>
-  )
-}
-
 function OffersDashboard() {
   return (
     <div className="w-full bg-[#fbfbfc] md:min-w-[1000px]">
@@ -122,36 +98,6 @@ function OffersDashboard() {
             <IconStar className="size-4" />
             Preferences
           </button>
-        </div>
-
-        {/* Metrics — concise inline strip on mobile */}
-        <div className="mt-5 flex items-stretch divide-x divide-black/[0.08] overflow-hidden rounded-xl border border-black/[0.06] bg-white md:hidden">
-          {[
-            { label: "Offers", value: "24" },
-            { label: "Live", value: "16" },
-            { label: "Highest", value: "$1.3M", accent: true },
-            { label: "Cash", value: "6" },
-          ].map((m) => (
-            <div key={m.label} className="flex-1 px-2 py-3 text-center">
-              <p
-                className={cn(
-                  "text-lg font-semibold",
-                  m.accent ? "text-emerald-600" : "text-[#0f1524]"
-                )}
-              >
-                {m.value}
-              </p>
-              <p className="mt-0.5 text-[11px] text-slate-500">{m.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Stat cards — desktop */}
-        <div className="mt-6 hidden grid-cols-4 gap-4 md:grid">
-          <StatCard label="Offers received" value="24" />
-          <StatCard label="Live offers" value="16" />
-          <StatCard label="Highest offer" value="$1,300,000" accent />
-          <StatCard label="Cash offers" value="6" />
         </div>
 
         {/* Filter row */}
@@ -260,7 +206,7 @@ export function HomeAltPage() {
   }, [])
 
   return (
-    <section className="relative flex h-screen flex-col overflow-hidden bg-[linear-gradient(180deg,#4E82C1_0%,#3f6fb0_100%)]">
+    <section className="home-alt-gradient relative flex h-screen flex-col overflow-hidden">
       {/* Buyer overlay — appears after the fade-in and row cascade have played */}
       <WelcomeOverlay delay={2900} />
 
@@ -278,9 +224,17 @@ export function HomeAltPage() {
           </a>
         </header>
 
+        {/* Hero heading */}
+        <div className="px-4 pt-1 text-center md:pt-3">
+          <h1 className="font-serif text-6xl leading-[1.1] text-white md:text-7xl">
+            Agentless property sales.{" "}
+            <span className="text-[#a9cef0]">Easy.</span>
+          </h1>
+        </div>
+
         {/* Dashboard frame — fills the screen and peeks from the bottom */}
-        <div className="mt-2 flex min-h-0 flex-1 justify-center px-4">
-          <div className="flex w-[min(1400px,96vw)] min-h-0 flex-col">
+        <div className="mt-16 flex min-h-0 flex-1 justify-center px-4 md:mt-20">
+          <div className="flex w-[min(1100px,96vw)] min-h-0 flex-col">
             <div className="min-h-0 flex-1 rounded-t-2xl bg-[#f8f8f8] p-2 shadow-[0_-12px_60px_rgba(0,0,0,0.25)]">
               <div className="h-full overflow-hidden rounded-t-xl bg-white">
                 <OffersDashboard />

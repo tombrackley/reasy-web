@@ -50,6 +50,11 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
         <img src={logoWhiteImg} alt="Reasy" className="h-6" />
       </div>
 
+      {/* Campaign hashtag */}
+      <div className="absolute right-0 top-0 flex h-6 items-center px-6 py-4 md:px-10 box-content">
+        <span className="text-[15px] font-medium text-white/50">#agentless</span>
+      </div>
+
       <div
         className={cn(
           "max-w-[720px] text-center transition-all duration-500",
@@ -83,7 +88,7 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
           </a>
         </div>
 
-        <p className="mt-5 text-xs text-white/40">
+        <p className="mt-5 text-sm text-white/40">
           Limited spots available.
         </p>
       </div>
