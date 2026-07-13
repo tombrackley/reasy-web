@@ -135,12 +135,12 @@
     }
   body {
     @apply bg-background text-foreground;
-    overflow-x: hidden;
+    overflow-x: clip;
     }
   html {
     @apply font-sans antialiased;
     scroll-behavior: smooth;
-    overflow-x: hidden;
+    overflow-x: clip;
     }
 }
 
@@ -176,6 +176,24 @@
 .animate-marquee {
   animation: marquee 70s linear infinite;
   will-change: transform;
+}
+
+/* Chat bubble entrance (buyers page offer demo) */
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-msg-in {
+  animation: msgIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Typing indicator dots */
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.animate-typing-dot {
+  animation: typingDot 1.2s infinite ease-in-out;
 }
 
 /* Row "impact" entrance for the alternative home dashboard */

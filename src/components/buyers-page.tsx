@@ -1,12 +1,31 @@
-import { useState, useEffect, type ReactNode, type MouseEvent } from "react"
+import { useState, useEffect, useRef, type ReactNode, type MouseEvent } from "react"
+import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
-import { IconArrowRight, IconHeartFilled, IconCheck, IconX, IconClock, IconBrandInstagram } from "@tabler/icons-react"
+import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconStarFilled } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
-import buyerDashImg from "@/assets/reasy-buyer-dashboard.png"
-import buyerDashMobileImg from "@/assets/reasy-buyer-dashboard-mobile.png"
 import { Reveal } from "@/components/reveal"
 import dailyMailLogo from "@/assets/daily-mail-logo.png"
 import yahooFinanceLogo from "@/assets/yahoo-finance-logo.png"
+import founderPhoto from "@/assets/founder-warren.jpeg"
+import founderAvatar from "@/assets/founder-avatar.png"
+import comment01 from "@/assets/comment-01.png"
+import comment02 from "@/assets/comment-02.png"
+import comment03 from "@/assets/comment-03.png"
+import comment04 from "@/assets/comment-04.png"
+import comment05 from "@/assets/comment-05.png"
+import comment06 from "@/assets/comment-06.png"
+import comment07 from "@/assets/comment-07.png"
+import comment08 from "@/assets/comment-08.png"
+import comment09 from "@/assets/comment-09.png"
+import comment10 from "@/assets/comment-10.png"
+import comment11 from "@/assets/comment-11.png"
+import comment12 from "@/assets/comment-12.png"
+import comment13 from "@/assets/comment-13.png"
+import comment14 from "@/assets/comment-14.png"
+import comment15 from "@/assets/comment-15.png"
+import comment16 from "@/assets/comment-16.png"
+import comment17 from "@/assets/comment-17.png"
+import comment18 from "@/assets/comment-18.png"
 
 // Doors open 1 October 2026, Australian eastern time
 const LAUNCH = new Date("2026-10-01T00:00:00+10:00")
@@ -89,47 +108,19 @@ function Countdown() {
 }
 
 // --- Instagram-style comments ---
+// Real screenshots, each padded to a uniform aspect ratio so every card is the
+// same size in the marquee (see COMMENT_IMAGES).
 
-type Comment = {
-  initial: string
-  color: string
-  name: string
-  text: string
-  date: string
-  likes: number
-}
-
-const COMMENTS: Comment[] = [
-  { initial: "H", color: "bg-indigo-500", name: "HPReka", text: "Following for sure. Uber has done good to the taxi monopoly so I think it's time", date: "1d", likes: 1 },
-  { initial: "G", color: "bg-sky-500", name: "GoGreens1234", text: "Lead the way bud. Let's see how supportive the Real Estate industry of au actually are????????", date: "3d", likes: 0 },
-  { initial: "I", color: "bg-emerald-500", name: "Isabel", text: "I'm so here for this. I'd be interested already 😄", date: "1w", likes: 25 },
-  { initial: "I", color: "bg-amber-500", name: "I_am_joann_love", text: "The real estate industry is desperate for disruption!", date: "1w", likes: 11 },
-  { initial: "J", color: "bg-red-500", name: "Jordie", text: "Go off King 🙌🤙", date: "2 Jul", likes: 0 },
-  { initial: "J", color: "bg-violet-500", name: "Joel Seeman", text: "All we need is an app and agents will be forced to do something actually useful with their lives.", date: "2 Jul", likes: 3 },
-  { initial: "M", color: "bg-pink-500", name: "MattD_87", text: "Commission fees are daylight robbery. Bring it on.", date: "28 Jun", likes: 8 },
-  { initial: "K", color: "bg-teal-500", name: "Kirra.Lee", text: "Finally someone said it. Counting down the days.", date: "27 Jun", likes: 14 },
+const COMMENT_IMAGES = [
+  comment01, comment02, comment03, comment04, comment05, comment06,
+  comment07, comment08, comment09, comment10, comment11, comment12,
+  comment13, comment14, comment15, comment16, comment17, comment18,
 ]
 
-function CommentCard({ initial, color, name, text, date, likes }: Comment) {
+function CommentCard({ src }: { src: string }) {
   return (
-    <div className="flex w-[280px] shrink-0 snap-start flex-col rounded-xl bg-white p-5 text-[#0a1628]">
-      <div className="mb-3 flex items-center gap-2.5">
-        <div className={cn("flex size-7 items-center justify-center rounded-full text-xs font-semibold text-white", color)}>
-          {initial}
-        </div>
-        <span className="text-sm font-semibold">{name}</span>
-      </div>
-      <p className="mb-4 flex-1 text-sm leading-relaxed text-[#0a1628]/75">{text}</p>
-      <div className="flex items-center justify-between text-xs text-[#0a1628]/45">
-        <div className="flex items-center gap-3">
-          <span>{date}</span>
-          <span className="font-medium">Reply</span>
-        </div>
-        <span className="flex items-center gap-1">
-          <IconHeartFilled className="size-4 text-red-500" />
-          {likes}
-        </span>
-      </div>
+    <div className="w-[340px] shrink-0 overflow-hidden rounded-xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
+      <img src={src} alt="Instagram comment" className="block w-full" />
     </div>
   )
 }
@@ -147,14 +138,14 @@ function WhatPeopleAreSaying() {
   return (
     <section className="pb-24 pt-8">
       <p className="mb-10 text-center text-sm font-medium tracking-wide text-white/80">
-        What people are saying about the agent system
+        We're giving you what you want:
       </p>
 
       {/* Continuous, slowly scrolling marquee (pauses on hover) */}
       <div className="group overflow-hidden">
         <div className="flex w-max gap-5 pb-4 animate-marquee group-hover:[animation-play-state:paused]">
-          {[...COMMENTS, ...COMMENTS].map((c, i) => (
-            <CommentCard key={i} {...c} />
+          {[...COMMENT_IMAGES, ...COMMENT_IMAGES].map((src, i) => (
+            <CommentCard key={i} src={src} />
           ))}
         </div>
       </div>
@@ -173,7 +164,6 @@ function WhatPeopleAreSaying() {
 function Badge({ children }: { children: ReactNode }) {
   return (
     <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 font-['Roboto_Mono_Variable'] text-[12px] font-semibold uppercase tracking-[0.1em] text-white/80">
-      <IconClock className="size-3.5" stroke={2} />
       {children}
     </span>
   )
@@ -183,71 +173,433 @@ const inputClass =
   "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-[15px] text-white placeholder:text-white/45 transition-colors focus:border-[#8fb8e8] focus:outline-none focus:ring-2 focus:ring-[#8fb8e8]/30"
 const labelClass = "mb-2 block text-sm font-medium text-white"
 
+// --- Offer chat graphic ---
+
+function OfferChatFeed() {
+  const ref = useRef<HTMLDivElement>(null)
+  // step advances 0 → 4, fading each bubble/offer card in sequence (no typing dots)
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setStep(4)
+      return
+    }
+    let timers: number[] = []
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            observer.unobserve(entry.target)
+            ;[500, 1400, 2300, 3200].forEach((delay, i) => {
+              timers.push(window.setTimeout(() => setStep(i + 1), delay))
+            })
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      timers.forEach(clearTimeout)
+    }
+  }, [])
+
+  // All messages hold their place; each fades in when its step is reached.
+  return (
+    <div
+      ref={ref}
+      className="absolute inset-0 flex flex-col justify-center gap-3 p-5 md:p-7"
+    >
+      <div
+        className={cn(
+          "ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-[#2b7fff] px-4 py-3 text-[15px] leading-snug text-white shadow-sm",
+          step >= 1 ? "animate-msg-in" : "opacity-0"
+        )}
+      >
+        Thanks so much for showing us through today, Sarah 🙏
+      </div>
+
+      <div
+        className={cn(
+          "ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-[#2b7fff] px-4 py-3 text-[15px] leading-snug text-white shadow-sm",
+          step >= 2 ? "animate-msg-in" : "opacity-0"
+        )}
+      >
+        We loved it. We'll send our offer through tonight 🙌
+      </div>
+
+      <div
+        className={cn(
+          "mr-auto w-fit max-w-[85%] rounded-2xl rounded-bl-md border border-slate-200 bg-white px-4 py-3 text-[15px] leading-snug text-[#0a1628] shadow-sm",
+          step >= 3 ? "animate-msg-in" : "opacity-0"
+        )}
+      >
+        So lovely to meet you both. Looking forward to it 😊
+      </div>
+
+      <div
+        className={cn(
+          "ml-auto w-full max-w-[260px] overflow-hidden rounded-2xl rounded-br-md bg-white shadow-[0_12px_34px_rgba(10,22,40,0.2)]",
+          step >= 4 ? "animate-msg-in" : "opacity-0"
+        )}
+      >
+        <div className="flex items-center gap-1.5 bg-[#d1f5e6] px-4 py-2.5">
+          <IconCircleCheckFilled className="size-4 text-[#0d9488]" />
+          <span className="text-xs font-semibold tracking-wide text-[#0f766e]">
+            Offer submitted
+          </span>
+        </div>
+        <div className="px-4 py-4">
+          <p className="font-serif text-[26px] leading-none text-[#0a1628]">$1,080,000</p>
+          <button
+            type="button"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#0a1628] transition-colors hover:bg-slate-50"
+          >
+            <IconFileTypePdf className="size-4 text-red-500" stroke={1.75} />
+            View offer PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// --- Offer rows graphic (Transparent card) ---
+
+const ROW_OFFERS = [
+  { score: 97, amount: "$1,300,000", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+  { score: 80, amount: "$1,230,000", avatar: "https://randomuser.me/api/portraits/women/44.jpg" },
+  { score: 77, amount: "$1,250,000", avatar: "https://randomuser.me/api/portraits/women/68.jpg" },
+  { score: 71, amount: "$1,190,000", avatar: "https://randomuser.me/api/portraits/men/54.jpg" },
+  { score: 69, amount: "$1,215,000", avatar: "https://randomuser.me/api/portraits/women/12.jpg" },
+]
+
+function OfferRowsGraphic() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  // checks appear after the rows have finished animating in
+  const [showChecks, setShowChecks] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInView(true)
+      setShowChecks(true)
+      return
+    }
+    let checkTimer: number | undefined
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setInView(true)
+            observer.unobserve(entry.target)
+            checkTimer = window.setTimeout(() => setShowChecks(true), 1300)
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      if (checkTimer) clearTimeout(checkTimer)
+    }
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className="absolute inset-0 flex flex-col justify-center gap-3 p-5 md:p-7"
+    >
+      {/* Individual offer rows — cascade in, then a green check appears beside each */}
+      {ROW_OFFERS.map((o, i) => (
+        <div
+          key={i}
+          className="mx-auto flex w-full max-w-[480px] items-center gap-3"
+        >
+          <div
+            className={cn(
+              "flex flex-1 items-center gap-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-3.5 shadow-[0_10px_30px_rgba(10,22,40,0.12)]",
+              inView ? "animate-msg-in" : "opacity-0"
+            )}
+            style={inView ? { animationDelay: `${i * 130}ms` } : undefined}
+          >
+            {/* Buyer — skeleton */}
+            <div className="flex flex-1 items-center gap-3">
+              <img
+                src={o.avatar}
+                alt=""
+                className="size-8 shrink-0 rounded-full bg-slate-200/80 object-cover"
+              />
+              <div className="h-2.5 w-24 rounded-full bg-slate-200/80" />
+            </div>
+            {/* Match */}
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold",
+                o.score >= 80
+                  ? "bg-teal-100 text-teal-600"
+                  : "bg-slate-100 text-slate-500"
+              )}
+            >
+              <IconStarFilled className="size-2.5" />
+              {o.score}
+            </span>
+            {/* Amount */}
+            <div className="w-[88px] text-right text-[15px] font-semibold text-emerald-600">
+              {o.amount}
+            </div>
+          </div>
+
+          {/* Green check outside the row */}
+          <IconCircleCheckFilled
+            className={cn(
+              "size-7 shrink-0 text-[#0d9488]",
+              showChecks ? "animate-msg-in" : "opacity-0"
+            )}
+            style={showChecks ? { animationDelay: `${i * 100}ms` } : undefined}
+          />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// --- Commission comparison bars (Reasonable card) ---
+
+// Bars = a fixed base (4) plus commission at 1 segment per 0.5%. Not to literal
+// price scale (commission is a small % of price), but the relative steps are honest.
+const COMMISSION_BARS = [
+  { label: "2%", segments: 8, reasy: false, caption: "Agent A" },
+  { label: "0% commission", segments: 4, reasy: true, caption: "With Reasy" },
+  { label: "2.5%", segments: 9, reasy: false, caption: "Agent B" },
+  { label: "3%", segments: 10, reasy: false, caption: "Agent C" },
+]
+
+function CommissionBars() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInView(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setInView(true)
+            observer.unobserve(entry.target)
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className="absolute inset-0 flex items-center justify-center bg-[#0a1628] px-6 py-8"
+    >
+      <div className="relative flex w-full max-w-[450px] items-end justify-center gap-3 pl-12 md:gap-5">
+        {/* "Asking price" axis on the left — arrow points up (price rises with commission) */}
+        <div className="pointer-events-none absolute inset-y-1 left-0 flex w-10 gap-1.5">
+          <span className="self-center whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.14em] text-white/45 [writing-mode:vertical-rl] [transform:rotate(180deg)]">
+            Asking price
+          </span>
+          <div className="relative w-2.5">
+            {/* vertical line */}
+            <div className="absolute bottom-0 left-1/2 top-2 w-px -translate-x-1/2 bg-white/30" />
+            {/* upward arrowhead */}
+            <div className="absolute left-1/2 top-0 -translate-x-1/2 border-x-4 border-b-[7px] border-x-transparent border-b-white/40" />
+          </div>
+        </div>
+
+        {COMMISSION_BARS.map((col, ci) => (
+          <div
+            key={ci}
+            className="relative flex max-w-[120px] flex-1 flex-col items-center justify-end gap-3"
+          >
+            {/* Label above the column */}
+            <span
+              className={cn(
+                "text-center text-[13px] font-medium leading-tight md:text-sm",
+                col.reasy ? "text-[#5eead4]" : "text-white/50"
+              )}
+            >
+              {col.label}
+            </span>
+
+            {/* Stacked segments, growing from the bottom */}
+            <div className="flex w-full flex-col-reverse gap-1.5">
+              {Array.from({ length: col.segments }).map((_, si) => (
+                <div
+                  key={si}
+                  className={cn(
+                    "h-3 w-full rounded-[3px]",
+                    col.reasy ? "bg-[#5eead4]" : "bg-white/[0.08]",
+                    inView ? "animate-msg-in" : "opacity-0"
+                  )}
+                  style={
+                    inView
+                      ? { animationDelay: `${ci * 90 + si * 55}ms` }
+                      : undefined
+                  }
+                />
+              ))}
+            </div>
+
+            {/* Caption under each column */}
+            <span
+              className={cn(
+                "absolute -bottom-9 left-1/2 -translate-x-1/2 whitespace-nowrap",
+                col.reasy
+                  ? "font-serif text-lg text-[#5eead4]"
+                  : "text-[13px] font-medium text-white/50",
+                inView ? "animate-msg-in" : "opacity-0"
+              )}
+              style={inView ? { animationDelay: `${600 + ci * 80}ms` } : undefined}
+            >
+              {col.caption}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+
 // --- What is #agentless ---
 
-function WhatIsAgentless() {
-  const points = [
-    {
-      title: "Direct to seller.",
-      desc: "Every offer you make goes directly to the seller. No agent deciding if you're serious enough. No one deciding what you get to hear.",
-    },
-    {
-      title: "No fabricated offers.",
-      desc: "A jaded real estate agent told us: fabricating competing offers to rush buyers is common. On Reasy, every offer is real and traceable.",
-    },
-    {
-      title: "No $40,000 commission.",
-      desc: "Agents charge sellers 2.5% commission. That cost gets baked into the price you pay. On Reasy, sellers keep it. Which means you don't pay it.",
-    },
-  ]
+const stackCards = [
+  {
+    eyebrow: "Direct",
+    headingA: "Every offer goes",
+    headingB: "straight to the seller",
+    body: "No agent deciding if you're serious enough. No one deciding what you get to hear. You talk to the owner, directly.",
+    accent: "#2f6bc4",
+    chat: true,
+    rows: false,
+    calc: false,
+  },
+  {
+    eyebrow: "Transparent",
+    headingA: "Every offer is",
+    headingB: "real and traceable",
+    body: "A jaded real estate agent told us that fabricating competing offers to rush buyers is common. On Reasy, that simply can't happen.",
+    accent: "#CA71DA",
+    chat: false,
+    rows: true,
+    calc: false,
+  },
+  {
+    eyebrow: "Reasonable",
+    headingA: "No $40,000",
+    headingB: "commission baked in",
+    body: "Agents charge sellers 2.5% commission, and that cost gets baked into the price you pay. On Reasy, sellers keep it, so you don't pay it.",
+    accent: "#0d9488",
+    chat: false,
+    rows: false,
+    calc: true,
+  },
+]
 
+// --- What is #agentless (floating, alternating variant) ---
+
+// Lightened accents so the highlighted heading words read on the dark section.
+const FLOAT_ACCENT = ["#8fb8e8", "#CA71DA", "#4fd1c5"]
+
+function AgentlessFloat() {
   return (
     <section className="px-6 py-24 md:px-14">
       <div className="mx-auto max-w-[1100px]">
-        <Badge>What is #agentless?</Badge>
+        <div className="text-center">
+          <Badge>What is #agentless?</Badge>
 
-        <h2 className="mt-6 font-serif text-4xl leading-[1.1] md:text-[52px]">
-          It's where buyers
-          <br />
-          <span className="text-[#8fb8e8]">talk directly to sellers.</span>
-        </h2>
-
-        <p className="mt-6 max-w-[760px] text-[17px] leading-relaxed text-white/80">
-          Reasy is a verified real estate vault where every home that's for sale
-          comes straight from the owner. No agent filtering your communication
-          and offers. You get direct access to the seller to communicate without
-          agents standing in your way. No $40,000+ commission baked into the
-          asking price. Every buyer is identity-verified.
-        </p>
-
-        {/* Numbered feature grid */}
-        <div className="mt-14 grid grid-cols-1 overflow-hidden rounded-2xl border border-white/10 md:grid-cols-3">
-          {points.map((p, i) => (
-            <div
-              key={i}
-              className="border-white/10 p-8 [&:not(:last-child)]:border-b md:[&:not(:last-child)]:border-b-0 md:[&:not(:last-child)]:border-r"
-            >
-              <div className="mb-6 font-serif text-4xl text-white/20">
-                0{i + 1}
-              </div>
-              <h3 className="mb-3 text-lg font-semibold text-white">{p.title}</h3>
-              <p className="text-sm leading-relaxed text-white/80">{p.desc}</p>
-            </div>
-          ))}
+          <h2 className="mt-6 font-serif text-4xl leading-[1.1] md:text-[52px]">
+            It's where buyers
+            <br />
+            <span className="text-[#8fb8e8]">talk directly to sellers.</span>
+          </h2>
         </div>
 
-        {/* Full-width product screenshot */}
-        <div className="mt-6 w-full overflow-hidden rounded-2xl border-2 border-white">
-          <img
-            src={buyerDashMobileImg}
-            alt="Reasy buyer dashboard showing a listing summary and direct chat with the seller"
-            className="block w-full md:hidden"
-          />
-          <img
-            src={buyerDashImg}
-            alt="Reasy buyer dashboard showing a listing summary and direct chat with the seller"
-            className="hidden w-full md:block"
-          />
+        <div className="mt-20 flex flex-col gap-24 md:mt-28 md:gap-32">
+          {stackCards.map((c, i) => {
+            const graphicLeft = i % 2 === 0
+            return (
+              <div
+                key={i}
+                className="grid items-center gap-12 md:grid-cols-2 md:gap-20"
+              >
+                {/* Graphic — floats freely, no container (below the text on mobile) */}
+                <div
+                  className={cn(
+                    "relative order-2 h-[440px] md:h-[520px]",
+                    graphicLeft ? "md:order-1" : "md:order-2"
+                  )}
+                >
+                  {c.chat ? (
+                    <OfferChatFeed />
+                  ) : c.rows ? (
+                    <OfferRowsGraphic />
+                  ) : c.calc ? (
+                    <CommissionBars />
+                  ) : null}
+                </div>
+
+                {/* Text */}
+                <div className={cn("order-1", graphicLeft ? "md:order-2" : "md:order-1")}>
+                  <div className="inline-flex items-center">
+                    <span
+                      className="rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white"
+                      style={{ backgroundColor: c.accent }}
+                    >
+                      {c.eyebrow}
+                    </span>
+                    <span
+                      className="-ml-2 size-7 rounded-full"
+                      style={{ backgroundColor: c.accent, opacity: 0.5 }}
+                    />
+                    <span
+                      className="-ml-3.5 size-7 rounded-full"
+                      style={{ backgroundColor: c.accent, opacity: 0.25 }}
+                    />
+                  </div>
+
+                  <h3 className="mt-6 font-serif text-4xl leading-[1.05] text-white md:text-5xl">
+                    {c.headingA}{" "}
+                    <span style={{ color: FLOAT_ACCENT[i] }}>{c.headingB}</span>
+                  </h3>
+
+                  <p className="mt-5 max-w-[440px] text-[17px] leading-relaxed text-white/70">
+                    {c.body}
+                  </p>
+
+                  <button
+                    type="button"
+                    className="mt-8 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
+                    style={{ backgroundColor: c.accent }}
+                  >
+                    Get early access
+                    <IconArrowRight className="size-4" stroke={2.25} />
+                  </button>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
@@ -274,7 +626,7 @@ function OldWayVsAgentless() {
 
   return (
     <section className="px-6 pb-24 md:px-14">
-      <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Old way */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-10">
           <p className="font-['Roboto_Mono_Variable'] text-[12px] font-semibold uppercase tracking-[0.1em] text-white/80">
@@ -311,7 +663,137 @@ function OldWayVsAgentless() {
 
 // --- Join #agentless waitlist ---
 
+// --- Seller enquiry overlay (from the home page) ---
+
+const dialogInput =
+  "w-full rounded-xl border border-[#e6e6eb] bg-white px-4 py-3 text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+const dialogLabel = "mb-2 block text-sm font-medium text-[#020a0f]"
+
+function SellerEnquiryDialog({
+  open,
+  onClose,
+}: {
+  open: boolean
+  onClose: () => void
+}) {
+  useEffect(() => {
+    if (!open) return
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.body.style.overflow = "hidden"
+    window.addEventListener("keydown", handleKey)
+    return () => {
+      document.body.style.overflow = ""
+      window.removeEventListener("keydown", handleKey)
+    }
+  }, [open, onClose])
+
+  if (!open) return null
+
+  // Portal to body so the fixed overlay isn't scoped by any transformed ancestor.
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-h-[90vh] w-full max-w-[520px] overflow-y-auto rounded-3xl border border-[#e6e6eb] bg-white p-6 text-left shadow-[0_24px_64px_-12px_rgba(0,0,0,0.25)] md:p-10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full bg-[#f6f6f8] text-[#47474f] transition-colors hover:bg-[#ececef]"
+        >
+          <IconX className="size-4" />
+        </button>
+
+        <h2 className="mb-3 font-serif text-3xl leading-[1.2] text-[#020a0f] md:text-[36px]">
+          Sell with Reasy
+        </h2>
+        <p className="mb-8 text-[15px] leading-relaxed text-[#1e2124]">
+          Register your interest in selling and we'll be in touch about listing
+          your property, commission-free.
+        </p>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            onClose()
+          }}
+          className="space-y-4"
+        >
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="seller-first" className={dialogLabel}>
+                First name
+              </label>
+              <input
+                id="seller-first"
+                type="text"
+                autoComplete="given-name"
+                placeholder="Jane"
+                className={dialogInput}
+              />
+            </div>
+            <div>
+              <label htmlFor="seller-last" className={dialogLabel}>
+                Last name
+              </label>
+              <input
+                id="seller-last"
+                type="text"
+                autoComplete="family-name"
+                placeholder="Smith"
+                className={dialogInput}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="seller-email" className={dialogLabel}>
+              Email
+            </label>
+            <input
+              id="seller-email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              className={dialogInput}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="seller-postcode" className={dialogLabel}>
+              Postcode
+            </label>
+            <input
+              id="seller-postcode"
+              type="text"
+              inputMode="numeric"
+              maxLength={4}
+              placeholder="e.g. 4573"
+              className={dialogInput}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="mt-2 w-full rounded-full bg-primary py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-primary/90"
+          >
+            Register interest
+          </button>
+        </form>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
 function JoinAgentless() {
+  const [sellerOpen, setSellerOpen] = useState(false)
+
   return (
     <section id="join" className="px-6 pb-28 md:px-14">
       <div className="mx-auto max-w-[640px]">
@@ -381,14 +863,17 @@ function JoinAgentless() {
 
         <p className="mt-12 text-center text-sm text-white/35">
           Interested in selling with Reasy?{" "}
-          <a
-            href="/home#waitlist"
+          <button
+            type="button"
+            onClick={() => setSellerOpen(true)}
             className="font-medium text-white/60 underline underline-offset-2 transition-colors hover:text-white/80"
           >
             Get in touch
-          </a>
+          </button>
         </p>
       </div>
+
+      <SellerEnquiryDialog open={sellerOpen} onClose={() => setSellerOpen(false)} />
     </section>
   )
 }
@@ -398,24 +883,32 @@ function JoinAgentless() {
 function PersonBehindThis() {
   return (
     <section className="px-6 pb-24 md:px-14">
-      <div className="mx-auto max-w-[1100px]">
+      <div className="mx-auto max-w-[1280px]">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Left — photo + Instagram card */}
           <div>
-            <div className="flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02]">
-              <span className="text-sm text-white/30">Founder photo</span>
+            <div className="aspect-[4/5] w-full overflow-hidden rounded-2xl border border-white/10">
+              <img
+                src={founderPhoto}
+                alt="Warren, founder of Reasy"
+                className="size-full object-cover"
+              />
             </div>
 
-            <div className="relative -mt-16 mr-6 rounded-2xl bg-white p-4 text-[#0a1628] shadow-[0_24px_60px_rgba(0,0,0,0.45)] md:mr-12">
+            <div className="relative -mt-16 rounded-2xl bg-white p-4 text-[#0a1628] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
               <div className="flex gap-4">
-                <div className="size-14 shrink-0 rounded-full bg-slate-200" />
+                <img
+                  src={founderAvatar}
+                  alt="agents_want_me_cancelled"
+                  className="size-14 shrink-0 rounded-full object-cover"
+                />
                 <div>
                   <p className="text-[15px] font-semibold">agents_want_me_cancelled</p>
                   <div className="mt-2 flex gap-6">
                     {[
                       ["42", "posts"],
-                      ["11.9K", "followers"],
-                      ["457", "following"],
+                      ["12.1K", "followers"],
+                      ["461", "following"],
                     ].map(([value, label]) => (
                       <div key={label}>
                         <p className="text-sm font-semibold leading-none">{value}</p>
@@ -497,7 +990,17 @@ function PersonBehindThis() {
 
 export function BuyersPage() {
   return (
-    <div className="min-h-screen bg-[#0a1628] text-white">
+    <div className="relative min-h-screen bg-[#0a1628] text-white">
+      {/* Footer glow — flipped home-alt gradient, light blue at the very bottom */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[1000px]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(10,22,40,0) 0%, rgba(28,44,85,0.5) 40%, #24407e 66%, #3a5aa8 86%, #4f7ddd 100%)",
+        }}
+      />
+      <div className="relative">
       <EarlyAccessBanner />
       {/* Spacer for the fixed banner */}
       <div className="h-11" />
@@ -558,10 +1061,11 @@ export function BuyersPage() {
 
         <Reveal><WhatPeopleAreSaying /></Reveal>
         <Reveal><PersonBehindThis /></Reveal>
-        <Reveal><WhatIsAgentless /></Reveal>
+        <AgentlessFloat />
         <Reveal><OldWayVsAgentless /></Reveal>
         <Reveal><JoinAgentless /></Reveal>
       </main>
+      </div>
     </div>
   )
 }
