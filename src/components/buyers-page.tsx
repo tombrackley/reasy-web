@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode, type MouseEvent } from "react"
+import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
 import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconStarFilled } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
@@ -662,7 +663,137 @@ function OldWayVsAgentless() {
 
 // --- Join #agentless waitlist ---
 
+// --- Seller enquiry overlay (from the home page) ---
+
+const dialogInput =
+  "w-full rounded-xl border border-[#e6e6eb] bg-white px-4 py-3 text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+const dialogLabel = "mb-2 block text-sm font-medium text-[#020a0f]"
+
+function SellerEnquiryDialog({
+  open,
+  onClose,
+}: {
+  open: boolean
+  onClose: () => void
+}) {
+  useEffect(() => {
+    if (!open) return
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.body.style.overflow = "hidden"
+    window.addEventListener("keydown", handleKey)
+    return () => {
+      document.body.style.overflow = ""
+      window.removeEventListener("keydown", handleKey)
+    }
+  }, [open, onClose])
+
+  if (!open) return null
+
+  // Portal to body so the fixed overlay isn't scoped by any transformed ancestor.
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-h-[90vh] w-full max-w-[520px] overflow-y-auto rounded-3xl border border-[#e6e6eb] bg-white p-6 text-left shadow-[0_24px_64px_-12px_rgba(0,0,0,0.25)] md:p-10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full bg-[#f6f6f8] text-[#47474f] transition-colors hover:bg-[#ececef]"
+        >
+          <IconX className="size-4" />
+        </button>
+
+        <h2 className="mb-3 font-serif text-3xl leading-[1.2] text-[#020a0f] md:text-[36px]">
+          Sell with Reasy
+        </h2>
+        <p className="mb-8 text-[15px] leading-relaxed text-[#1e2124]">
+          Register your interest in selling and we'll be in touch about listing
+          your property, commission-free.
+        </p>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            onClose()
+          }}
+          className="space-y-4"
+        >
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="seller-first" className={dialogLabel}>
+                First name
+              </label>
+              <input
+                id="seller-first"
+                type="text"
+                autoComplete="given-name"
+                placeholder="Jane"
+                className={dialogInput}
+              />
+            </div>
+            <div>
+              <label htmlFor="seller-last" className={dialogLabel}>
+                Last name
+              </label>
+              <input
+                id="seller-last"
+                type="text"
+                autoComplete="family-name"
+                placeholder="Smith"
+                className={dialogInput}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="seller-email" className={dialogLabel}>
+              Email
+            </label>
+            <input
+              id="seller-email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              className={dialogInput}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="seller-postcode" className={dialogLabel}>
+              Postcode
+            </label>
+            <input
+              id="seller-postcode"
+              type="text"
+              inputMode="numeric"
+              maxLength={4}
+              placeholder="e.g. 4573"
+              className={dialogInput}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="mt-2 w-full rounded-full bg-primary py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-primary/90"
+          >
+            Register interest
+          </button>
+        </form>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
 function JoinAgentless() {
+  const [sellerOpen, setSellerOpen] = useState(false)
+
   return (
     <section id="join" className="px-6 pb-28 md:px-14">
       <div className="mx-auto max-w-[640px]">
@@ -732,14 +863,17 @@ function JoinAgentless() {
 
         <p className="mt-12 text-center text-sm text-white/35">
           Interested in selling with Reasy?{" "}
-          <a
-            href="/home#waitlist"
+          <button
+            type="button"
+            onClick={() => setSellerOpen(true)}
             className="font-medium text-white/60 underline underline-offset-2 transition-colors hover:text-white/80"
           >
             Get in touch
-          </a>
+          </button>
         </p>
       </div>
+
+      <SellerEnquiryDialog open={sellerOpen} onClose={() => setSellerOpen(false)} />
     </section>
   )
 }
