@@ -1,9 +1,7 @@
-import { useState, useEffect, type ReactNode, type MouseEvent } from "react"
+import { useState, useEffect, useRef, type ReactNode, type MouseEvent } from "react"
 import { cn } from "@/lib/utils"
-import { IconArrowRight, IconCheck, IconX, IconBrandInstagram } from "@tabler/icons-react"
+import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconStarFilled } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
-import buyerDashImg from "@/assets/reasy-buyer-dashboard.png"
-import buyerDashMobileImg from "@/assets/reasy-buyer-dashboard-mobile.png"
 import { Reveal } from "@/components/reveal"
 import dailyMailLogo from "@/assets/daily-mail-logo.png"
 import yahooFinanceLogo from "@/assets/yahoo-finance-logo.png"
@@ -174,71 +172,433 @@ const inputClass =
   "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-[15px] text-white placeholder:text-white/45 transition-colors focus:border-[#8fb8e8] focus:outline-none focus:ring-2 focus:ring-[#8fb8e8]/30"
 const labelClass = "mb-2 block text-sm font-medium text-white"
 
+// --- Offer chat graphic ---
+
+function OfferChatFeed() {
+  const ref = useRef<HTMLDivElement>(null)
+  // step advances 0 → 4, fading each bubble/offer card in sequence (no typing dots)
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setStep(4)
+      return
+    }
+    let timers: number[] = []
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            observer.unobserve(entry.target)
+            ;[500, 1400, 2300, 3200].forEach((delay, i) => {
+              timers.push(window.setTimeout(() => setStep(i + 1), delay))
+            })
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      timers.forEach(clearTimeout)
+    }
+  }, [])
+
+  // All messages hold their place; each fades in when its step is reached.
+  return (
+    <div
+      ref={ref}
+      className="absolute inset-0 flex flex-col justify-center gap-3 p-5 md:p-7"
+    >
+      <div
+        className={cn(
+          "ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-[#2b7fff] px-4 py-3 text-[15px] leading-snug text-white shadow-sm",
+          step >= 1 ? "animate-msg-in" : "opacity-0"
+        )}
+      >
+        Thanks so much for showing us through today, Sarah 🙏
+      </div>
+
+      <div
+        className={cn(
+          "ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-[#2b7fff] px-4 py-3 text-[15px] leading-snug text-white shadow-sm",
+          step >= 2 ? "animate-msg-in" : "opacity-0"
+        )}
+      >
+        We loved it. We'll send our offer through tonight 🙌
+      </div>
+
+      <div
+        className={cn(
+          "mr-auto w-fit max-w-[85%] rounded-2xl rounded-bl-md border border-slate-200 bg-white px-4 py-3 text-[15px] leading-snug text-[#0a1628] shadow-sm",
+          step >= 3 ? "animate-msg-in" : "opacity-0"
+        )}
+      >
+        So lovely to meet you both. Looking forward to it 😊
+      </div>
+
+      <div
+        className={cn(
+          "ml-auto w-full max-w-[260px] overflow-hidden rounded-2xl rounded-br-md bg-white shadow-[0_12px_34px_rgba(10,22,40,0.2)]",
+          step >= 4 ? "animate-msg-in" : "opacity-0"
+        )}
+      >
+        <div className="flex items-center gap-1.5 bg-[#d1f5e6] px-4 py-2.5">
+          <IconCircleCheckFilled className="size-4 text-[#0d9488]" />
+          <span className="text-xs font-semibold tracking-wide text-[#0f766e]">
+            Offer submitted
+          </span>
+        </div>
+        <div className="px-4 py-4">
+          <p className="font-serif text-[26px] leading-none text-[#0a1628]">$1,080,000</p>
+          <button
+            type="button"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#0a1628] transition-colors hover:bg-slate-50"
+          >
+            <IconFileTypePdf className="size-4 text-red-500" stroke={1.75} />
+            View offer PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// --- Offer rows graphic (Transparent card) ---
+
+const ROW_OFFERS = [
+  { score: 97, amount: "$1,300,000", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+  { score: 80, amount: "$1,230,000", avatar: "https://randomuser.me/api/portraits/women/44.jpg" },
+  { score: 77, amount: "$1,250,000", avatar: "https://randomuser.me/api/portraits/women/68.jpg" },
+  { score: 71, amount: "$1,190,000", avatar: "https://randomuser.me/api/portraits/men/54.jpg" },
+  { score: 69, amount: "$1,215,000", avatar: "https://randomuser.me/api/portraits/women/12.jpg" },
+]
+
+function OfferRowsGraphic() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  // checks appear after the rows have finished animating in
+  const [showChecks, setShowChecks] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInView(true)
+      setShowChecks(true)
+      return
+    }
+    let checkTimer: number | undefined
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setInView(true)
+            observer.unobserve(entry.target)
+            checkTimer = window.setTimeout(() => setShowChecks(true), 1300)
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      if (checkTimer) clearTimeout(checkTimer)
+    }
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className="absolute inset-0 flex flex-col justify-center gap-3 p-5 md:p-7"
+    >
+      {/* Individual offer rows — cascade in, then a green check appears beside each */}
+      {ROW_OFFERS.map((o, i) => (
+        <div
+          key={i}
+          className="mx-auto flex w-full max-w-[480px] items-center gap-3"
+        >
+          <div
+            className={cn(
+              "flex flex-1 items-center gap-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-3.5 shadow-[0_10px_30px_rgba(10,22,40,0.12)]",
+              inView ? "animate-msg-in" : "opacity-0"
+            )}
+            style={inView ? { animationDelay: `${i * 130}ms` } : undefined}
+          >
+            {/* Buyer — skeleton */}
+            <div className="flex flex-1 items-center gap-3">
+              <img
+                src={o.avatar}
+                alt=""
+                className="size-8 shrink-0 rounded-full bg-slate-200/80 object-cover"
+              />
+              <div className="h-2.5 w-24 rounded-full bg-slate-200/80" />
+            </div>
+            {/* Match */}
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold",
+                o.score >= 80
+                  ? "bg-teal-100 text-teal-600"
+                  : "bg-slate-100 text-slate-500"
+              )}
+            >
+              <IconStarFilled className="size-2.5" />
+              {o.score}
+            </span>
+            {/* Amount */}
+            <div className="w-[88px] text-right text-[15px] font-semibold text-emerald-600">
+              {o.amount}
+            </div>
+          </div>
+
+          {/* Green check outside the row */}
+          <IconCircleCheckFilled
+            className={cn(
+              "size-7 shrink-0 text-[#0d9488]",
+              showChecks ? "animate-msg-in" : "opacity-0"
+            )}
+            style={showChecks ? { animationDelay: `${i * 100}ms` } : undefined}
+          />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// --- Commission comparison bars (Reasonable card) ---
+
+// Bars = a fixed base (4) plus commission at 1 segment per 0.5%. Not to literal
+// price scale (commission is a small % of price), but the relative steps are honest.
+const COMMISSION_BARS = [
+  { label: "2%", segments: 8, reasy: false, caption: "Agent A" },
+  { label: "0% commission", segments: 4, reasy: true, caption: "With Reasy" },
+  { label: "2.5%", segments: 9, reasy: false, caption: "Agent B" },
+  { label: "3%", segments: 10, reasy: false, caption: "Agent C" },
+]
+
+function CommissionBars() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInView(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setInView(true)
+            observer.unobserve(entry.target)
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className="absolute inset-0 flex items-center justify-center bg-[#0a1628] px-6 py-8"
+    >
+      <div className="relative flex w-full max-w-[450px] items-end justify-center gap-3 pl-12 md:gap-5">
+        {/* "Asking price" axis on the left — arrow points up (price rises with commission) */}
+        <div className="pointer-events-none absolute inset-y-1 left-0 flex w-10 gap-1.5">
+          <span className="self-center whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.14em] text-white/45 [writing-mode:vertical-rl] [transform:rotate(180deg)]">
+            Asking price
+          </span>
+          <div className="relative w-2.5">
+            {/* vertical line */}
+            <div className="absolute bottom-0 left-1/2 top-2 w-px -translate-x-1/2 bg-white/30" />
+            {/* upward arrowhead */}
+            <div className="absolute left-1/2 top-0 -translate-x-1/2 border-x-4 border-b-[7px] border-x-transparent border-b-white/40" />
+          </div>
+        </div>
+
+        {COMMISSION_BARS.map((col, ci) => (
+          <div
+            key={ci}
+            className="relative flex max-w-[120px] flex-1 flex-col items-center justify-end gap-3"
+          >
+            {/* Label above the column */}
+            <span
+              className={cn(
+                "text-center text-[13px] font-medium leading-tight md:text-sm",
+                col.reasy ? "text-[#5eead4]" : "text-white/50"
+              )}
+            >
+              {col.label}
+            </span>
+
+            {/* Stacked segments, growing from the bottom */}
+            <div className="flex w-full flex-col-reverse gap-1.5">
+              {Array.from({ length: col.segments }).map((_, si) => (
+                <div
+                  key={si}
+                  className={cn(
+                    "h-3 w-full rounded-[3px]",
+                    col.reasy ? "bg-[#5eead4]" : "bg-white/[0.08]",
+                    inView ? "animate-msg-in" : "opacity-0"
+                  )}
+                  style={
+                    inView
+                      ? { animationDelay: `${ci * 90 + si * 55}ms` }
+                      : undefined
+                  }
+                />
+              ))}
+            </div>
+
+            {/* Caption under each column */}
+            <span
+              className={cn(
+                "absolute -bottom-9 left-1/2 -translate-x-1/2 whitespace-nowrap",
+                col.reasy
+                  ? "font-serif text-lg text-[#5eead4]"
+                  : "text-[13px] font-medium text-white/50",
+                inView ? "animate-msg-in" : "opacity-0"
+              )}
+              style={inView ? { animationDelay: `${600 + ci * 80}ms` } : undefined}
+            >
+              {col.caption}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+
 // --- What is #agentless ---
 
-function WhatIsAgentless() {
-  const points = [
-    {
-      title: "Direct to seller.",
-      desc: "Every offer you make goes directly to the seller. No agent deciding if you're serious enough. No one deciding what you get to hear.",
-    },
-    {
-      title: "No fabricated offers.",
-      desc: "A jaded real estate agent told us: fabricating competing offers to rush buyers is common. On Reasy, every offer is real and traceable.",
-    },
-    {
-      title: "No $40,000 commission.",
-      desc: "Agents charge sellers 2.5% commission. That cost gets baked into the price you pay. On Reasy, sellers keep it. Which means you don't pay it.",
-    },
-  ]
+const stackCards = [
+  {
+    eyebrow: "Direct",
+    headingA: "Every offer goes",
+    headingB: "straight to the seller",
+    body: "No agent deciding if you're serious enough. No one deciding what you get to hear. You talk to the owner, directly.",
+    accent: "#2f6bc4",
+    chat: true,
+    rows: false,
+    calc: false,
+  },
+  {
+    eyebrow: "Transparent",
+    headingA: "Every offer is",
+    headingB: "real and traceable",
+    body: "A jaded real estate agent told us that fabricating competing offers to rush buyers is common. On Reasy, that simply can't happen.",
+    accent: "#CA71DA",
+    chat: false,
+    rows: true,
+    calc: false,
+  },
+  {
+    eyebrow: "Reasonable",
+    headingA: "No $40,000",
+    headingB: "commission baked in",
+    body: "Agents charge sellers 2.5% commission, and that cost gets baked into the price you pay. On Reasy, sellers keep it, so you don't pay it.",
+    accent: "#0d9488",
+    chat: false,
+    rows: false,
+    calc: true,
+  },
+]
 
+// --- What is #agentless (floating, alternating variant) ---
+
+// Lightened accents so the highlighted heading words read on the dark section.
+const FLOAT_ACCENT = ["#8fb8e8", "#CA71DA", "#4fd1c5"]
+
+function AgentlessFloat() {
   return (
     <section className="px-6 py-24 md:px-14">
       <div className="mx-auto max-w-[1100px]">
-        <Badge>What is #agentless?</Badge>
+        <div className="text-center">
+          <Badge>What is #agentless?</Badge>
 
-        <h2 className="mt-6 font-serif text-4xl leading-[1.1] md:text-[52px]">
-          It's where buyers
-          <br />
-          <span className="text-[#8fb8e8]">talk directly to sellers.</span>
-        </h2>
-
-        <p className="mt-6 max-w-[760px] text-[17px] leading-relaxed text-white/80">
-          Reasy is a verified real estate vault where every home that's for sale
-          comes straight from the owner. No agent filtering your communication
-          and offers. You get direct access to the seller to communicate without
-          agents standing in your way. No $40,000+ commission baked into the
-          asking price. Every buyer is identity-verified.
-        </p>
-
-        {/* Numbered feature grid */}
-        <div className="mt-14 grid grid-cols-1 overflow-hidden rounded-2xl border border-white/10 md:grid-cols-3">
-          {points.map((p, i) => (
-            <div
-              key={i}
-              className="border-white/10 p-8 [&:not(:last-child)]:border-b md:[&:not(:last-child)]:border-b-0 md:[&:not(:last-child)]:border-r"
-            >
-              <div className="mb-6 font-serif text-4xl text-white/20">
-                0{i + 1}
-              </div>
-              <h3 className="mb-3 text-lg font-semibold text-white">{p.title}</h3>
-              <p className="text-sm leading-relaxed text-white/80">{p.desc}</p>
-            </div>
-          ))}
+          <h2 className="mt-6 font-serif text-4xl leading-[1.1] md:text-[52px]">
+            It's where buyers
+            <br />
+            <span className="text-[#8fb8e8]">talk directly to sellers.</span>
+          </h2>
         </div>
 
-        {/* Full-width product screenshot */}
-        <div className="mt-6 w-full overflow-hidden rounded-2xl border-2 border-white">
-          <img
-            src={buyerDashMobileImg}
-            alt="Reasy buyer dashboard showing a listing summary and direct chat with the seller"
-            className="block w-full md:hidden"
-          />
-          <img
-            src={buyerDashImg}
-            alt="Reasy buyer dashboard showing a listing summary and direct chat with the seller"
-            className="hidden w-full md:block"
-          />
+        <div className="mt-20 flex flex-col gap-24 md:mt-28 md:gap-32">
+          {stackCards.map((c, i) => {
+            const graphicLeft = i % 2 === 0
+            return (
+              <div
+                key={i}
+                className="grid items-center gap-12 md:grid-cols-2 md:gap-20"
+              >
+                {/* Graphic — floats freely, no container (below the text on mobile) */}
+                <div
+                  className={cn(
+                    "relative order-2 h-[440px] md:h-[520px]",
+                    graphicLeft ? "md:order-1" : "md:order-2"
+                  )}
+                >
+                  {c.chat ? (
+                    <OfferChatFeed />
+                  ) : c.rows ? (
+                    <OfferRowsGraphic />
+                  ) : c.calc ? (
+                    <CommissionBars />
+                  ) : null}
+                </div>
+
+                {/* Text */}
+                <div className={cn("order-1", graphicLeft ? "md:order-2" : "md:order-1")}>
+                  <div className="inline-flex items-center">
+                    <span
+                      className="rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white"
+                      style={{ backgroundColor: c.accent }}
+                    >
+                      {c.eyebrow}
+                    </span>
+                    <span
+                      className="-ml-2 size-7 rounded-full"
+                      style={{ backgroundColor: c.accent, opacity: 0.5 }}
+                    />
+                    <span
+                      className="-ml-3.5 size-7 rounded-full"
+                      style={{ backgroundColor: c.accent, opacity: 0.25 }}
+                    />
+                  </div>
+
+                  <h3 className="mt-6 font-serif text-4xl leading-[1.05] text-white md:text-5xl">
+                    {c.headingA}{" "}
+                    <span style={{ color: FLOAT_ACCENT[i] }}>{c.headingB}</span>
+                  </h3>
+
+                  <p className="mt-5 max-w-[440px] text-[17px] leading-relaxed text-white/70">
+                    {c.body}
+                  </p>
+
+                  <button
+                    type="button"
+                    className="mt-8 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
+                    style={{ backgroundColor: c.accent }}
+                  >
+                    Get early access
+                    <IconArrowRight className="size-4" stroke={2.25} />
+                  </button>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
@@ -265,7 +625,7 @@ function OldWayVsAgentless() {
 
   return (
     <section className="px-6 pb-24 md:px-14">
-      <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Old way */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-10">
           <p className="font-['Roboto_Mono_Variable'] text-[12px] font-semibold uppercase tracking-[0.1em] text-white/80">
@@ -389,7 +749,7 @@ function JoinAgentless() {
 function PersonBehindThis() {
   return (
     <section className="px-6 pb-24 md:px-14">
-      <div className="mx-auto max-w-[1100px]">
+      <div className="mx-auto max-w-[1280px]">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Left — photo + Instagram card */}
           <div>
@@ -496,7 +856,17 @@ function PersonBehindThis() {
 
 export function BuyersPage() {
   return (
-    <div className="min-h-screen bg-[#0a1628] text-white">
+    <div className="relative min-h-screen bg-[#0a1628] text-white">
+      {/* Footer glow — flipped home-alt gradient, light blue at the very bottom */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[1000px]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(10,22,40,0) 0%, rgba(28,44,85,0.5) 40%, #24407e 66%, #3a5aa8 86%, #4f7ddd 100%)",
+        }}
+      />
+      <div className="relative">
       <EarlyAccessBanner />
       {/* Spacer for the fixed banner */}
       <div className="h-11" />
@@ -557,10 +927,11 @@ export function BuyersPage() {
 
         <Reveal><WhatPeopleAreSaying /></Reveal>
         <Reveal><PersonBehindThis /></Reveal>
-        <Reveal><WhatIsAgentless /></Reveal>
+        <AgentlessFloat />
         <Reveal><OldWayVsAgentless /></Reveal>
         <Reveal><JoinAgentless /></Reveal>
       </main>
+      </div>
     </div>
   )
 }
