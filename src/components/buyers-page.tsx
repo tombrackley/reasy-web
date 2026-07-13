@@ -125,6 +125,79 @@ function CommentCard({ src }: { src: string }) {
   )
 }
 
+// Continuous marquee driven by requestAnimationFrame so the speed can ease
+// smoothly (no position jump). Hovering slows it right down; it doesn't stop.
+const MARQUEE_NORMAL = 60 // px/sec
+const MARQUEE_SLOW = 9 // px/sec on hover
+
+function CommentMarquee() {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const offsetRef = useRef(0)
+  const speedRef = useRef(MARQUEE_NORMAL)
+  const targetRef = useRef(MARQUEE_NORMAL)
+  const halfRef = useRef(0)
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+
+    // Cache the wrap point (half the track, since the content is duplicated
+    // exactly once). Re-measure when images load and change the width.
+    const measure = () => {
+      halfRef.current = track.scrollWidth / 2
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(track)
+
+    let raf = 0
+    let last = 0
+    const step = (t: number) => {
+      if (!last) last = t
+      const dt = Math.min((t - last) / 1000, 0.05) // clamp when tab regains focus
+      last = t
+      // ease current speed toward the target over ~0.25s
+      speedRef.current += (targetRef.current - speedRef.current) * Math.min(dt * 4, 1)
+      offsetRef.current -= speedRef.current * dt
+      const half = halfRef.current
+      if (half > 0 && offsetRef.current <= -half) offsetRef.current += half
+      track.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`
+      raf = requestAnimationFrame(step)
+    }
+    raf = requestAnimationFrame(step)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+    }
+  }, [])
+
+  const slow = () => {
+    targetRef.current = MARQUEE_SLOW
+  }
+  const resume = () => {
+    targetRef.current = MARQUEE_NORMAL
+  }
+
+  return (
+    <div
+      className="overflow-hidden"
+      onMouseEnter={slow}
+      onMouseLeave={resume}
+      onTouchStart={slow}
+      onTouchEnd={resume}
+      onTouchCancel={resume}
+    >
+      <div ref={trackRef} className="flex w-max gap-5 pb-4 will-change-transform">
+        {[...COMMENT_IMAGES, ...COMMENT_IMAGES].map((src, i) => (
+          <CommentCard key={i} src={src} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="text-center">
@@ -141,14 +214,8 @@ function WhatPeopleAreSaying() {
         We're giving you what you want:
       </p>
 
-      {/* Continuous, slowly scrolling marquee (pauses on hover) */}
-      <div className="group overflow-hidden">
-        <div className="flex w-max gap-5 pb-4 animate-marquee group-hover:[animation-play-state:paused]">
-          {[...COMMENT_IMAGES, ...COMMENT_IMAGES].map((src, i) => (
-            <CommentCard key={i} src={src} />
-          ))}
-        </div>
-      </div>
+      {/* Continuous marquee — slows down (never stops) on hover / touch */}
+      <CommentMarquee />
 
       <div className="mt-12 flex items-start justify-center gap-10 md:gap-16">
         <Stat value="15K+" label="Followers" />
@@ -193,7 +260,7 @@ function OfferChatFeed() {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             observer.unobserve(entry.target)
-            ;[500, 1400, 2300, 3200].forEach((delay, i) => {
+            ;[500, 1400, 2300].forEach((delay, i) => {
               timers.push(window.setTimeout(() => setStep(i + 1), delay))
             })
           }
@@ -220,22 +287,13 @@ function OfferChatFeed() {
           step >= 1 ? "animate-msg-in" : "opacity-0"
         )}
       >
-        Thanks so much for showing us through today, Sarah 🙏
-      </div>
-
-      <div
-        className={cn(
-          "ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-[#2b7fff] px-4 py-3 text-[15px] leading-snug text-white shadow-sm",
-          step >= 2 ? "animate-msg-in" : "opacity-0"
-        )}
-      >
-        We loved it. We'll send our offer through tonight 🙌
+        Thank you for showing us through your house. We're preparing our offer now.
       </div>
 
       <div
         className={cn(
           "mr-auto w-fit max-w-[85%] rounded-2xl rounded-bl-md border border-slate-200 bg-white px-4 py-3 text-[15px] leading-snug text-[#0a1628] shadow-sm",
-          step >= 3 ? "animate-msg-in" : "opacity-0"
+          step >= 2 ? "animate-msg-in" : "opacity-0"
         )}
       >
         So lovely to meet you both. Looking forward to it 😊
@@ -244,7 +302,7 @@ function OfferChatFeed() {
       <div
         className={cn(
           "ml-auto w-full max-w-[260px] overflow-hidden rounded-2xl rounded-br-md bg-white shadow-[0_12px_34px_rgba(10,22,40,0.2)]",
-          step >= 4 ? "animate-msg-in" : "opacity-0"
+          step >= 3 ? "animate-msg-in" : "opacity-0"
         )}
       >
         <div className="flex items-center gap-1.5 bg-[#d1f5e6] px-4 py-2.5">
@@ -461,24 +519,18 @@ function CommissionBars() {
               ))}
             </div>
 
-            {/* Caption under each column ("Agent A" wraps so the letter sits below) */}
+            {/* Caption under each column */}
             <span
               className={cn(
-                "absolute -bottom-9 left-1/2 -translate-x-1/2 text-center leading-tight",
+                "absolute -bottom-9 left-1/2 -translate-x-1/2 whitespace-nowrap text-center leading-tight",
                 col.reasy
-                  ? "whitespace-nowrap font-serif text-lg text-[#5eead4]"
-                  : "text-[13px] font-medium text-white/50",
+                  ? "font-serif text-lg text-[#5eead4]"
+                  : "text-[11px] font-medium text-white/50",
                 inView ? "animate-msg-in" : "opacity-0"
               )}
               style={inView ? { animationDelay: `${600 + ci * 80}ms` } : undefined}
             >
-              {col.reasy
-                ? col.caption
-                : col.caption.split(" ").map((word, wi) => (
-                    <span key={wi} className="block">
-                      {word}
-                    </span>
-                  ))}
+              {col.caption}
             </span>
           </div>
         ))}
@@ -934,10 +986,15 @@ function PersonBehindThis() {
 
           {/* Right — story */}
           <div>
-            <div className="flex items-center gap-2 text-white/70">
+            <a
+              href="https://www.instagram.com/agents_want_me_cancelled/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-fit items-center gap-2 text-white/70 transition-colors hover:text-white"
+            >
               <IconBrandInstagram className="size-5" stroke={1.75} />
               <span className="text-[15px] font-medium">@agentswantmecancelled</span>
-            </div>
+            </a>
             <h2 className="mt-5 font-serif text-4xl leading-[1.1] text-white md:text-5xl">
               Hey. I'm Warren.
             </h2>
