@@ -135,12 +135,12 @@
     }
   body {
     @apply bg-background text-foreground;
-    overflow-x: hidden;
+    overflow-x: clip;
     }
   html {
     @apply font-sans antialiased;
     scroll-behavior: smooth;
-    overflow-x: hidden;
+    overflow-x: clip;
     }
 }
 

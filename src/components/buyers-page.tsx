@@ -1,12 +1,32 @@
 import { useState, useEffect, type ReactNode, type MouseEvent } from "react"
 import { cn } from "@/lib/utils"
-import { IconArrowRight, IconHeartFilled, IconCheck, IconX, IconClock, IconBrandInstagram } from "@tabler/icons-react"
+import { IconArrowRight, IconCheck, IconX, IconBrandInstagram } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import buyerDashImg from "@/assets/reasy-buyer-dashboard.png"
 import buyerDashMobileImg from "@/assets/reasy-buyer-dashboard-mobile.png"
 import { Reveal } from "@/components/reveal"
 import dailyMailLogo from "@/assets/daily-mail-logo.png"
 import yahooFinanceLogo from "@/assets/yahoo-finance-logo.png"
+import founderPhoto from "@/assets/founder-warren.jpeg"
+import founderAvatar from "@/assets/founder-avatar.png"
+import comment01 from "@/assets/comment-01.png"
+import comment02 from "@/assets/comment-02.png"
+import comment03 from "@/assets/comment-03.png"
+import comment04 from "@/assets/comment-04.png"
+import comment05 from "@/assets/comment-05.png"
+import comment06 from "@/assets/comment-06.png"
+import comment07 from "@/assets/comment-07.png"
+import comment08 from "@/assets/comment-08.png"
+import comment09 from "@/assets/comment-09.png"
+import comment10 from "@/assets/comment-10.png"
+import comment11 from "@/assets/comment-11.png"
+import comment12 from "@/assets/comment-12.png"
+import comment13 from "@/assets/comment-13.png"
+import comment14 from "@/assets/comment-14.png"
+import comment15 from "@/assets/comment-15.png"
+import comment16 from "@/assets/comment-16.png"
+import comment17 from "@/assets/comment-17.png"
+import comment18 from "@/assets/comment-18.png"
 
 // Doors open 1 October 2026, Australian eastern time
 const LAUNCH = new Date("2026-10-01T00:00:00+10:00")
@@ -89,47 +109,19 @@ function Countdown() {
 }
 
 // --- Instagram-style comments ---
+// Real screenshots, each padded to a uniform aspect ratio so every card is the
+// same size in the marquee (see COMMENT_IMAGES).
 
-type Comment = {
-  initial: string
-  color: string
-  name: string
-  text: string
-  date: string
-  likes: number
-}
-
-const COMMENTS: Comment[] = [
-  { initial: "H", color: "bg-indigo-500", name: "HPReka", text: "Following for sure. Uber has done good to the taxi monopoly so I think it's time", date: "1d", likes: 1 },
-  { initial: "G", color: "bg-sky-500", name: "GoGreens1234", text: "Lead the way bud. Let's see how supportive the Real Estate industry of au actually are????????", date: "3d", likes: 0 },
-  { initial: "I", color: "bg-emerald-500", name: "Isabel", text: "I'm so here for this. I'd be interested already 😄", date: "1w", likes: 25 },
-  { initial: "I", color: "bg-amber-500", name: "I_am_joann_love", text: "The real estate industry is desperate for disruption!", date: "1w", likes: 11 },
-  { initial: "J", color: "bg-red-500", name: "Jordie", text: "Go off King 🙌🤙", date: "2 Jul", likes: 0 },
-  { initial: "J", color: "bg-violet-500", name: "Joel Seeman", text: "All we need is an app and agents will be forced to do something actually useful with their lives.", date: "2 Jul", likes: 3 },
-  { initial: "M", color: "bg-pink-500", name: "MattD_87", text: "Commission fees are daylight robbery. Bring it on.", date: "28 Jun", likes: 8 },
-  { initial: "K", color: "bg-teal-500", name: "Kirra.Lee", text: "Finally someone said it. Counting down the days.", date: "27 Jun", likes: 14 },
+const COMMENT_IMAGES = [
+  comment01, comment02, comment03, comment04, comment05, comment06,
+  comment07, comment08, comment09, comment10, comment11, comment12,
+  comment13, comment14, comment15, comment16, comment17, comment18,
 ]
 
-function CommentCard({ initial, color, name, text, date, likes }: Comment) {
+function CommentCard({ src }: { src: string }) {
   return (
-    <div className="flex w-[280px] shrink-0 snap-start flex-col rounded-xl bg-white p-5 text-[#0a1628]">
-      <div className="mb-3 flex items-center gap-2.5">
-        <div className={cn("flex size-7 items-center justify-center rounded-full text-xs font-semibold text-white", color)}>
-          {initial}
-        </div>
-        <span className="text-sm font-semibold">{name}</span>
-      </div>
-      <p className="mb-4 flex-1 text-sm leading-relaxed text-[#0a1628]/75">{text}</p>
-      <div className="flex items-center justify-between text-xs text-[#0a1628]/45">
-        <div className="flex items-center gap-3">
-          <span>{date}</span>
-          <span className="font-medium">Reply</span>
-        </div>
-        <span className="flex items-center gap-1">
-          <IconHeartFilled className="size-4 text-red-500" />
-          {likes}
-        </span>
-      </div>
+    <div className="w-[340px] shrink-0 overflow-hidden rounded-xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
+      <img src={src} alt="Instagram comment" className="block w-full" />
     </div>
   )
 }
@@ -147,14 +139,14 @@ function WhatPeopleAreSaying() {
   return (
     <section className="pb-24 pt-8">
       <p className="mb-10 text-center text-sm font-medium tracking-wide text-white/80">
-        What people are saying about the agent system
+        We're giving you what you want:
       </p>
 
       {/* Continuous, slowly scrolling marquee (pauses on hover) */}
       <div className="group overflow-hidden">
         <div className="flex w-max gap-5 pb-4 animate-marquee group-hover:[animation-play-state:paused]">
-          {[...COMMENTS, ...COMMENTS].map((c, i) => (
-            <CommentCard key={i} {...c} />
+          {[...COMMENT_IMAGES, ...COMMENT_IMAGES].map((src, i) => (
+            <CommentCard key={i} src={src} />
           ))}
         </div>
       </div>
@@ -173,7 +165,6 @@ function WhatPeopleAreSaying() {
 function Badge({ children }: { children: ReactNode }) {
   return (
     <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 font-['Roboto_Mono_Variable'] text-[12px] font-semibold uppercase tracking-[0.1em] text-white/80">
-      <IconClock className="size-3.5" stroke={2} />
       {children}
     </span>
   )
@@ -402,20 +393,28 @@ function PersonBehindThis() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Left — photo + Instagram card */}
           <div>
-            <div className="flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02]">
-              <span className="text-sm text-white/30">Founder photo</span>
+            <div className="aspect-[4/5] w-full overflow-hidden rounded-2xl border border-white/10">
+              <img
+                src={founderPhoto}
+                alt="Warren, founder of Reasy"
+                className="size-full object-cover"
+              />
             </div>
 
-            <div className="relative -mt-16 mr-6 rounded-2xl bg-white p-4 text-[#0a1628] shadow-[0_24px_60px_rgba(0,0,0,0.45)] md:mr-12">
+            <div className="relative -mt-16 rounded-2xl bg-white p-4 text-[#0a1628] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
               <div className="flex gap-4">
-                <div className="size-14 shrink-0 rounded-full bg-slate-200" />
+                <img
+                  src={founderAvatar}
+                  alt="agents_want_me_cancelled"
+                  className="size-14 shrink-0 rounded-full object-cover"
+                />
                 <div>
                   <p className="text-[15px] font-semibold">agents_want_me_cancelled</p>
                   <div className="mt-2 flex gap-6">
                     {[
                       ["42", "posts"],
-                      ["11.9K", "followers"],
-                      ["457", "following"],
+                      ["12.1K", "followers"],
+                      ["461", "following"],
                     ].map(([value, label]) => (
                       <div key={label}>
                         <p className="text-sm font-semibold leading-none">{value}</p>
