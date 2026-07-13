@@ -411,11 +411,11 @@ function CommissionBars() {
   return (
     <div
       ref={ref}
-      className="absolute inset-0 flex items-center justify-center bg-[#0a1628] px-6 py-8"
+      className="absolute inset-0 flex items-center justify-center bg-[#0a1628] px-3 py-8 md:px-6"
     >
-      <div className="relative flex w-full max-w-[450px] items-end justify-center gap-3 pl-12 md:gap-5">
+      <div className="relative flex w-full max-w-[450px] items-end justify-center gap-2 pl-9 md:gap-5 md:pl-12">
         {/* "Asking price" axis on the left — arrow points up (price rises with commission) */}
-        <div className="pointer-events-none absolute inset-y-1 left-0 flex w-10 gap-1.5">
+        <div className="pointer-events-none absolute inset-y-1 left-0 flex w-9 gap-1.5 md:w-10">
           <span className="self-center whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.14em] text-white/45 [writing-mode:vertical-rl] [transform:rotate(180deg)]">
             Asking price
           </span>
@@ -461,18 +461,24 @@ function CommissionBars() {
               ))}
             </div>
 
-            {/* Caption under each column */}
+            {/* Caption under each column ("Agent A" wraps so the letter sits below) */}
             <span
               className={cn(
-                "absolute -bottom-9 left-1/2 -translate-x-1/2 whitespace-nowrap",
+                "absolute -bottom-9 left-1/2 -translate-x-1/2 text-center leading-tight",
                 col.reasy
-                  ? "font-serif text-lg text-[#5eead4]"
+                  ? "whitespace-nowrap font-serif text-lg text-[#5eead4]"
                   : "text-[13px] font-medium text-white/50",
                 inView ? "animate-msg-in" : "opacity-0"
               )}
               style={inView ? { animationDelay: `${600 + ci * 80}ms` } : undefined}
             >
-              {col.caption}
+              {col.reasy
+                ? col.caption
+                : col.caption.split(" ").map((word, wi) => (
+                    <span key={wi} className="block">
+                      {word}
+                    </span>
+                  ))}
             </span>
           </div>
         ))}
