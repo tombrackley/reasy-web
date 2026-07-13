@@ -186,6 +186,83 @@ body {
   animation: msgIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Conveyancer workspace choreography (buyers "Connected" card) */
+/* checkmark / pill / card "pop" */
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0); }
+  70% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.animate-pop-in {
+  animation: popIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+/* card "pop" for the pending-invite swap (gentler than the tick pop) */
+@keyframes softPop {
+  0% { opacity: 0; transform: scale(0.94); }
+  60% { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.animate-soft-pop {
+  animation: softPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+/* fake mouse cursor: glides in from the lower-right, presses, lifts, fades */
+@keyframes cursorClick {
+  0%   { opacity: 0; transform: translate(26px, 24px) scale(1); }
+  22%  { opacity: 1; transform: translate(4px, 4px) scale(1); }
+  58%  { opacity: 1; transform: translate(4px, 4px) scale(1); }
+  70%  { transform: translate(4px, 4px) scale(0.78); }
+  84%  { transform: translate(4px, 4px) scale(1); }
+  100% { opacity: 0; transform: translate(-2px, -2px) scale(1); }
+}
+.animate-cursor-click {
+  animation: cursorClick 1.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Shimmer stroke — a soft animated highlight that travels around a button's
+   edge (Framer-style), giving CTAs some depth instead of a flat fill. */
+@property --shimmer-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes shimmerSpin {
+  to { --shimmer-angle: 360deg; }
+}
+.shimmer-stroke {
+  position: relative;
+  isolation: isolate;
+  transition: filter 0.25s ease;
+}
+/* colour lift on hover — no movement, just a brighter, richer fill */
+.shimmer-stroke:hover {
+  filter: brightness(1.09) saturate(1.12);
+}
+.shimmer-stroke::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px; /* ring thickness */
+  background: conic-gradient(
+    from var(--shimmer-angle),
+    rgba(255, 255, 255, 0.07) 0deg,
+    rgba(255, 255, 255, 0.45) 45deg,
+    rgba(255, 255, 255, 0.07) 100deg,
+    rgba(255, 255, 255, 0.07) 360deg
+  );
+  /* show only the padding ring */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: shimmerSpin 2.4s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-stroke::before { animation: none; }
+}
+
 /* Typing indicator dots */
 @keyframes typingDot {
   0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type ReactNode, type MouseEvent, type PointerEvent } from "react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
-import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconBulb } from "@tabler/icons-react"
+import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconBulb, IconPlus, IconScale, IconPointerFilled, IconLock } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import { Reveal } from "@/components/reveal"
 import dailyMailLogo from "@/assets/daily-mail-logo.png"
@@ -236,7 +236,7 @@ function WhatPeopleAreSaying() {
   return (
     <section className="pb-24 pt-8">
       <p className="mb-10 text-center text-sm font-medium tracking-wide text-white/80">
-        We're giving you what you want:
+        The people have spoken (and this is what they want)
       </p>
 
       {/* Continuous marquee — slows down (never stops) on hover / touch */}
@@ -465,7 +465,7 @@ function GuidanceGraphic() {
             <IconBulb className="size-4" stroke={2.25} />
             Reasy
           </span>
-          <span className="rounded-full bg-[#CA71DA] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
+          <span className="rounded-full bg-[#B47CFF] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
             Action needed
           </span>
         </div>
@@ -476,6 +476,167 @@ function GuidanceGraphic() {
     </div>
   )
 }
+
+// --- Conveyancer workspace graphic (Connected card) ---
+
+const WORKSPACE_DOCS = ["Building and pest report", "Finance pre-approval", "Offer"]
+
+function WorkspaceGraphic() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  // pressed = the cursor is pushing the button; clicked = button swapped for card
+  const [pressed, setPressed] = useState(false)
+  const [clicked, setClicked] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInView(true)
+      setClicked(true)
+      return
+    }
+    const timers: number[] = []
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setInView(true)
+            observer.unobserve(entry.target)
+            // synced with the fake cursor's press moment
+            timers.push(window.setTimeout(() => setPressed(true), 2500))
+            timers.push(
+              window.setTimeout(() => {
+                setClicked(true)
+                setPressed(false)
+              }, 2700)
+            )
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      timers.forEach(clearTimeout)
+    }
+  }, [])
+
+  return (
+    <div ref={ref} className="absolute inset-0 flex items-center justify-center p-5 md:p-7">
+      <div className="relative w-full max-w-[360px]">
+        {/* Main workspace card */}
+        <div
+          className={cn(
+            "rounded-2xl bg-white p-6 shadow-[0_20px_50px_rgba(10,22,40,0.28)]",
+            inView ? "animate-msg-in" : "opacity-0"
+          )}
+        >
+          <p className="font-['Inter_Variable'] text-[18px] font-medium text-[#0a1628]">
+            Your Reasy workspace
+          </p>
+
+          {/* Shared documents the conveyancer can access */}
+          <p className="mt-5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+            Shared documents
+          </p>
+          <div className="mt-3 space-y-2">
+            {WORKSPACE_DOCS.map((doc, i) => {
+              const rowDelay = 260 + i * 180
+              return (
+                <div
+                  key={i}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/70 px-3 py-2.5",
+                    inView ? "animate-msg-in" : "opacity-0"
+                  )}
+                  style={inView ? { animationDelay: `${rowDelay}ms` } : undefined}
+                >
+                  <IconFileTypePdf className="size-5 shrink-0 text-red-500" stroke={1.75} />
+                  <span className="text-[13px] font-medium text-[#0a1628]">{doc}.pdf</span>
+                  {/* the tick pops in just after its row lands */}
+                  <IconCircleCheckFilled
+                    className={cn(
+                      "ml-auto size-4 shrink-0 text-[#0d9488]",
+                      inView ? "animate-pop-in" : "opacity-0"
+                    )}
+                    style={inView ? { animationDelay: `${rowDelay + 260}ms` } : undefined}
+                  />
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Add-conveyancer button — a cursor glides in, clicks it, and it
+              swaps in place for the pending-invite card */}
+          <div
+            className={cn("relative mt-4 min-h-[136px]", inView ? "animate-msg-in" : "opacity-0")}
+            style={
+              inView
+                ? { animationDelay: `${260 + WORKSPACE_DOCS.length * 180 + 240}ms` }
+                : undefined
+            }
+          >
+            {/* the button */}
+            <button
+              type="button"
+              className={cn(
+                "flex h-full w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300/50 bg-slate-50 text-[13px] font-semibold text-slate-500 transition-all duration-200",
+                pressed && "scale-[0.97] border-slate-400/50 bg-slate-100",
+                clicked && "scale-95 opacity-0"
+              )}
+            >
+              <IconPlus className="size-4" stroke={2.25} />
+              Add conveyancer
+            </button>
+
+            {/* the pending-invite card that replaces the button in place */}
+            <div
+              className={cn(
+                "absolute inset-0 flex items-center gap-3 rounded-xl border-2 border-dashed border-[#0d9488]/45 bg-white px-3",
+                clicked ? "animate-soft-pop" : "pointer-events-none opacity-0"
+              )}
+            >
+              {/* avatar with a law-firm badge on its corner, like an online dot */}
+              <div className="relative size-9 shrink-0">
+                <img
+                  src="https://randomuser.me/api/portraits/women/68.jpg"
+                  alt="Sarah Nguyen"
+                  className="size-9 rounded-full object-cover"
+                />
+                <span className="absolute -bottom-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-[#1e293b] text-white ring-2 ring-white">
+                  <IconScale className="size-2.5" stroke={2.25} />
+                </span>
+              </div>
+              <div className="min-w-0 leading-tight">
+                <p className="text-[13px] font-semibold text-[#0a1628]">Sarah Nguyen</p>
+                <p className="text-[11px] text-slate-500">Acme Legal</p>
+              </div>
+              <span className="ml-auto shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-500">
+                Invited
+              </span>
+            </div>
+
+            {/* fake mouse cursor that glides in and presses the button */}
+            {!clicked && (
+              <span
+                className={cn(
+                  "pointer-events-none absolute left-[54%] top-1/2 text-[#0a1628] drop-shadow-[0_2px_5px_rgba(0,0,0,0.35)]",
+                  inView ? "animate-cursor-click" : "opacity-0"
+                )}
+                style={inView ? { animationDelay: "1300ms" } : undefined}
+              >
+                <IconPointerFilled className="size-5" />
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 
 // --- Commission comparison bars (Reasonable card) ---
 
@@ -587,6 +748,119 @@ function CommissionBars() {
   )
 }
 
+// --- Gatekept listings graphic (Access card) ---
+
+const ACCESS_LISTINGS = [
+  {
+    tag: "Off-market",
+    price: "$1.24M",
+    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=180&h=180&fit=crop&q=60",
+  },
+  {
+    tag: "Private sale",
+    price: "$980K",
+    img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=180&h=180&fit=crop&q=60",
+  },
+  {
+    tag: "Pre-market",
+    price: "$1.6M",
+    img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=180&h=180&fit=crop&q=60",
+  },
+]
+
+function AccessGraphic() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  // the gatekept listings "unlock" once the card has settled in
+  const [unlocked, setUnlocked] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInView(true)
+      setUnlocked(true)
+      return
+    }
+    let unlockTimer: number | undefined
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setInView(true)
+            observer.unobserve(entry.target)
+            unlockTimer = window.setTimeout(() => setUnlocked(true), 1500)
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      if (unlockTimer) clearTimeout(unlockTimer)
+    }
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className="absolute inset-0 flex flex-col justify-center gap-3 p-5 md:p-7"
+    >
+      {/* Individual listing rows float freely on the section (no container),
+          gatekept (blurred/locked) then unlocking to "on Reasy first" */}
+      {ACCESS_LISTINGS.map((l, i) => (
+        <div
+          key={i}
+          className={cn(
+            "mx-auto flex w-full max-w-[420px] items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-[0_10px_30px_rgba(10,22,40,0.12)]",
+            inView ? "animate-msg-in" : "opacity-0"
+          )}
+          style={inView ? { animationDelay: `${i * 130}ms` } : undefined}
+        >
+          {/* property photo */}
+          <img
+            src={l.img}
+            alt="Property for sale"
+            className="size-12 shrink-0 rounded-xl bg-slate-100 object-cover"
+          />
+          {/* address — blurred (redacted) while gatekept */}
+          <div
+            className={cn(
+              "flex-1 space-y-1.5 transition-all duration-500",
+              unlocked ? "blur-0" : "blur-[3px]"
+            )}
+          >
+            <div className="h-2.5 w-28 rounded-full bg-slate-200" />
+            <div className="h-2 w-20 rounded-full bg-slate-200/70" />
+          </div>
+          {/* price + lock state */}
+          <div className="flex flex-col items-end gap-1">
+            <span
+              className={cn(
+                "text-[14px] font-semibold transition-colors duration-500",
+                unlocked
+                  ? "text-[#0a1628]"
+                  : "text-transparent [text-shadow:0_0_7px_rgba(10,22,40,0.55)]"
+              )}
+            >
+              {l.price}
+            </span>
+            <span
+              className={cn(
+                "flex items-center gap-1 whitespace-nowrap text-[10px] font-medium text-slate-400 transition-opacity duration-500",
+                unlocked ? "opacity-0" : "opacity-100"
+              )}
+            >
+              <IconLock className="size-3" stroke={2.25} />
+              {l.tag}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 // --- What is #agentless ---
 
@@ -599,34 +873,42 @@ const stackCards = [
     accent: "#2f6bc4",
     chat: true,
     guide: false,
+    workspace: false,
     calc: false,
+    access: false,
   },
   {
     eyebrow: "Software Intelligence",
     headingA: "Built to",
     headingB: "replace the agent",
     body: "Reasy's smart intelligence prioritises every message for you, flags what needs action, guides you through every step and tracks deadlines automatically. It's built to do the job of a real estate agent, so you never have to deal with one again.",
-    accent: "#CA71DA",
+    accent: "#B47CFF",
     chat: false,
     guide: true,
+    workspace: false,
     calc: false,
+    access: false,
   },
+  // The conveyancer (workspace: true) and commission (calc: true) cards are kept
+  // as options — flip a flag here to swap the graphic back in for AccessGraphic.
   {
-    eyebrow: "Reasonable",
-    headingA: "No $40,000",
-    headingB: "commission baked in",
-    body: "Agents charge sellers 2.5% commission, and that cost gets baked into the price you pay. On Reasy, sellers keep it, so you don't pay it.",
-    accent: "#0d9488",
+    eyebrow: "Access",
+    headingA: "Homes you won't find",
+    headingB: "on the portals",
+    body: "Plenty of owners sell privately on Reasy, direct and without an agent, so these homes never make it onto the big portals. You get a whole pool of listings other buyers never see, and you deal with the seller yourself from the very first message.",
+    accent: "#4fd1c5",
     chat: false,
     guide: false,
-    calc: true,
+    workspace: false,
+    calc: false,
+    access: true,
   },
 ]
 
 // --- What is #agentless (floating, alternating variant) ---
 
 // Lightened accents so the highlighted heading words read on the dark section.
-const FLOAT_ACCENT = ["#8fb8e8", "#CA71DA", "#4fd1c5"]
+const FLOAT_ACCENT = ["#8fb8e8", "#B47CFF", "#4fd1c5"]
 
 function AgentlessFloat() {
   return (
@@ -661,6 +943,10 @@ function AgentlessFloat() {
                     <OfferChatFeed />
                   ) : c.guide ? (
                     <GuidanceGraphic />
+                  ) : c.workspace ? (
+                    <WorkspaceGraphic />
+                  ) : c.access ? (
+                    <AccessGraphic />
                   ) : c.calc ? (
                     <CommissionBars />
                   ) : null}
@@ -696,8 +982,7 @@ function AgentlessFloat() {
 
                   <button
                     type="button"
-                    className="mt-8 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
-                    style={{ backgroundColor: c.accent }}
+                    className="shimmer-stroke mt-8 inline-flex items-center gap-1.5 rounded-full border border-white/40 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
                   >
                     Get early access
                     <IconArrowRight className="size-4" stroke={2.25} />
@@ -719,14 +1004,12 @@ function OldWayVsAgentless() {
     "Agent filters your offers",
     "You don't know if your offer was submitted",
     "Fabricated competing offers are common",
-    "You pay the agent's fee indirectly",
-    "Open homes with 40 strangers",
+    "Communication filtered through an agent's agenda",
   ]
   const agentless = [
     "Every offer goes directly to the seller",
     "Full transparency. You see everything.",
     "Identity-verified buyers only",
-    "Sellers keep the commission (lower prices)",
     "Direct conversations with the owner",
   ]
 
@@ -1159,7 +1442,7 @@ export function BuyersPage() {
           <div className="mt-12">
             <a
               href="/home#waitlist"
-              className="inline-flex items-center gap-2 rounded-full bg-[#a9cef0] px-8 py-4 text-[15px] font-semibold text-[#0a1628] transition-colors hover:bg-[#bcd9f4]"
+              className="shimmer-stroke inline-flex items-center gap-2 rounded-full bg-[#a9cef0] px-8 py-4 text-[15px] font-semibold text-[#0a1628] shadow-[0_10px_30px_-8px_rgba(169,206,240,0.5)] transition-colors hover:bg-[#bcd9f4]"
             >
               Get Early Access <IconArrowRight className="size-4" />
             </a>
