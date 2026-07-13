@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type ReactNode, type MouseEvent, type PointerEvent } from "react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
-import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconBulb, IconPlus, IconScale, IconPointerFilled } from "@tabler/icons-react"
+import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconBulb, IconPlus, IconScale, IconPointerFilled, IconLock } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import { Reveal } from "@/components/reveal"
 import dailyMailLogo from "@/assets/daily-mail-logo.png"
@@ -748,6 +748,120 @@ function CommissionBars() {
   )
 }
 
+// --- Gatekept listings graphic (Access card) ---
+
+const ACCESS_LISTINGS = [
+  {
+    tag: "Off-market",
+    price: "$1.24M",
+    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=180&h=180&fit=crop&q=60",
+  },
+  {
+    tag: "Private sale",
+    price: "$980K",
+    img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=180&h=180&fit=crop&q=60",
+  },
+  {
+    tag: "Pre-market",
+    price: "$1.6M",
+    img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=180&h=180&fit=crop&q=60",
+  },
+]
+
+function AccessGraphic() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  // the gatekept listings "unlock" once the card has settled in
+  const [unlocked, setUnlocked] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInView(true)
+      setUnlocked(true)
+      return
+    }
+    let unlockTimer: number | undefined
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setInView(true)
+            observer.unobserve(entry.target)
+            unlockTimer = window.setTimeout(() => setUnlocked(true), 1500)
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      if (unlockTimer) clearTimeout(unlockTimer)
+    }
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className="absolute inset-0 flex flex-col justify-center gap-3 p-5 md:p-7"
+    >
+      {/* Individual listing rows float freely on the section (no container),
+          gatekept (blurred/locked) then unlocking to "on Reasy first" */}
+      {ACCESS_LISTINGS.map((l, i) => (
+        <div
+          key={i}
+          className={cn(
+            "mx-auto flex w-full max-w-[420px] items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-[0_10px_30px_rgba(10,22,40,0.12)]",
+            inView ? "animate-msg-in" : "opacity-0"
+          )}
+          style={inView ? { animationDelay: `${i * 130}ms` } : undefined}
+        >
+          {/* property photo */}
+          <img
+            src={l.img}
+            alt="Property for sale"
+            className="size-12 shrink-0 rounded-xl bg-slate-100 object-cover"
+          />
+          {/* address — blurred (redacted) while gatekept */}
+          <div
+            className={cn(
+              "flex-1 space-y-1.5 transition-all duration-500",
+              unlocked ? "blur-0" : "blur-[3px]"
+            )}
+          >
+            <div className="h-2.5 w-28 rounded-full bg-slate-200" />
+            <div className="h-2 w-20 rounded-full bg-slate-200/70" />
+          </div>
+          {/* price + lock state */}
+          <div className="flex flex-col items-end gap-1">
+            <span
+              className={cn(
+                "text-[14px] font-semibold transition-colors duration-500",
+                unlocked
+                  ? "text-[#0a1628]"
+                  : "text-transparent [text-shadow:0_0_7px_rgba(10,22,40,0.55)]"
+              )}
+            >
+              {l.price}
+            </span>
+            <span
+              className={cn(
+                "flex items-center gap-1 whitespace-nowrap text-[10px] font-medium text-slate-400 transition-opacity duration-500",
+                unlocked ? "opacity-0" : "opacity-100"
+              )}
+            >
+              <IconLock className="size-3" stroke={2.25} />
+              {l.tag}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // --- What is #agentless ---
 
 const stackCards = [
@@ -761,6 +875,7 @@ const stackCards = [
     guide: false,
     workspace: false,
     calc: false,
+    access: false,
   },
   {
     eyebrow: "Software Intelligence",
@@ -772,19 +887,21 @@ const stackCards = [
     guide: true,
     workspace: false,
     calc: false,
+    access: false,
   },
-  // Conveyancer "Connected" card kept as an option — flip workspace: true (and
-  // calc: false) to swap the commission bars back out for WorkspaceGraphic.
+  // The conveyancer (workspace: true) and commission (calc: true) cards are kept
+  // as options — flip a flag here to swap the graphic back in for AccessGraphic.
   {
-    eyebrow: "Reasonable",
-    headingA: "No $40,000",
-    headingB: "commission baked in",
-    body: "Agents charge sellers 2.5% commission, and that cost gets baked into the price you pay. On Reasy, sellers keep it, so you don't pay it.",
-    accent: "#0d9488",
+    eyebrow: "Access",
+    headingA: "Homes you won't find",
+    headingB: "on the portals",
+    body: "Plenty of owners sell privately on Reasy, direct and without an agent, so these homes never make it onto the big portals. You get a whole pool of listings other buyers never see, and you deal with the seller yourself from the very first message.",
+    accent: "#4fd1c5",
     chat: false,
     guide: false,
     workspace: false,
-    calc: true,
+    calc: false,
+    access: true,
   },
 ]
 
@@ -828,6 +945,8 @@ function AgentlessFloat() {
                     <GuidanceGraphic />
                   ) : c.workspace ? (
                     <WorkspaceGraphic />
+                  ) : c.access ? (
+                    <AccessGraphic />
                   ) : c.calc ? (
                     <CommissionBars />
                   ) : null}
