@@ -61,7 +61,7 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
           entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
         )}
       >
-        <h2 className="font-serif text-[clamp(2.5rem,8vw,5rem)] leading-[1.05] text-white">
+        <h2 className="font-serif text-[clamp(3rem,9vw,5rem)] leading-[1.05] text-white">
           Agents are <span className="text-[#8fb8e8]">NOT</span>
           <br />
           welcome here.
@@ -73,7 +73,7 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
         </p>
 
         <div className="mt-7 flex justify-center">
-          <span className="inline-flex items-center rounded-full bg-white/5 px-5 py-2 text-base font-semibold tracking-wide text-white">
+          <span className="inline-flex items-center text-base font-semibold tracking-wide text-white">
             Doors open 1 October 2026 · Australia
           </span>
         </div>

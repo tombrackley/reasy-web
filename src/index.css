@@ -144,6 +144,14 @@
     }
 }
 
+/* Pre-launch the whole site is dark; keep the page (and mobile overscroll)
+   dark so no white shows behind the fixed sections. Pairs with the
+   theme-color meta in index.html. */
+html,
+body {
+  background-color: #050e1c;
+}
+
 .prose-reasy {
   @apply text-[16px] leading-[1.7] text-[#1e2124];
 }

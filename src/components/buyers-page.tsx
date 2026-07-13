@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type ReactNode, type MouseEvent } from "react"
+import { useState, useEffect, useRef, type ReactNode, type MouseEvent, type PointerEvent } from "react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
 import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconBulb } from "@tabler/icons-react"
@@ -120,22 +120,29 @@ const COMMENT_IMAGES = [
 function CommentCard({ src }: { src: string }) {
   return (
     <div className="w-[340px] shrink-0 overflow-hidden rounded-xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
-      <img src={src} alt="Instagram comment" className="block w-full" />
+      {/* pointer-events-none + no callout so a long-press doesn't trigger the
+          iOS "copy/save image" menu while slowing the marquee */}
+      <img
+        src={src}
+        alt="Instagram comment"
+        draggable={false}
+        className="pointer-events-none block w-full select-none [-webkit-touch-callout:none]"
+      />
     </div>
   )
 }
 
-// Continuous marquee driven by requestAnimationFrame so the speed can ease
-// smoothly (no position jump). Hovering slows it right down; it doesn't stop.
-const MARQUEE_NORMAL = 60 // px/sec
-const MARQUEE_SLOW = 9 // px/sec on hover
+// Continuous marquee driven by requestAnimationFrame. It auto-scrolls at a
+// steady pace, but the user can grab and drag it left/right (mouse or touch) to
+// scrub through; it resumes auto-scrolling on release.
+const MARQUEE_SPEED = 50 // px/sec
 
 function CommentMarquee() {
   const trackRef = useRef<HTMLDivElement>(null)
   const offsetRef = useRef(0)
-  const speedRef = useRef(MARQUEE_NORMAL)
-  const targetRef = useRef(MARQUEE_NORMAL)
   const halfRef = useRef(0)
+  const draggingRef = useRef(false)
+  const lastXRef = useRef(0)
 
   useEffect(() => {
     const track = trackRef.current
@@ -157,11 +164,11 @@ function CommentMarquee() {
       if (!last) last = t
       const dt = Math.min((t - last) / 1000, 0.05) // clamp when tab regains focus
       last = t
-      // ease current speed toward the target over ~0.25s
-      speedRef.current += (targetRef.current - speedRef.current) * Math.min(dt * 4, 1)
-      offsetRef.current -= speedRef.current * dt
-      const half = halfRef.current
-      if (half > 0 && offsetRef.current <= -half) offsetRef.current += half
+      // advance automatically unless the user is dragging
+      if (!draggingRef.current) {
+        offsetRef.current -= MARQUEE_SPEED * dt
+        wrapOffset()
+      }
       track.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`
       raf = requestAnimationFrame(step)
     }
@@ -173,21 +180,39 @@ function CommentMarquee() {
     }
   }, [])
 
-  const slow = () => {
-    targetRef.current = MARQUEE_SLOW
+  // keep the offset within one copy's width so the loop stays seamless
+  const wrapOffset = () => {
+    const half = halfRef.current
+    if (half <= 0) return
+    while (offsetRef.current <= -half) offsetRef.current += half
+    while (offsetRef.current > 0) offsetRef.current -= half
   }
-  const resume = () => {
-    targetRef.current = MARQUEE_NORMAL
+
+  const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    draggingRef.current = true
+    lastXRef.current = e.clientX
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+  }
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return
+    offsetRef.current += e.clientX - lastXRef.current
+    lastXRef.current = e.clientX
+    wrapOffset()
+  }
+  const endDrag = (e: PointerEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return
+    draggingRef.current = false
+    e.currentTarget.releasePointerCapture?.(e.pointerId)
   }
 
   return (
     <div
-      className="overflow-hidden"
-      onMouseEnter={slow}
-      onMouseLeave={resume}
-      onTouchStart={slow}
-      onTouchEnd={resume}
-      onTouchCancel={resume}
+      className="cursor-grab touch-pan-y select-none overflow-hidden [-webkit-touch-callout:none] active:cursor-grabbing"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onPointerLeave={endDrag}
     >
       <div ref={trackRef} className="flex w-max gap-5 pb-4 will-change-transform">
         {[...COMMENT_IMAGES, ...COMMENT_IMAGES].map((src, i) => (
@@ -617,7 +642,7 @@ function AgentlessFloat() {
           </h2>
         </div>
 
-        <div className="mt-16 flex flex-col gap-24 md:mt-24 md:gap-32">
+        <div className="mt-16 flex flex-col gap-20 md:mt-24 md:gap-28">
           {stackCards.map((c, i) => {
             const graphicLeft = i % 2 === 0
             return (
