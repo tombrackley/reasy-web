@@ -81,7 +81,7 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
         <div className="mt-8">
           <a
             href="/for-buyers"
-            className="inline-flex items-center gap-2 rounded-full bg-[#a9cef0] px-8 py-4 text-[15px] font-semibold text-[#0a1526] transition-colors hover:bg-[#bcd9f4]"
+            className="shimmer-stroke inline-flex items-center gap-2 rounded-full bg-[#a9cef0] px-8 py-4 text-[15px] font-semibold text-[#0a1526] shadow-[0_10px_30px_-8px_rgba(169,206,240,0.5)] transition-colors hover:bg-[#bcd9f4]"
           >
             See what all the fuss is about
             <IconArrowRight className="size-4" />
