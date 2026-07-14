@@ -152,7 +152,7 @@ function CommentCard({ src, className }: { src: string; className?: string }) {
 // Continuous marquee driven by requestAnimationFrame. It auto-scrolls at a
 // steady pace, but the user can grab and drag it left/right (mouse or touch) to
 // scrub through; it resumes auto-scrolling on release.
-const MARQUEE_SPEED = 50 // px/sec
+const MARQUEE_SPEED = 32 // px/sec
 
 function CommentMarquee() {
   const trackRef = useRef<HTMLDivElement>(null)
@@ -245,7 +245,7 @@ function CommentMarquee() {
 // steps back and the right half steps forward. Driven purely by a translateX
 // transform (no scroll container) so there's no horizontal swipe/drag — only
 // tap navigation. Wraps around at both ends.
-const AUTO_ADVANCE_MS = 3500
+const AUTO_ADVANCE_MS = 6000
 
 function MobileCommentCarousel() {
   const trackRef = useRef<HTMLDivElement>(null)
