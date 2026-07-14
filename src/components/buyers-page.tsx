@@ -1085,8 +1085,8 @@ function MessageSellerGraphic() {
       ref={ref}
       className="absolute inset-0 flex flex-col justify-center gap-3 p-5 md:p-7"
     >
-      {/* Listing card */}
-      <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-3xl bg-white shadow-[0_22px_55px_rgba(10,22,40,0.3)]">
+      {/* Listing card — shrink-0 so it never compresses when the composer shows */}
+      <div className="mx-auto w-full max-w-[360px] shrink-0 overflow-hidden rounded-3xl bg-white shadow-[0_22px_55px_rgba(10,22,40,0.3)]">
         <div className="relative p-2.5">
           <img
             src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=720&h=420&fit=crop&q=70"
@@ -1098,7 +1098,7 @@ function MessageSellerGraphic() {
           </span>
         </div>
 
-        <div className="px-4 pb-4 pt-1">
+        <div className="px-4 pb-6 pt-1">
           <div className="flex items-center justify-between gap-2">
             <p className="font-serif text-[26px] leading-none text-[#0a1628]">
               $1,720,000
@@ -1162,21 +1162,24 @@ function MessageSellerGraphic() {
         </div>
       </div>
 
-      {/* Composer — fixed-height rounded rectangle, already tall enough for the
-          two-line message so it doesn't grow as the text wraps */}
-      {(phase === 2 || phase === 3) && (
-        <div className="mx-auto flex w-full max-w-[360px] animate-msg-in items-end gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_14px_36px_rgba(10,22,40,0.2)]">
-          <span className="min-h-[2.5rem] flex-1 text-[14px] leading-snug text-[#0a1628]">
-            {typed || (
-              <span className="text-[#94a3b8]">Message the seller…</span>
-            )}
-            <span className="ml-px inline-block h-4 w-px translate-y-[3px] animate-pulse bg-primary" />
-          </span>
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-white">
-            <IconSend className="size-4" stroke={2} />
-          </span>
-        </div>
-      )}
+      {/* Reserved slot — always occupies the composer's height so the card
+          neither moves nor resizes when the input appears/disappears. The
+          composer itself is a fixed-height rounded rectangle. */}
+      <div className="h-[66px] shrink-0">
+        {(phase === 2 || phase === 3) && (
+          <div className="mx-auto flex w-full max-w-[360px] animate-msg-in items-end gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_14px_36px_rgba(10,22,40,0.2)]">
+            <span className="min-h-[2.5rem] flex-1 text-[14px] leading-snug text-[#0a1628]">
+              {typed || (
+                <span className="text-[#94a3b8]">Message the seller…</span>
+              )}
+              <span className="ml-px inline-block h-4 w-px translate-y-[3px] animate-pulse bg-primary" />
+            </span>
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-white">
+              <IconSend className="size-4" stroke={2} />
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
