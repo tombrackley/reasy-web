@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type ReactNode, type MouseEvent, type PointerEvent } from "react"
+import { useState, useEffect, useLayoutEffect, useRef, type ReactNode, type MouseEvent, type PointerEvent } from "react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
 import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconBulb, IconPlus, IconScale, IconPointerFilled, IconLock, IconMapPin, IconBed, IconBath, IconCar, IconArrowsDiagonal, IconMessage, IconSend } from "@tabler/icons-react"
@@ -111,10 +111,27 @@ function Countdown() {
 // Real screenshots, each padded to a uniform aspect ratio so every card is the
 // same size in the marquee (see COMMENT_IMAGES).
 
+// Order matches the client's Notion "Instagram Screenshots here" page,
+// top to bottom (username noted for each).
 const COMMENT_IMAGES = [
-  comment01, comment02, comment03, comment04, comment05, comment06,
-  comment07, comment08, comment09, comment10, comment11, comment12,
-  comment13, comment14, comment15, comment16, comment17, comment18,
+  comment18, // disruptivepotato
+  comment02, // appleuser57286718
+  comment15, // 750ibm
+  comment17, // griffin_dope
+  comment14, // Jacq Therese Plunqui
+  comment16, // elizabeth_hindmarsh1967
+  comment13, // xxoo
+  comment12, // Al
+  comment11, // HPReka
+  comment10, // andrea
+  comment09, // Builder
+  comment08, // s_t_a_x
+  comment06, // clarekarensweeney
+  comment04, // Joel Seemo
+  comment07, // Kurt
+  comment05, // michelecherry213
+  comment03, // delilah
+  comment01, // stefinternational
 ]
 
 function CommentCard({ src, className }: { src: string; className?: string }) {
@@ -224,72 +241,37 @@ function CommentMarquee() {
 }
 
 // Mobile-only carousel: one comment centred with a peek of the neighbours,
-// auto-advances on a timer (like Instagram Stories) but a tap on the left half
-// steps back and the right half steps forward. Native scroll-snap keeps swiping
-// working too. Wrapping at the ends jumps instantly so there's no long rewind.
+// auto-advances on a timer (like Instagram Stories); a tap on the left half
+// steps back and the right half steps forward. Driven purely by a translateX
+// transform (no scroll container) so there's no horizontal swipe/drag — only
+// tap navigation. Wraps around at both ends.
 const AUTO_ADVANCE_MS = 3500
 
 function MobileCommentCarousel() {
-  const scrollerRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
   const timerRef = useRef<number | undefined>(undefined)
-  const syncRef = useRef<number | undefined>(undefined)
-  const snapTimerRef = useRef<number | undefined>(undefined)
   const [active, setActive] = useState(0)
+  const [offset, setOffset] = useState(0)
   const len = COMMENT_IMAGES.length
 
-  const nearestIndex = () => {
-    const el = scrollerRef.current
-    if (!el) return 0
-    const mid = el.scrollLeft + el.clientWidth / 2
-    let best = 0
-    let bestDist = Infinity
-    Array.from(el.children).forEach((child, i) => {
-      const c = child as HTMLElement
-      const dist = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid)
-      if (dist < bestDist) {
-        bestDist = dist
-        best = i
-      }
-    })
-    return best
+  // Centre the active card by translating the track. Using the offset delta
+  // from the first card keeps it correct regardless of the offsetParent, and
+  // active 0 → offset 0 is already centred thanks to the symmetric px-14.
+  const measure = () => {
+    const track = trackRef.current
+    if (!track) return
+    const first = track.children[0] as HTMLElement | undefined
+    const cur = track.children[active] as HTMLElement | undefined
+    if (first && cur) setOffset(-(cur.offsetLeft - first.offsetLeft))
   }
 
-  const scrollToIndex = (i: number, smooth = true) => {
-    const el = scrollerRef.current
-    if (!el) return
-    const child = el.children[i] as HTMLElement | undefined
-    if (!child) return
-    setActive(i)
-    const left = child.offsetLeft + child.offsetWidth / 2 - el.clientWidth / 2
-    if (smooth) {
-      // scroll-snap-type: mandatory cancels programmatic smooth scrolls (it
-      // re-snaps to the current point mid-animation), so lift snapping for the
-      // duration and restore it after. We land on a snap point, so there's no
-      // visible jump when it comes back.
-      el.style.scrollSnapType = "none"
-      window.clearTimeout(snapTimerRef.current)
-      snapTimerRef.current = window.setTimeout(() => {
-        el.style.scrollSnapType = ""
-      }, 500)
-    }
-    el.scrollTo({ left, behavior: smooth ? "smooth" : "auto" })
-  }
+  useLayoutEffect(measure, [active])
 
-  // Keep the highlighted (opaque) card in sync while the user swipes.
-  const onScroll = () => {
-    if (syncRef.current) return
-    syncRef.current = requestAnimationFrame(() => {
-      syncRef.current = undefined
-      setActive(nearestIndex())
-    })
-  }
-
-  const step = (dir: 1 | -1) => {
-    const next = nearestIndex() + dir
-    if (next >= len) scrollToIndex(0, false)
-    else if (next < 0) scrollToIndex(len - 1, false)
-    else scrollToIndex(next, true)
-  }
+  useEffect(() => {
+    window.addEventListener("resize", measure)
+    return () => window.removeEventListener("resize", measure)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active])
 
   const reduced =
     typeof window !== "undefined" &&
@@ -297,45 +279,45 @@ function MobileCommentCarousel() {
 
   const startTimer = () => {
     window.clearInterval(timerRef.current)
-    timerRef.current = window.setInterval(() => step(1), AUTO_ADVANCE_MS)
+    timerRef.current = window.setInterval(
+      () => setActive((a) => (a + 1) % len),
+      AUTO_ADVANCE_MS
+    )
   }
 
   useEffect(() => {
     if (reduced) return
     startTimer()
-    return () => {
-      window.clearInterval(timerRef.current)
-      window.clearTimeout(snapTimerRef.current)
-    }
+    return () => window.clearInterval(timerRef.current)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onTap = (e: MouseEvent<HTMLDivElement>) => {
-    const el = scrollerRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    step(e.clientX >= rect.left + rect.width / 2 ? 1 : -1)
+    const rect = e.currentTarget.getBoundingClientRect()
+    const dir = e.clientX >= rect.left + rect.width / 2 ? 1 : -1
+    setActive((a) => (a + dir + len) % len)
     if (!reduced) startTimer() // reset the clock after a manual skip
   }
 
   return (
-    <div
-      ref={scrollerRef}
-      onClick={onTap}
-      onScroll={onScroll}
-      className="flex snap-x snap-mandatory gap-6 overflow-x-auto px-14 pb-4 md:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-    >
-      {COMMENT_IMAGES.map((src, i) => (
-        <div
-          key={i}
-          className={cn(
-            "w-full shrink-0 snap-center transition-opacity duration-300",
-            active === i ? "opacity-100" : "opacity-30"
-          )}
-        >
-          <CommentCard src={src} className="w-full" />
-        </div>
-      ))}
+    <div onClick={onTap} className="overflow-hidden px-14 pb-4 md:hidden">
+      <div
+        ref={trackRef}
+        className="flex gap-6 transition-transform duration-500 ease-out will-change-transform motion-reduce:transition-none"
+        style={{ transform: `translateX(${offset}px)` }}
+      >
+        {COMMENT_IMAGES.map((src, i) => (
+          <div
+            key={i}
+            className={cn(
+              "w-full shrink-0 transition-opacity duration-300 motion-reduce:transition-none",
+              active === i ? "opacity-100" : "opacity-30"
+            )}
+          >
+            <CommentCard src={src} className="w-full" />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -1476,6 +1458,20 @@ function SellerEnquiryDialog({
               type="email"
               autoComplete="email"
               placeholder="you@example.com"
+              className={dialogInput}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="seller-mobile" className={dialogLabel}>
+              Mobile number
+            </label>
+            <input
+              id="seller-mobile"
+              type="tel"
+              autoComplete="tel"
+              inputMode="tel"
+              placeholder="0412 345 678"
               className={dialogInput}
             />
           </div>
