@@ -43,7 +43,7 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
       )}
     >
       {/* Soft radial glow behind the content */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(79,130,193,0.22),transparent_70%)]" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(80,125,222,0.22),transparent_70%)]" />
 
       {/* Reasy logo — matches the home-alt header treatment */}
       <div className="absolute left-0 top-0 px-6 py-4 md:px-10">
@@ -62,14 +62,14 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
         )}
       >
         <h2 className="font-serif text-[clamp(3rem,9vw,5rem)] leading-[1.05] text-white">
-          Agents are <span className="text-[#8fb8e8]">NOT</span>
+          Agents are <span className="text-primary">NOT</span>
           <br />
           welcome here.
         </h2>
 
         <p className="mx-auto mt-6 max-w-[520px] text-lg leading-relaxed text-white/70">
           If you enjoy dealing with Real Estate Agents you are in the wrong
-          place… <span className="font-semibold text-[#7ba4dd]">Stick with the old portals!</span>
+          place… <span className="font-semibold text-primary">Stick with the old portals!</span>
         </p>
 
         <div className="mt-7 flex justify-center">
@@ -81,7 +81,7 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
         <div className="mt-8">
           <a
             href="/for-buyers"
-            className="shimmer-stroke inline-flex items-center gap-2 rounded-full bg-[#a9cef0] px-8 py-4 text-[15px] font-semibold text-[#0a1526] shadow-[0_10px_30px_-8px_rgba(169,206,240,0.5)] transition-colors hover:bg-[#bcd9f4]"
+            className="shimmer-stroke inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(80,125,222,0.5)] transition-colors hover:bg-primary/90"
           >
             See what all the fuss is about
             <IconArrowRight className="size-4" />

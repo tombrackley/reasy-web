@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type ReactNode, type MouseEvent, type PointerEvent } from "react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
-import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconBulb, IconPlus, IconScale, IconPointerFilled, IconLock } from "@tabler/icons-react"
+import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconBulb, IconPlus, IconScale, IconPointerFilled, IconLock, IconMapPin, IconBed, IconBath, IconCar, IconArrowsDiagonal, IconMessage, IconSend } from "@tabler/icons-react"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
 import { Reveal } from "@/components/reveal"
 import dailyMailLogo from "@/assets/daily-mail-logo.png"
@@ -397,18 +397,28 @@ function OfferChatFeed() {
     const el = ref.current
     if (!el) return
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setStep(4)
+      setStep(3)
       return
     }
     let timers: number[] = []
+    let running = false
+    const cycle = () => {
+      timers.forEach(clearTimeout)
+      timers = []
+      setStep(0)
+      ;[500, 1400, 2300].forEach((delay, i) => {
+        timers.push(window.setTimeout(() => setStep(i + 1), delay))
+      })
+      // last bubble lands (~2650ms), hold the finished state 3s, then loop
+      timers.push(window.setTimeout(() => running && cycle(), 2650 + 3000))
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && !running) {
+            running = true
             observer.unobserve(entry.target)
-            ;[500, 1400, 2300].forEach((delay, i) => {
-              timers.push(window.setTimeout(() => setStep(i + 1), delay))
-            })
+            cycle()
           }
         }
       },
@@ -416,6 +426,7 @@ function OfferChatFeed() {
     )
     observer.observe(el)
     return () => {
+      running = false
       observer.disconnect()
       timers.forEach(clearTimeout)
     }
@@ -496,14 +507,26 @@ function GuidanceGraphic() {
       setShowHint(true)
       return
     }
-    let hintTimer: number | undefined
+    let timers: number[] = []
+    let running = false
+    const cycle = () => {
+      timers.forEach(clearTimeout)
+      timers = []
+      // reset so the entrance animations can replay
+      setInView(false)
+      setShowHint(false)
+      timers.push(window.setTimeout(() => setInView(true), 60))
+      timers.push(window.setTimeout(() => setShowHint(true), 60 + 1400))
+      // hint settles (~1810ms), hold the finished state 3s, then loop
+      timers.push(window.setTimeout(() => running && cycle(), 60 + 1810 + 3000))
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setInView(true)
+          if (entry.isIntersecting && !running) {
+            running = true
             observer.unobserve(entry.target)
-            hintTimer = window.setTimeout(() => setShowHint(true), 1400)
+            cycle()
           }
         }
       },
@@ -511,8 +534,9 @@ function GuidanceGraphic() {
     )
     observer.observe(el)
     return () => {
+      running = false
       observer.disconnect()
-      if (hintTimer) clearTimeout(hintTimer)
+      timers.forEach(clearTimeout)
     }
   }, [])
 
@@ -983,6 +1007,180 @@ function AccessGraphic() {
   )
 }
 
+// --- Message the seller directly graphic (Access card) ---
+// A real listing card with a "Message Seller" button. On scroll-in: a cursor
+// taps the button, a composer slides up, a message types itself out and sends —
+// the button then flips to a green "Enquired" state ("you're in the inbox").
+const SELLER_MESSAGE =
+  "Hi! Is 42 Wallaby Way still available? I'd love to book an inspection."
+
+function MessageSellerGraphic() {
+  const ref = useRef<HTMLDivElement>(null)
+  // 0 idle · 1 button pressed · 2 composer open · 3 typing · 4 sent
+  const [phase, setPhase] = useState(0)
+  const [typed, setTyped] = useState("")
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setPhase(4)
+      setTyped(SELLER_MESSAGE)
+      return
+    }
+    let timers: number[] = []
+    let typeInt: number | undefined
+    let running = false
+    const cycle = () => {
+      timers.forEach(clearTimeout)
+      timers = []
+      if (typeInt) window.clearInterval(typeInt)
+      setPhase(0)
+      setTyped("")
+      timers.push(window.setTimeout(() => setPhase(1), 900)) // cursor taps button
+      timers.push(window.setTimeout(() => setPhase(2), 1900)) // composer appears
+      timers.push(
+        window.setTimeout(() => {
+          setPhase(3)
+          let i = 0
+          typeInt = window.setInterval(() => {
+            i += 1
+            setTyped(SELLER_MESSAGE.slice(0, i))
+            if (i >= SELLER_MESSAGE.length) {
+              window.clearInterval(typeInt)
+              timers.push(window.setTimeout(() => setPhase(4), 650)) // send
+              // bubble lands (~1000ms), hold the finished state 3s, then loop
+              timers.push(window.setTimeout(() => running && cycle(), 1000 + 3000))
+            }
+          }, 42)
+        }, 2300)
+      )
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && !running) {
+            running = true
+            observer.unobserve(entry.target)
+            cycle()
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => {
+      running = false
+      observer.disconnect()
+      timers.forEach(clearTimeout)
+      if (typeInt) clearInterval(typeInt)
+    }
+  }, [])
+
+  const stat = "flex items-center gap-1.5"
+  const statIcon = "size-[18px] text-[#94a3b8]"
+
+  return (
+    <div
+      ref={ref}
+      className="absolute inset-0 flex flex-col justify-center gap-3 p-5 md:p-7"
+    >
+      {/* Listing card */}
+      <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-3xl bg-white shadow-[0_22px_55px_rgba(10,22,40,0.3)]">
+        <div className="relative p-2.5">
+          <img
+            src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=720&h=420&fit=crop&q=70"
+            alt="42 Wallaby Way, Sydney"
+            className="h-[150px] w-full rounded-2xl object-cover md:h-[168px]"
+          />
+          <span className="absolute left-5 top-5 rounded-full bg-[#d1f5e6] px-3 py-1 text-xs font-semibold text-[#0f766e]">
+            House
+          </span>
+        </div>
+
+        <div className="px-4 pb-4 pt-1">
+          <div className="flex items-center justify-between gap-2">
+            <p className="font-serif text-[26px] leading-none text-[#0a1628]">
+              $1,720,000
+            </p>
+            <span className="shrink-0 rounded-full bg-[#d1f5e6] px-3 py-1 text-xs font-semibold text-[#0f766e]">
+              Open to Offers
+            </span>
+          </div>
+
+          <div className="mt-2.5 flex items-center gap-1.5 text-sm text-[#47474f]">
+            <IconMapPin className="size-4 shrink-0 text-[#94a3b8]" stroke={2} />
+            42 Wallaby Way Sydney, NSW, 2000
+          </div>
+
+          <div className="mt-3 flex items-center gap-4 text-sm text-[#47474f]">
+            <span className={stat}>
+              <IconBed className={statIcon} stroke={1.75} />4
+            </span>
+            <span className={stat}>
+              <IconBath className={statIcon} stroke={1.75} />3
+            </span>
+            <span className={stat}>
+              <IconCar className={statIcon} stroke={1.75} />2
+            </span>
+            <span className={cn(stat, "ml-auto")}>
+              <IconArrowsDiagonal className={statIcon} stroke={1.75} />
+              1,890m²
+            </span>
+          </div>
+
+          {/* Message Seller button — flips to "Enquired" once the message sends */}
+          <div className="relative mt-4">
+            <button
+              type="button"
+              className={cn(
+                "flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all duration-300",
+                phase >= 4
+                  ? "bg-[#d1f5e6] text-[#0f766e]"
+                  : "bg-primary text-white",
+                phase === 1 && "scale-[0.97] brightness-95"
+              )}
+            >
+              {phase >= 4 ? (
+                <>
+                  <IconCheck className="size-[18px]" stroke={2.5} />
+                  Enquired
+                </>
+              ) : (
+                <>
+                  <IconMessage className="size-[18px]" stroke={2} />
+                  Message Seller
+                </>
+              )}
+            </button>
+            {phase === 1 && (
+              <span className="pointer-events-none absolute right-10 top-1/2 animate-cursor-click">
+                <IconPointerFilled className="size-6 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]" />
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Composer — fixed-height rounded rectangle, already tall enough for the
+          two-line message so it doesn't grow as the text wraps */}
+      {(phase === 2 || phase === 3) && (
+        <div className="mx-auto flex w-full max-w-[360px] animate-msg-in items-end gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_14px_36px_rgba(10,22,40,0.2)]">
+          <span className="min-h-[2.5rem] flex-1 text-[14px] leading-snug text-[#0a1628]">
+            {typed || (
+              <span className="text-[#94a3b8]">Message the seller…</span>
+            )}
+            <span className="ml-px inline-block h-4 w-px translate-y-[3px] animate-pulse bg-primary" />
+          </span>
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-white">
+            <IconSend className="size-4" stroke={2} />
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // --- What is #agentless ---
 
 const stackCards = [
@@ -997,6 +1195,7 @@ const stackCards = [
     workspace: false,
     calc: false,
     access: false,
+    inbox: false,
   },
   {
     eyebrow: "Software Intelligence",
@@ -1009,6 +1208,7 @@ const stackCards = [
     workspace: false,
     calc: false,
     access: false,
+    inbox: false,
   },
   // The conveyancer (workspace: true) and commission (calc: true) cards are kept
   // as options — flip a flag here to swap the graphic back in for AccessGraphic.
@@ -1016,13 +1216,14 @@ const stackCards = [
     eyebrow: "Access",
     headingA: "Homes you won't find",
     headingB: "on the portals",
-    body: "Plenty of owners sell privately on Reasy, direct and without an agent, so these homes never make it onto the big portals. You get a whole pool of listings other buyers never see, and you deal with the seller yourself from the very first message.",
+    body: "Owners sell direct on Reasy. Their homes skip the agent, skip the portal and land straight in front of buyers who actually want to buy. That's you. While everyone else is getting outbid at auction or messed around by agents, you're already in the seller's inbox.",
     accent: "#4fd1c5",
     chat: false,
     guide: false,
     workspace: false,
     calc: false,
-    access: true,
+    access: false,
+    inbox: true,
   },
 ]
 
@@ -1064,6 +1265,8 @@ function AgentlessFloat() {
                     <OfferChatFeed />
                   ) : c.guide ? (
                     <GuidanceGraphic />
+                  ) : c.inbox ? (
+                    <MessageSellerGraphic />
                   ) : c.workspace ? (
                     <WorkspaceGraphic />
                   ) : c.access ? (
@@ -1582,9 +1785,9 @@ export function BuyersPage() {
       </main>
 
       <footer className="relative z-10 border-t border-white/10 px-6 py-10 md:px-14">
-        <div className="mx-auto flex max-w-[1280px] flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
+        <div className="relative mx-auto flex max-w-[1280px] flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
           <img src={logoWhiteImg} alt="Reasy" className="h-6" />
-          <nav className="flex items-center gap-8 text-sm text-white/60">
+          <nav className="flex items-center gap-8 text-sm text-white/60 md:absolute md:left-1/2 md:-translate-x-1/2">
             <a href="/privacy" className="transition-colors hover:text-white">
               Privacy Policy
             </a>
