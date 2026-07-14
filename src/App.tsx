@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
 import { BuyersPage } from "@/components/buyers-page"
+import { PrivacyPage } from "@/components/privacy-page"
+import { TermsPage } from "@/components/terms-page"
 import { WelcomeOverlay } from "@/components/welcome-overlay"
 
 // TEMPORARY GATE: while the site is pre-launch, the only routes are the
@@ -21,6 +23,8 @@ function App() {
   }, [path])
 
   if (path === "/for-buyers") return <BuyersPage />
+  if (path === "/privacy") return <PrivacyPage />
+  if (path === "/terms") return <TermsPage />
 
   // Everything else lands on the temporary home gate.
   return (
