@@ -1417,6 +1417,20 @@ function ContactDialog({ open, onClose }: { open: boolean; onClose: () => void }
           </div>
 
           <div>
+            <label htmlFor="contact-mobile" className="text-sm font-medium text-[#020a0f] mb-2 block">
+              Mobile
+            </label>
+            <input
+              id="contact-mobile"
+              type="tel"
+              autoComplete="tel"
+              inputMode="tel"
+              placeholder="0412 345 678"
+              className="w-full px-4 py-3 rounded-xl border border-[#e6e6eb] bg-white text-[15px] text-[#020a0f] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+            />
+          </div>
+
+          <div>
             <label htmlFor="contact-postcode" className="text-sm font-medium text-[#020a0f] mb-2 block">
               Postcode
             </label>

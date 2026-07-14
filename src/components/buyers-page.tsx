@@ -117,9 +117,9 @@ const COMMENT_IMAGES = [
   comment13, comment14, comment15, comment16, comment17, comment18,
 ]
 
-function CommentCard({ src }: { src: string }) {
+function CommentCard({ src, className }: { src: string; className?: string }) {
   return (
-    <div className="w-[340px] shrink-0 overflow-hidden rounded-xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
+    <div className={cn("w-[340px] shrink-0 overflow-hidden rounded-xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.18)]", className)}>
       {/* pointer-events-none + no callout so a long-press doesn't trigger the
           iOS "copy/save image" menu while slowing the marquee */}
       <img
@@ -223,10 +223,127 @@ function CommentMarquee() {
   )
 }
 
+// Mobile-only carousel: one comment centred with a peek of the neighbours,
+// auto-advances on a timer (like Instagram Stories) but a tap on the left half
+// steps back and the right half steps forward. Native scroll-snap keeps swiping
+// working too. Wrapping at the ends jumps instantly so there's no long rewind.
+const AUTO_ADVANCE_MS = 3500
+
+function MobileCommentCarousel() {
+  const scrollerRef = useRef<HTMLDivElement>(null)
+  const timerRef = useRef<number | undefined>(undefined)
+  const syncRef = useRef<number | undefined>(undefined)
+  const snapTimerRef = useRef<number | undefined>(undefined)
+  const [active, setActive] = useState(0)
+  const len = COMMENT_IMAGES.length
+
+  const nearestIndex = () => {
+    const el = scrollerRef.current
+    if (!el) return 0
+    const mid = el.scrollLeft + el.clientWidth / 2
+    let best = 0
+    let bestDist = Infinity
+    Array.from(el.children).forEach((child, i) => {
+      const c = child as HTMLElement
+      const dist = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid)
+      if (dist < bestDist) {
+        bestDist = dist
+        best = i
+      }
+    })
+    return best
+  }
+
+  const scrollToIndex = (i: number, smooth = true) => {
+    const el = scrollerRef.current
+    if (!el) return
+    const child = el.children[i] as HTMLElement | undefined
+    if (!child) return
+    setActive(i)
+    const left = child.offsetLeft + child.offsetWidth / 2 - el.clientWidth / 2
+    if (smooth) {
+      // scroll-snap-type: mandatory cancels programmatic smooth scrolls (it
+      // re-snaps to the current point mid-animation), so lift snapping for the
+      // duration and restore it after. We land on a snap point, so there's no
+      // visible jump when it comes back.
+      el.style.scrollSnapType = "none"
+      window.clearTimeout(snapTimerRef.current)
+      snapTimerRef.current = window.setTimeout(() => {
+        el.style.scrollSnapType = ""
+      }, 500)
+    }
+    el.scrollTo({ left, behavior: smooth ? "smooth" : "auto" })
+  }
+
+  // Keep the highlighted (opaque) card in sync while the user swipes.
+  const onScroll = () => {
+    if (syncRef.current) return
+    syncRef.current = requestAnimationFrame(() => {
+      syncRef.current = undefined
+      setActive(nearestIndex())
+    })
+  }
+
+  const step = (dir: 1 | -1) => {
+    const next = nearestIndex() + dir
+    if (next >= len) scrollToIndex(0, false)
+    else if (next < 0) scrollToIndex(len - 1, false)
+    else scrollToIndex(next, true)
+  }
+
+  const reduced =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+  const startTimer = () => {
+    window.clearInterval(timerRef.current)
+    timerRef.current = window.setInterval(() => step(1), AUTO_ADVANCE_MS)
+  }
+
+  useEffect(() => {
+    if (reduced) return
+    startTimer()
+    return () => {
+      window.clearInterval(timerRef.current)
+      window.clearTimeout(snapTimerRef.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const onTap = (e: MouseEvent<HTMLDivElement>) => {
+    const el = scrollerRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    step(e.clientX >= rect.left + rect.width / 2 ? 1 : -1)
+    if (!reduced) startTimer() // reset the clock after a manual skip
+  }
+
+  return (
+    <div
+      ref={scrollerRef}
+      onClick={onTap}
+      onScroll={onScroll}
+      className="flex snap-x snap-mandatory gap-6 overflow-x-auto px-14 pb-4 md:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    >
+      {COMMENT_IMAGES.map((src, i) => (
+        <div
+          key={i}
+          className={cn(
+            "w-full shrink-0 snap-center transition-opacity duration-300",
+            active === i ? "opacity-100" : "opacity-30"
+          )}
+        >
+          <CommentCard src={src} className="w-full" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="text-center">
-      <div className="text-2xl font-semibold text-[#8fb8e8] md:text-[28px]">{value}</div>
+      <div className="font-serif text-2xl text-white md:text-[28px]">{value}</div>
       <div className="mt-1 text-xs tracking-wide text-white/80">{label}</div>
     </div>
   )
@@ -239,12 +356,16 @@ function WhatPeopleAreSaying() {
         The people have spoken (and this is what they want)
       </p>
 
-      {/* Continuous marquee — slows down (never stops) on hover / touch */}
-      <CommentMarquee />
+      {/* Desktop: continuous drag-scrub marquee. Mobile: tap left/right to
+          step (auto-advances like Instagram Stories), swipe also works. */}
+      <div className="hidden md:block">
+        <CommentMarquee />
+      </div>
+      <MobileCommentCarousel />
 
       <div className="mt-12 flex items-start justify-center gap-10 md:gap-16">
-        <Stat value="15K+" label="Followers" />
-        <Stat value="1.5M+" label="Views (60 days)" />
+        <Stat value="18K+" label="Followers" />
+        <Stat value="1.5M+" label="Views" />
         <Stat value="500+" label="Comments" />
       </div>
     </section>
@@ -262,7 +383,7 @@ function Badge({ children }: { children: ReactNode }) {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-[15px] text-white placeholder:text-white/45 transition-colors focus:border-[#8fb8e8] focus:outline-none focus:ring-2 focus:ring-[#8fb8e8]/30"
+  "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-[15px] text-white placeholder:text-white/45 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
 const labelClass = "mb-2 block text-sm font-medium text-white"
 
 // --- Offer chat graphic ---
@@ -908,7 +1029,7 @@ const stackCards = [
 // --- What is #agentless (floating, alternating variant) ---
 
 // Lightened accents so the highlighted heading words read on the dark section.
-const FLOAT_ACCENT = ["#8fb8e8", "#B47CFF", "#4fd1c5"]
+const FLOAT_ACCENT = ["#507dde", "#B47CFF", "#4fd1c5"]
 
 function AgentlessFloat() {
   return (
@@ -920,7 +1041,7 @@ function AgentlessFloat() {
           <h2 className="mt-6 font-serif text-4xl leading-[1.1] md:text-[52px]">
             It's where buyers
             <br />
-            <span className="text-[#8fb8e8]">talk directly to sellers.</span>
+            <span className="text-primary">talk directly to sellers.</span>
           </h2>
         </div>
 
@@ -1009,7 +1130,7 @@ function OldWayVsAgentless() {
   const agentless = [
     "Every offer goes directly to the seller",
     "Full transparency. You see everything.",
-    "Identity-verified buyers only",
+    "Buyers and sellers identity-verified for transparency",
     "Direct conversations with the owner",
   ]
 
@@ -1033,7 +1154,7 @@ function OldWayVsAgentless() {
 
         {/* #agentless */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-10">
-          <p className="font-['Roboto_Mono_Variable'] text-[12px] font-semibold uppercase tracking-[0.1em] text-[#8fb8e8]">
+          <p className="font-['Roboto_Mono_Variable'] text-[12px] font-semibold uppercase tracking-[0.1em] text-primary">
             #Agentless
           </p>
           <div className="mt-4 divide-y divide-white/[0.07]">
@@ -1190,9 +1311,9 @@ function JoinAgentless() {
           <Badge>Join #agentless</Badge>
 
           <h2 className="mt-6 font-serif text-4xl leading-[1.15] md:text-[44px]">
-            Be <span className="text-[#8fb8e8]">first in line</span>
+            Be <span className="text-primary">first in line</span>
             <br />
-            when the doors open.
+            when we open the doors.
           </h2>
         </div>
 
@@ -1240,7 +1361,7 @@ function JoinAgentless() {
 
           <button
             type="submit"
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-[#a9cef0] py-4 text-[15px] font-semibold text-[#0a1628] transition-colors hover:bg-[#bcd9f4]"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-4 text-[15px] font-semibold text-white transition-colors hover:bg-primary/90"
           >
             Get Early Access <IconArrowRight className="size-4" />
           </button>
@@ -1343,9 +1464,9 @@ function PersonBehindThis() {
               <p>
                 <span className="font-semibold text-white">I started posting about it.</span>{" "}
                 Agents lost their minds. My follower count went from nothing to
-                15K+ in weeks. +1.5 million views. Hundreds of comments from
+                18K+ in weeks. +1.5 million views. Hundreds of comments from
                 people saying the exact same thing:{" "}
-                <span className="italic text-[#7ba4dd]">
+                <span className="italic text-primary">
                   "why doesn't a platform exist already?"
                 </span>
               </p>
@@ -1414,7 +1535,7 @@ export function BuyersPage() {
             <br />
             dealing with agents,
             <br className="hidden md:block" />{" "}
-            <span className="relative isolate inline-block text-[#8fb8e8]">
+            <span className="relative isolate inline-block text-primary">
               or you can stop.
               <svg
                 className="absolute bottom-1 left-0 w-full -z-10 opacity-60"
@@ -1425,7 +1546,7 @@ export function BuyersPage() {
               >
                 <path
                   d="M2 6C80 2 200 2 471 6"
-                  stroke="#A5C2FF"
+                  stroke="#507dde"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
@@ -1442,7 +1563,7 @@ export function BuyersPage() {
           <div className="mt-12">
             <a
               href="/home#waitlist"
-              className="shimmer-stroke inline-flex items-center gap-2 rounded-full bg-[#a9cef0] px-8 py-4 text-[15px] font-semibold text-[#0a1628] shadow-[0_10px_30px_-8px_rgba(169,206,240,0.5)] transition-colors hover:bg-[#bcd9f4]"
+              className="shimmer-stroke inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(80,125,222,0.5)] transition-colors hover:bg-primary/90"
             >
               Get Early Access <IconArrowRight className="size-4" />
             </a>
@@ -1459,6 +1580,23 @@ export function BuyersPage() {
         <Reveal><OldWayVsAgentless /></Reveal>
         <Reveal><JoinAgentless /></Reveal>
       </main>
+
+      <footer className="relative z-10 border-t border-white/10 px-6 py-10 md:px-14">
+        <div className="mx-auto flex max-w-[1280px] flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
+          <img src={logoWhiteImg} alt="Reasy" className="h-6" />
+          <nav className="flex items-center gap-8 text-sm text-white/60">
+            <a href="/privacy" className="transition-colors hover:text-white">
+              Privacy Policy
+            </a>
+            <a href="/terms" className="transition-colors hover:text-white">
+              Terms of Service
+            </a>
+          </nav>
+          <p className="text-xs text-white/40">
+            &copy; 2026 Reasy Pty Ltd. All rights reserved.
+          </p>
+        </div>
+      </footer>
       </div>
     </div>
   )
