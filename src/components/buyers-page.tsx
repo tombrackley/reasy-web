@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef, type ReactNode, type MouseEvent, type PointerEvent } from "react"
+import { useState, useEffect, useLayoutEffect, useRef, type ReactNode, type MouseEvent, type TouchEvent, type PointerEvent } from "react"
 import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
 import { IconArrowRight, IconCheck, IconX, IconBrandInstagram, IconCircleCheckFilled, IconFileTypePdf, IconBulb, IconPlus, IconScale, IconPointerFilled, IconLock, IconMapPin, IconBed, IconBath, IconCar, IconArrowsDiagonal, IconMessage, IconSend } from "@tabler/icons-react"
@@ -240,18 +240,63 @@ function CommentMarquee() {
   )
 }
 
+// Instagram-style windowed dot indicator: keeps the active dot centred and
+// shrinks the dots towards the edges of the window, so a long list of comments
+// reads as "there are many more" without printing dozens of full-size dots.
+function CarouselDots({ len, active }: { len: number; active: number }) {
+  const PITCH = 14 // px between dot centres
+  const VISIBLE = 7 // dots shown at full/near-full size before shrinking
+  const viewport = VISIBLE * PITCH
+  const shift = viewport / 2 - PITCH / 2 - active * PITCH
+
+  return (
+    <div className="mt-5 flex justify-center" aria-hidden>
+      <div className="overflow-hidden" style={{ width: viewport }}>
+        <div
+          className="flex transition-transform duration-500 ease-out motion-reduce:transition-none"
+          style={{ transform: `translateX(${shift}px)` }}
+        >
+          {Array.from({ length: len }, (_, i) => {
+            const d = Math.abs(i - active)
+            const scale = d === 0 ? 1 : d <= 2 ? 0.7 : d <= 3 ? 0.5 : 0.3
+            return (
+              <div
+                key={i}
+                className="flex shrink-0 items-center justify-center"
+                style={{ width: PITCH, height: PITCH }}
+              >
+                <span
+                  className={cn(
+                    "block size-1.5 rounded-full transition-all duration-300 motion-reduce:transition-none",
+                    active === i ? "bg-white" : "bg-white/40"
+                  )}
+                  style={{ transform: `scale(${scale})` }}
+                />
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Mobile-only carousel: one comment centred with a peek of the neighbours,
-// auto-advances on a timer (like Instagram Stories); a tap on the left half
-// steps back and the right half steps forward. Driven purely by a translateX
-// transform (no scroll container) so there's no horizontal swipe/drag — only
-// tap navigation. Wraps around at both ends.
+// auto-advances on a timer (like Instagram Stories). Swipe left/right to move
+// between comments; the track follows the finger and snaps to the nearest
+// comment on release. Driven purely by a translateX transform (no scroll
+// container). Wraps around at both ends.
 const AUTO_ADVANCE_MS = 6000
+const SWIPE_THRESHOLD = 40 // px of travel needed to commit to a step
 
 function MobileCommentCarousel() {
   const trackRef = useRef<HTMLDivElement>(null)
   const timerRef = useRef<number | undefined>(undefined)
   const [active, setActive] = useState(0)
   const [offset, setOffset] = useState(0)
+  const [drag, setDrag] = useState(0)
+  const dragging = useRef(false)
+  const startX = useRef(0)
   const len = COMMENT_IMAGES.length
 
   // Centre the active card by translating the track. Using the offset delta
@@ -292,32 +337,60 @@ function MobileCommentCarousel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const onTap = (e: MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const dir = e.clientX >= rect.left + rect.width / 2 ? 1 : -1
-    setActive((a) => (a + dir + len) % len)
-    if (!reduced) startTimer() // reset the clock after a manual skip
+  const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    dragging.current = true
+    startX.current = e.touches[0].clientX
+    window.clearInterval(timerRef.current) // pause auto-advance while touching
+  }
+
+  const onTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    if (!dragging.current) return
+    setDrag(e.touches[0].clientX - startX.current)
+  }
+
+  const onTouchEnd = () => {
+    if (!dragging.current) return
+    dragging.current = false
+    const d = drag
+    setDrag(0)
+    if (Math.abs(d) > SWIPE_THRESHOLD) {
+      // swipe right (positive) → previous, swipe left → next
+      const dir = d < 0 ? 1 : -1
+      setActive((a) => (a + dir + len) % len)
+    }
+    if (!reduced) startTimer() // resume the clock after the gesture
   }
 
   return (
-    <div onClick={onTap} className="overflow-hidden px-14 pb-4 md:hidden">
-      <div
-        ref={trackRef}
-        className="flex gap-6 transition-transform duration-500 ease-out will-change-transform motion-reduce:transition-none"
-        style={{ transform: `translateX(${offset}px)` }}
-      >
-        {COMMENT_IMAGES.map((src, i) => (
-          <div
-            key={i}
-            className={cn(
-              "w-full shrink-0 transition-opacity duration-300 motion-reduce:transition-none",
-              active === i ? "opacity-100" : "opacity-30"
-            )}
-          >
-            <CommentCard src={src} className="w-full" />
-          </div>
-        ))}
+    <div className="overflow-hidden pb-4 md:hidden">
+      <div className="px-14">
+        <div
+          ref={trackRef}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          className={cn(
+            "flex touch-pan-y gap-6 will-change-transform",
+            dragging.current
+              ? ""
+              : "transition-transform duration-500 ease-out motion-reduce:transition-none"
+          )}
+          style={{ transform: `translateX(${offset + drag}px)` }}
+        >
+          {COMMENT_IMAGES.map((src, i) => (
+            <div
+              key={i}
+              className={cn(
+                "w-full shrink-0 transition-opacity duration-300 motion-reduce:transition-none",
+                active === i ? "opacity-100" : "opacity-30"
+              )}
+            >
+              <CommentCard src={src} className="w-full" />
+            </div>
+          ))}
+        </div>
       </div>
+      <CarouselDots len={len} active={active} />
     </div>
   )
 }
@@ -338,8 +411,9 @@ function WhatPeopleAreSaying() {
         The people have spoken (and this is what they want)
       </p>
 
-      {/* Desktop: continuous drag-scrub marquee. Mobile: tap left/right to
-          step (auto-advances like Instagram Stories), swipe also works. */}
+      {/* Desktop: continuous drag-scrub marquee. Mobile: swipe left/right to
+          step through comments (auto-advances like Instagram Stories), with
+          dot indicators below. */}
       <div className="hidden md:block">
         <CommentMarquee />
       </div>
