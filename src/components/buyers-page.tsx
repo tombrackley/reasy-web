@@ -27,8 +27,8 @@ import comment16 from "@/assets/comment-16.png"
 import comment17 from "@/assets/comment-17.png"
 import comment18 from "@/assets/comment-18.png"
 
-// Doors open 1 October 2026, Australian eastern time
-const LAUNCH = new Date("2026-10-01T00:00:00+10:00")
+// Doors open 1 November 2026, Australian eastern time
+const LAUNCH = new Date("2026-11-01T00:00:00+10:00")
 
 function useCountdown(target: Date) {
   const [now, setNow] = useState(() => new Date())
@@ -1751,7 +1751,7 @@ function PersonBehindThis() {
                 I'm betting everything on. The industry doesn't want this to exist
                 and that's exactly why it has to.
               </p>
-              <p className="text-white/50">Doors open 1 October. Get in early.</p>
+              <p className="text-white/50">Doors open 1 November. Get in early.</p>
             </div>
 
             {/* As featured in */}
@@ -1846,7 +1846,7 @@ export function BuyersPage() {
           </div>
 
           <p className="mt-5 text-xs text-white/80">
-            Doors open 1 October. Limited spots available.
+            Doors open 1 November. Limited spots available.
           </p>
         </section>
 

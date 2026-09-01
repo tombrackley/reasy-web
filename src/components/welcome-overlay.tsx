@@ -74,7 +74,7 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
 
         <div className="mt-7 flex justify-center">
           <span className="inline-flex items-center text-base font-semibold tracking-wide text-white">
-            Doors open 1 October 2026 · Australia
+            Doors open 1 November 2026 · Australia
           </span>
         </div>
 
