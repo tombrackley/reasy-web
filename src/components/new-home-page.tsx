@@ -15,6 +15,11 @@ import {
   IconBrandTiktok,
   IconBrandYoutube,
   IconCircleCheck,
+  IconCoin,
+  IconBook,
+  IconListCheck,
+  IconMessageCircle,
+  IconMail,
   type IconProps,
 } from "@tabler/icons-react"
 
@@ -36,17 +41,44 @@ function initialAudience(): Audience {
   return param === "buying" ? "buying" : "selling"
 }
 
-const navLinks: Record<Audience, { label: string; href: string }[]> = {
-  selling: [
-    { label: "How selling works", href: "#selling" },
-    { label: "Reasy AI", href: "#reasy-ai" },
-    { label: "Savings", href: "#savings" },
-  ],
-  buying: [
-    { label: "How buying works", href: "#buying" },
-    { label: "Buyer guide", href: "/for-buyers" },
-  ],
+// Shared nav for both views. Items either switch the page to an audience and
+// scroll to a section, or link off to another page.
+type NavItem = {
+  label: string
+  description: string
+  icon: TablerIcon
+  audience: Audience
+  section?: string
+  href?: string
 }
+
+const navMenus: { label: string; items: NavItem[] }[] = [
+  {
+    label: "For sellers",
+    items: [
+      { label: "How selling works", description: "List, talk to buyers and settle, step by step", icon: IconListCheck, audience: "selling", section: "selling" },
+      { label: "Reasy AI", description: "Pricing help and a selling assistant", icon: IconSparkles, audience: "selling", section: "reasy-ai" },
+      { label: "What you could save", description: "See the commission you keep", icon: IconCoin, audience: "selling", section: "savings" },
+      { label: "List your property", description: "Join the seller waitlist", icon: IconHome, audience: "selling", href: WAITLIST_HREF },
+    ],
+  },
+  {
+    label: "For buyers",
+    items: [
+      { label: "How buying works", description: "Enquire, inspect, offer and settle", icon: IconListCheck, audience: "buying", section: "buying" },
+      { label: "Talk to sellers directly", description: "No agent in the middle", icon: IconMessageCircle, audience: "buying", section: "buying" },
+      { label: "Buyer guide", description: "What to expect when buying privately", icon: IconBook, audience: "buying", href: "/for-buyers" },
+      { label: "Join the buyer waitlist", description: "Be first to see new listings", icon: IconMail, audience: "buying", href: WAITLIST_HREF },
+    ],
+  },
+]
+
+const navLinks = [
+  { label: "Browse properties", href: "/for-buyers" },
+  { label: "Pricing", audience: "selling" as Audience, section: "savings" },
+]
+
+type NavigateTo = (audience: Audience, section?: string) => void
 
 const audienceOptions: { value: Audience; label: string; icon: TablerIcon }[] = [
   { value: "selling", label: "I'm selling", icon: IconHome },
@@ -141,17 +173,128 @@ function AnnouncementBar() {
 
 // --- Nav ---
 
-function Nav({ audience, onAudienceChange }: { audience: Audience; onAudienceChange: (value: Audience) => void }) {
+const navLinkClass =
+  "inline-flex items-center gap-1 rounded-full px-4 py-2 text-base font-medium text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+
+function NavMenuItem({ item, onNavigate, onDone }: { item: NavItem; onNavigate: NavigateTo; onDone: () => void }) {
+  const { icon: Icon } = item
+  const body = (
+    <>
+      <span
+        className={cn(
+          "flex size-9 shrink-0 items-center justify-center rounded-full",
+          item.audience === "selling" ? "bg-secondary text-secondary-foreground" : "bg-green text-green-foreground"
+        )}
+      >
+        <Icon className="size-4.5" stroke={1.75} />
+      </span>
+      <span>
+        <span className="block text-sm font-semibold text-foreground">{item.label}</span>
+        <span className="block text-sm text-muted-foreground">{item.description}</span>
+      </span>
+    </>
+  )
+  const className =
+    "flex w-full items-start gap-3 rounded-xl p-3 text-left outline-none transition-colors hover:bg-accent focus-visible:bg-accent"
+
+  if (item.href) {
+    return (
+      <a href={item.href} className={className} onClick={onDone}>
+        {body}
+      </a>
+    )
+  }
+  return (
+    <button
+      type="button"
+      className={className}
+      onClick={() => {
+        onNavigate(item.audience, item.section)
+        onDone()
+      }}
+    >
+      {body}
+    </button>
+  )
+}
+
+function NavDropdown({ label, items, onNavigate }: { label: string; items: NavItem[]; onNavigate: NavigateTo }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  // When hover has just opened the menu, the click that follows shouldn't close it.
+  const hoverOpened = useRef(false)
+  const menuId = `nav-menu-${label.toLowerCase().replace(/\s+/g, "-")}`
+
+  // Close on outside click and Escape
+  useEffect(() => {
+    if (!open) return
+    const onPointer = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false)
+    }
+    document.addEventListener("pointerdown", onPointer)
+    document.addEventListener("keydown", onKey)
+    return () => {
+      document.removeEventListener("pointerdown", onPointer)
+      document.removeEventListener("keydown", onKey)
+    }
+  }, [open])
+
+  return (
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={() => {
+        hoverOpened.current = true
+        setOpen(true)
+      }}
+      onMouseLeave={() => {
+        hoverOpened.current = false
+        setOpen(false)
+      }}
+      onBlur={(e) => {
+        if (!ref.current?.contains(e.relatedTarget as Node)) setOpen(false)
+      }}
+    >
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={menuId}
+        onClick={() => {
+          if (hoverOpened.current) {
+            hoverOpened.current = false
+            setOpen(true)
+          } else {
+            setOpen((o) => !o)
+          }
+        }}
+        className={cn(navLinkClass, open && "bg-accent text-accent-foreground")}
+      >
+        {label}
+        <IconChevronDown className={cn("size-4 transition-transform duration-200", open && "rotate-180")} />
+      </button>
+      {open && (
+        // pt-2 bridges the gap so the menu stays open while the pointer moves into it
+        <div id={menuId} className="absolute left-0 top-full z-50 pt-2">
+          <div className="w-80 animate-in fade-in slide-in-from-top-1 rounded-2xl bg-card p-2 shadow-xl ring-1 ring-border duration-150">
+            {items.map((item) => (
+              <NavMenuItem key={item.label} item={item} onNavigate={onNavigate} onDone={() => setOpen(false)} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Nav({ onNavigate }: { onNavigate: NavigateTo }) {
   const [scrolled, setScrolled] = useState(false)
-  // The hero has its own toggle; the nav copy only appears once that's out of view.
-  const [pastHero, setPastHero] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 8)
-      setPastHero(window.scrollY > 280)
-    }
+    const onScroll = () => setScrolled(window.scrollY > 8)
     onScroll()
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
@@ -165,32 +308,32 @@ function Nav({ audience, onAudienceChange }: { audience: Audience; onAudienceCha
       )}
     >
       <nav className="flex h-16 items-center justify-between gap-6 px-4 md:h-20 md:px-8 lg:px-14">
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-8">
           <a href="/new-home" aria-label="Reasy home">
             <img src={logoImg} alt="Reasy" className="h-6 dark:hidden" />
             <img src={logoWhiteImg} alt="Reasy" className="hidden h-6 dark:block" />
           </a>
-          <div className="hidden items-center gap-1 xl:flex">
-            {navLinks[audience].map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="rounded-full px-4 py-2 text-base font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                {link.label}
-              </a>
+          <div className="hidden items-center gap-1 lg:flex">
+            {navMenus.map((menu) => (
+              <NavDropdown key={menu.label} label={menu.label} items={menu.items} onNavigate={onNavigate} />
             ))}
+            {navLinks.map((link) =>
+              link.href ? (
+                <a key={link.label} href={link.href} className={navLinkClass}>
+                  {link.label}
+                </a>
+              ) : (
+                <button
+                  key={link.label}
+                  type="button"
+                  onClick={() => onNavigate(link.audience!, link.section)}
+                  className={navLinkClass}
+                >
+                  {link.label}
+                </button>
+              )
+            )}
           </div>
-        </div>
-
-        <div
-          inert={!pastHero}
-          className={cn(
-            "hidden transition-opacity duration-300 lg:block",
-            pastHero ? "opacity-100" : "opacity-0"
-          )}
-        >
-          <AudienceToggle value={audience} onChange={onAudienceChange} size="sm" />
         </div>
 
         <div className="flex items-center gap-2">
@@ -209,7 +352,7 @@ function Nav({ audience, onAudienceChange }: { audience: Audience; onAudienceCha
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
-            className="flex size-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent xl:hidden outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="flex size-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent lg:hidden outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
           >
@@ -218,40 +361,45 @@ function Nav({ audience, onAudienceChange }: { audience: Audience; onAudienceCha
         </div>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile menu: same structure, grouped */}
       <div
+        inert={!menuOpen}
         className={cn(
-          "grid overflow-hidden border-border transition-all duration-300 xl:hidden",
+          "grid overflow-hidden border-border transition-all duration-300 lg:hidden",
           menuOpen ? "grid-rows-[1fr] border-t" : "grid-rows-[0fr]"
         )}
       >
         <div className="min-h-0">
-          <div className="flex flex-col gap-1 px-4 py-4">
-            <AudienceToggle
-              value={audience}
-              onChange={(value) => {
-                onAudienceChange(value)
-                setMenuOpen(false)
-              }}
-              size="sm"
-              className="mb-3 self-start"
-            />
-            {navLinks[audience].map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="rounded-xl px-3 py-3 text-base font-medium text-foreground transition-colors hover:bg-accent outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                {link.label}
-              </a>
+          <div className="max-h-[calc(100dvh-8rem)] space-y-6 overflow-y-auto px-4 py-5">
+            {navMenus.map((menu) => (
+              <div key={menu.label}>
+                <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{menu.label}</p>
+                {menu.items.map((item) => (
+                  <NavMenuItem key={item.label} item={item} onNavigate={onNavigate} onDone={() => setMenuOpen(false)} />
+                ))}
+              </div>
             ))}
-            <a
-              href={WAITLIST_HREF}
-              className="mt-2 rounded-full border border-border bg-card px-3 py-3 text-center text-base font-medium text-foreground sm:hidden"
-            >
-              Log in
-            </a>
+            <div className="flex flex-col gap-1 border-t border-border pt-4">
+              <a href="/for-buyers" className="rounded-xl px-3 py-3 text-base font-medium text-foreground hover:bg-accent">
+                Browse properties
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigate("selling", "savings")
+                  setMenuOpen(false)
+                }}
+                className="rounded-xl px-3 py-3 text-left text-base font-medium text-foreground hover:bg-accent"
+              >
+                Pricing
+              </button>
+              <a
+                href={WAITLIST_HREF}
+                className="mt-2 rounded-full border border-border bg-card px-3 py-3 text-center text-base font-medium text-foreground sm:hidden"
+              >
+                Log in
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -298,7 +446,7 @@ function Hero({ audience, onAudienceChange }: { audience: Audience; onAudienceCh
         <AudienceToggle value={audience} onChange={onAudienceChange} />
 
         <div key={audience} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-          <h1 className="mx-auto mt-10 max-w-[900px] text-balance text-5xl font-bold leading-[1.02] tracking-tighter text-brand-dark md:text-7xl lg:text-8xl dark:text-foreground">
+          <h1 className="mx-auto mt-10 max-w-[900px] text-balance font-display text-5xl leading-[1.02] tracking-[-0.02em] text-brand-dark md:text-7xl lg:text-8xl dark:text-foreground">
             {content.title}
           </h1>
           <p className="mx-auto mt-7 max-w-[600px] text-lg leading-relaxed text-muted-foreground md:text-xl">
@@ -922,8 +1070,9 @@ function Footer() {
   ]
 
   return (
-    <footer className="px-4 pb-4 md:px-6 md:pb-6">
-      <div className="mx-auto max-w-[1400px] rounded-3xl bg-brand-dark px-8 py-14 text-white md:px-14 md:py-20">
+    <footer className="px-3 pb-3 md:px-6 md:pb-6">
+      {/* Full-width rounded panel, matching the hero container's gutters */}
+      <div className="rounded-4xl bg-brand-dark px-8 py-14 text-white md:px-14 md:py-20 lg:px-20 lg:py-24">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <img src={logoWhiteImg} alt="Reasy" className="h-7" />
@@ -991,6 +1140,18 @@ export function NewHomePage() {
     window.history.replaceState(null, "", url)
   }
 
+  // Menu items switch view (if needed) then scroll to their section once it renders.
+  const navigateTo: NavigateTo = (value, section) => {
+    if (value !== audience) changeAudience(value)
+    if (!section) {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+      return
+    }
+    window.setTimeout(() => {
+      document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }, 60)
+  }
+
   // Switching from further down the page brings you back to the top of the new view.
   const switchAndScroll = (value: Audience) => {
     changeAudience(value)
@@ -1000,7 +1161,7 @@ export function NewHomePage() {
   return (
     <div data-slot="new-home-page" className="min-h-screen bg-canvas text-foreground">
       <AnnouncementBar />
-      <Nav audience={audience} onAudienceChange={changeAudience} />
+      <Nav onNavigate={navigateTo} />
       <main>
         <Hero audience={audience} onAudienceChange={changeAudience} />
         <Reveal key={`intro-${audience}`}><Intro audience={audience} /></Reveal>
