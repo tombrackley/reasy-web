@@ -125,7 +125,7 @@ export function AudienceToggle({
         aria-hidden="true"
         className={cn(
           "absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full transition-all duration-300 ease-out",
-          value === "selling" ? "translate-x-0 bg-primary" : "translate-x-full bg-lime"
+          value === "selling" ? "translate-x-0 bg-seller" : "translate-x-full bg-buyer"
         )}
       />
       {audienceOptions.map(({ value: option, label, icon: Icon }) => {
@@ -141,8 +141,8 @@ export function AudienceToggle({
               size === "lg" ? "px-5 py-2.5 text-base" : "px-3.5 py-1.5 text-sm",
               active
                 ? option === "selling"
-                  ? "text-primary-foreground"
-                  : "text-lime-foreground"
+                  ? "text-seller-foreground"
+                  : "text-buyer-foreground"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -191,7 +191,7 @@ export function AnnouncementBar() {
 // --- Nav ---
 
 const navLinkClass =
-  "inline-flex items-center gap-1 rounded-full px-4 py-2 text-base font-medium text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+  "inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
 
 function NavMenuItem({ item, onNavigate, onDone }: { item: NavItem; onNavigate: NavigateTo; onDone: () => void }) {
   const { icon: Icon } = item
@@ -203,8 +203,8 @@ function NavMenuItem({ item, onNavigate, onDone }: { item: NavItem; onNavigate: 
           item.ai
             ? "bg-ai/15 text-ai"
             : item.audience === "selling"
-              ? "bg-secondary text-secondary-foreground"
-              : "bg-lime text-lime-foreground"
+              ? "bg-seller text-seller-foreground"
+              : "bg-buyer text-buyer-foreground"
         )}
       >
         <Icon className="size-4.5" stroke={1.75} />
@@ -436,18 +436,18 @@ const heroContent: Record<
   }
 > = {
   selling: {
-    title: "Selling your home, made easy.",
-    body: "Reasy guides you from first enquiry to signed contract, for a flat fee instead of thousands in agent commission.",
+    title: "Sell without an agent. Easy.",
+    body: "Keep the commission. We'll show you how, step by step.",
     primary: { label: "List your property", href: WAITLIST_HREF, icon: IconHome },
     secondary: { label: "See what you could save", href: "#savings" },
     note: { highlight: "From $129 to list", rest: "No commission, ever" },
   },
   buying: {
-    title: "Buying your next home, made easy.",
-    body: "Find homes listed by their owners, talk to sellers directly and follow a checklist that explains every step, from finance to settlement.",
+    title: "Buy without the middleman.",
+    body: "Deal straight with the owner. No agent deciding who gets a look in, and no phantom offers pushing the price up.",
     primary: { label: "Get early access to listings", href: WAITLIST_HREF, icon: IconSearch },
     secondary: { label: "See how buying works", href: "#buying" },
-    note: { highlight: "Every seller is verified", rest: "No agent in the middle" },
+    note: { highlight: "Every seller is verified", rest: "Message owners directly" },
   },
 }
 
@@ -593,8 +593,8 @@ function Intro({ audience }: { audience: Audience }) {
 
 // Each showcase picks up one of the Reasy brand colours.
 const tones = {
-  blue: { chip: "bg-primary text-primary-foreground", glow: "feature-glow", icon: "text-primary" },
-  lime: { chip: "bg-lime text-lime-foreground", glow: "feature-glow-lime", icon: "text-lime-foreground" },
+  seller: { chip: "bg-seller text-seller-foreground", glow: "feature-glow-seller", icon: "text-seller-foreground" },
+  buyer: { chip: "bg-buyer text-buyer-foreground", glow: "feature-glow-buyer", icon: "text-buyer-ink" },
   ai: { chip: "bg-ai/15 text-ai", glow: "feature-glow-ai", icon: "text-ai" },
 }
 
@@ -612,7 +612,7 @@ function FeatureShowcase({
   title,
   items,
   cta,
-  tone = "blue",
+  tone = "seller",
   reverse = false,
 }: {
   id: string
@@ -966,7 +966,7 @@ function BothSides({ audience, onAudienceChange }: { audience: Audience; onAudie
                   <span
                     className={cn(
                       "flex size-11 items-center justify-center rounded-full",
-                      value === "selling" ? "bg-primary text-primary-foreground" : "bg-lime text-lime-foreground"
+                      value === "selling" ? "bg-seller text-seller-foreground" : "bg-buyer text-buyer-foreground"
                     )}
                   >
                     <Icon className="size-5" stroke={1.75} />
@@ -1234,7 +1234,7 @@ export function NewHomePage() {
               eyebrow="Buying"
               title="Buy direct from the owner, with guidance"
               items={buyingItems}
-              tone="lime"
+              tone="buyer"
               cta={{ label: "Explore Reasy for buyers", href: "/for-buyers" }}
             />
           </Reveal>

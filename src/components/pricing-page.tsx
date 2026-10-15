@@ -2,13 +2,12 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Reveal } from "@/components/reveal"
 import { AnnouncementBar, AudienceToggle, Footer, Nav, WAITLIST_HREF, type Audience } from "@/components/new-home-page"
-import { IconChevronDown, IconCoin, IconSparkles2Filled } from "@tabler/icons-react"
+import { IconChevronDown, IconCoin } from "@tabler/icons-react"
 
 // Plans and prices come from reasy-app's src/data/plan.ts, which transcribes
 // the pricing page in Notion. Keep the two in step if either changes.
 
-type Tone = "navy" | "blue" | "lime"
-type Mark = "dot" | "square" | "sparkle"
+type Tone = "navy" | "blue" | "seller" | "buyer"
 
 type PlanCard = {
   name: string
@@ -16,7 +15,6 @@ type PlanCard = {
   price: string
   period?: string
   tone: Tone
-  mark: Mark
   // One value per comparison row, with optional accent detail on the right
   rows: { value: string; extra?: string }[]
   summary: string
@@ -41,8 +39,7 @@ const pricing: Record<Audience, Pricing> = {
         tagline: "Pay as you go until it sells",
         price: "$129",
         period: "then $29 / month",
-        tone: "blue",
-        mark: "square",
+        tone: "seller",
         rows: [
           { value: "$129", extra: "first month included" },
           { value: "$29 a month", extra: "from month two" },
@@ -61,7 +58,6 @@ const pricing: Record<Audience, Pricing> = {
         price: "$299",
         period: "/ 12 months",
         tone: "navy",
-        mark: "sparkle",
         rows: [
           { value: "$299", extra: "paid once" },
           { value: "Nothing more", extra: "12 months access" },
@@ -85,8 +81,7 @@ const pricing: Record<Audience, Pricing> = {
         tagline: "For getting a feel for it",
         price: "$0",
         period: "/ month",
-        tone: "lime",
-        mark: "dot",
+        tone: "buyer",
         rows: [
           { value: "Seven days after listing" },
           { value: "One seller", extra: "for 30 days" },
@@ -105,7 +100,6 @@ const pricing: Record<Audience, Pricing> = {
         price: "$29",
         period: "/ month",
         tone: "blue",
-        mark: "square",
         rows: [
           { value: "The day they go live" },
           { value: "Any seller" },
@@ -124,7 +118,6 @@ const pricing: Record<Audience, Pricing> = {
         price: "$299",
         period: "/ 12 months",
         tone: "navy",
-        mark: "sparkle",
         rows: [
           { value: "The day they go live" },
           { value: "Any seller" },
@@ -141,22 +134,17 @@ const pricing: Record<Audience, Pricing> = {
   },
 }
 
-// Dark cards carry white text; the buyer lime card is light, so it flips to
-// the lime ink colour (same pairing as the app's "Unconditional" badge).
-const toneClass: Record<Tone, { card: string; extra: string; muted: string; line: string; cta: string; dot: string }> = {
-  navy: { card: "bg-brand-dark text-white", extra: "text-lime", muted: "text-white/60", line: "border-white/20", cta: "bg-white text-brand-dark hover:bg-white/90", dot: "bg-lime" },
-  blue: { card: "bg-primary-strong text-white", extra: "text-white", muted: "text-white/70", line: "border-white/20", cta: "bg-white text-brand-dark hover:bg-white/90", dot: "bg-lime" },
-  lime: { card: "bg-lime text-lime-foreground", extra: "text-lime-foreground", muted: "text-lime-foreground/70", line: "border-lime-foreground/15", cta: "bg-lime-foreground text-white hover:bg-lime-foreground/90", dot: "bg-lime-foreground" },
-}
-
-function PlanMark({ mark, dot }: { mark: Mark; dot: string }) {
-  if (mark === "dot") return <span className={cn("block size-6 rounded-full", dot)} />
-  if (mark === "square") return <span className="block size-6 rounded-md bg-ai" />
-  return <IconSparkles2Filled className="size-6 text-ai" />
+// Dark cards carry white text. The seller (lime green) and buyer (light
+// turquoise) cards are light, so they flip to the app's dark ink for each.
+const toneClass: Record<Tone, { card: string; extra: string; muted: string; line: string; cta: string }> = {
+  navy: { card: "bg-brand-dark text-white", extra: "text-lime", muted: "text-white/60", line: "border-white/20", cta: "bg-white text-brand-dark hover:bg-white/90" },
+  blue: { card: "bg-primary-strong text-white", extra: "text-white", muted: "text-white/70", line: "border-white/20", cta: "bg-white text-brand-dark hover:bg-white/90" },
+  seller: { card: "bg-seller text-seller-foreground", extra: "text-seller-foreground", muted: "text-seller-foreground/70", line: "border-seller-foreground/15", cta: "bg-seller-foreground text-white hover:bg-seller-foreground/90" },
+  buyer: { card: "bg-buyer text-buyer-foreground", extra: "text-buyer-ink", muted: "text-buyer-foreground/70", line: "border-buyer-foreground/15", cta: "bg-buyer-foreground text-white hover:bg-buyer-foreground/90" },
 }
 
 // Fixed heights keep each card's rows level with the labels column on desktop.
-const headerHeight = "lg:h-64"
+const headerHeight = "lg:h-52"
 const rowClass = "flex min-h-14 items-center justify-between gap-3 border-t py-3"
 
 function PlanColumn({ plan, labels }: { plan: PlanCard; labels: string[] }) {
@@ -164,8 +152,7 @@ function PlanColumn({ plan, labels }: { plan: PlanCard; labels: string[] }) {
   return (
     <article className={cn("flex flex-col rounded-3xl p-7 md:p-9", tone.card)}>
       <div className={cn("flex flex-col", headerHeight)}>
-        <PlanMark mark={plan.mark} dot={tone.dot} />
-        <h3 className="mt-6 text-2xl font-semibold">{plan.name}</h3>
+        <h3 className="text-2xl font-semibold">{plan.name}</h3>
         <p className={cn("mt-1 text-lg", tone.muted)}>{plan.tagline}</p>
         <p className="mt-6 flex flex-wrap items-baseline gap-x-2 lg:mt-auto lg:pb-6">
           <span className="font-display text-6xl leading-none">{plan.price}</span>

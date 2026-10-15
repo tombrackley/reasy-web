@@ -63,6 +63,14 @@
     --gate: oklch(0.6805 0.169 259.79);
     --gate-foreground: oklch(0.4881 0.1467 258.26);
     --gate-accent: oklch(0.4426 0.1623 262.53);
+    /* Audience colours (reasy-app "Selling" / "Buying" pills): sellers are
+       lime green, buyers light turquoise. buyer-ink is the app's readable
+       turquoise for icons and text on light backgrounds. */
+    --seller: oklch(0.9288 0.1067 123.62);
+    --seller-foreground: oklch(0.2115 0.0476 158.22);
+    --buyer: oklch(0.9576 0.0508 200.87);
+    --buyer-foreground: oklch(0.1777 0.0302 198.7);
+    --buyer-ink: oklch(0.5527 0.0983 216.2);
     /* Offer status badge (reasy-app "Unconditional"): rgba(197,255,201,0.7) / #14302b */
     --lime: oklch(0.9467 0.0930 146.58 / 70%);
     --lime-foreground: oklch(0.2855 0.0354 180.58);
@@ -144,6 +152,11 @@
     --color-lilac: var(--lilac);
     --color-sky: var(--sky);
     --color-sky-foreground: var(--sky-foreground);
+    --color-seller: var(--seller);
+    --color-seller-foreground: var(--seller-foreground);
+    --color-buyer: var(--buyer);
+    --color-buyer-foreground: var(--buyer-foreground);
+    --color-buyer-ink: var(--buyer-ink);
     --color-lime: var(--lime);
     --color-lime-foreground: var(--lime-foreground);
     --color-ai: var(--ai);
@@ -377,7 +390,7 @@ body {
    glow bottom-left and a lilac glow bottom-right, like Calendly's hero. */
 .hero-wash {
   background:
-    radial-gradient(55% 45% at 0% 100%, var(--blush) 0%, transparent 70%),
+    radial-gradient(60% 55% at 0% 78%, color-mix(in srgb, var(--blush) 80%, var(--ai) 20%) 0%, transparent 72%),
     radial-gradient(55% 45% at 100% 100%, var(--lilac) 0%, transparent 70%),
     linear-gradient(180deg, var(--canvas-deep) 0%, var(--canvas-deep) 55%, color-mix(in oklch, var(--blush) 35%, var(--canvas-deep)) 100%);
 }
@@ -392,11 +405,16 @@ body {
     linear-gradient(180deg, var(--primary-strong) 0%, var(--primary) 55%, color-mix(in srgb, var(--primary) 70%, var(--sky)) 100%);
 }
 
-/* Lime and AI-pink takes on the same glow, for the buying and AI sections. */
-.feature-glow-lime {
+/* Seller, buyer and AI-pink takes on the same glow, for the buying and AI sections. */
+.feature-glow-seller {
   background:
-    radial-gradient(70% 60% at 85% 10%, color-mix(in srgb, var(--lime) 90%, transparent) 0%, transparent 70%),
-    linear-gradient(160deg, color-mix(in srgb, var(--lime) 100%, var(--lime-foreground) 6%) 0%, var(--lime) 70%, var(--background) 100%);
+    radial-gradient(70% 60% at 85% 10%, color-mix(in srgb, var(--seller) 70%, transparent) 0%, transparent 70%),
+    linear-gradient(160deg, var(--seller) 0%, color-mix(in srgb, var(--seller) 55%, var(--background)) 70%, var(--background) 100%);
+}
+.feature-glow-buyer {
+  background:
+    radial-gradient(70% 60% at 85% 10%, color-mix(in srgb, var(--buyer) 80%, transparent) 0%, transparent 70%),
+    linear-gradient(160deg, color-mix(in srgb, var(--buyer) 85%, var(--buyer-ink)) 0%, var(--buyer) 70%, var(--background) 100%);
 }
 .feature-glow-ai {
   background:
