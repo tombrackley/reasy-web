@@ -446,3 +446,30 @@ body {
     linear-gradient(to top, transparent 0%, #000 30%);
   mask-composite: intersect;
 }
+
+/* Landing nodes: each square bobs and turns a touch while idle */
+@keyframes nodeFloat {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(4px, -8px) rotate(6deg); }
+  66% { transform: translate(-5px, 5px) rotate(-4deg); }
+}
+.animate-node-float {
+  animation: nodeFloat 6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-node-float { animation: none; }
+}
+
+/* Landing nodes: tiny ambient specks drifting further and slower */
+@keyframes speckDrift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(14px, -18px); }
+  50% { transform: translate(-8px, -30px); }
+  75% { transform: translate(-16px, -8px); }
+}
+.animate-speck-drift {
+  animation: speckDrift 12s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-speck-drift { animation: none; }
+}

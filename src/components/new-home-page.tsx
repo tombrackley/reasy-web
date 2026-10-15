@@ -8,6 +8,8 @@ import {
   IconHome,
   IconSearch,
   IconSparkles2Filled,
+  IconRoute,
+  IconBuildingBank,
   IconEyeOff,
   IconScale,
   IconHomeSearch,
@@ -56,8 +58,6 @@ type NavItem = {
   audience: Audience
   section?: string
   href?: string
-  // Uses the Reasy AI pink instead of the audience colour
-  ai?: boolean
 }
 
 const navMenus: { label: string; items: NavItem[] }[] = [
@@ -65,7 +65,7 @@ const navMenus: { label: string; items: NavItem[] }[] = [
     label: "For sellers",
     items: [
       { label: "How selling works", description: "List, talk to buyers and settle, step by step", icon: IconListCheck, audience: "selling", section: "selling" },
-      { label: "Reasy AI", description: "Pricing help and a selling assistant", icon: IconSparkles2Filled, audience: "selling", section: "reasy-ai", ai: true },
+      { label: "Reasy AI", description: "Pricing help and a selling assistant", icon: IconSparkles2Filled, audience: "selling", section: "reasy-ai" },
       { label: "What you could save", description: "See the commission you keep", icon: IconCoin, audience: "selling", section: "savings" },
       { label: "List your property", description: "Join the seller waitlist", icon: IconHome, audience: "selling", href: WAITLIST_HREF },
     ],
@@ -74,6 +74,7 @@ const navMenus: { label: string; items: NavItem[] }[] = [
     label: "For buyers",
     items: [
       { label: "How buying works", description: "Enquire, inspect, offer and settle", icon: IconListCheck, audience: "buying", section: "buying" },
+      { label: "Reasy AI", description: "Answers and next steps, any time", icon: IconSparkles2Filled, audience: "buying", section: "reasy-ai-buying" },
       { label: "Talk to sellers directly", description: "No agent in the middle", icon: IconMessageCircle, audience: "buying", section: "buying" },
       { label: "Buyer guide", description: "What to expect when buying privately", icon: IconBook, audience: "buying", href: "/for-buyers" },
       { label: "Join the buyer waitlist", description: "Be first to see new listings", icon: IconMail, audience: "buying", href: WAITLIST_HREF },
@@ -200,11 +201,7 @@ function NavMenuItem({ item, onNavigate, onDone }: { item: NavItem; onNavigate: 
       <span
         className={cn(
           "flex size-9 shrink-0 items-center justify-center rounded-full",
-          item.ai
-            ? "bg-ai/15 text-ai"
-            : item.audience === "selling"
-              ? "bg-seller text-seller-foreground"
-              : "bg-buyer text-buyer-foreground"
+          item.audience === "selling" ? "bg-seller text-seller-foreground" : "bg-buyer text-buyer-foreground"
         )}
       >
         <Icon className="size-4.5" stroke={1.75} />
@@ -804,6 +801,27 @@ const buyingItems: FeatureItem[] = [
   },
 ]
 
+const buyerAiItems: FeatureItem[] = [
+  {
+    icon: IconMessageChatbot,
+    title: "Ask anything, any time",
+    description:
+      "Why do I need a conveyancer? How do open homes work? Ask Reasy and get a plain-English answer straight away, day or night.",
+  },
+  {
+    icon: IconRoute,
+    title: "Know what to do next",
+    description:
+      "Reasy looks at where you're up to and suggests your next step, from booking an inspection to what happens after you make an offer.",
+  },
+  {
+    icon: IconBuildingBank,
+    title: "Get your finance straight",
+    description:
+      "Understand pre-approval, deposits and settlement before you need them, so you can move quickly when the right home comes up.",
+  },
+]
+
 const aiItems: FeatureItem[] = [
   {
     icon: IconChartBar,
@@ -1236,6 +1254,20 @@ export function NewHomePage() {
               items={buyingItems}
               tone="buyer"
               cta={{ label: "Explore Reasy for buyers", href: "/for-buyers" }}
+            />
+          </Reveal>
+        )}
+        {audience === "buying" && (
+          <Reveal key="reasy-ai-buying">
+            <FeatureShowcase
+              id="reasy-ai-buying"
+              icon={IconSparkles2Filled}
+              eyebrow="Reasy AI"
+              badge="Beta"
+              title="Meet your AI buying assistant"
+              items={buyerAiItems}
+              tone="ai"
+              reverse
             />
           </Reveal>
         )}

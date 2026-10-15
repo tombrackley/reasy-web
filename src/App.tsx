@@ -32,6 +32,12 @@ function App() {
   if (path === "/browse") return <BrowsePage />
   if (path === "/browse/results") return <BrowseResultsPage />
   if (path === "/pricing") return <PricingPage />
+  if (path === "/landing-nodes")
+    return (
+      <div className="min-h-screen bg-gate">
+        <WelcomeOverlay delay={0} visual="nodes" />
+      </div>
+    )
 
   // Everything else lands on the temporary home gate.
   return (

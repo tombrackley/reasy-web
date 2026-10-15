@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import { LandingNodes, type NodeShape } from "@/components/landing-nodes"
 import { IconSparkles2Filled } from "@tabler/icons-react"
 import logoImg from "@/assets/reasy-logo-gate.svg"
 import sellerIcon from "@/assets/icon-land-sale.svg"
@@ -8,17 +9,26 @@ import waterfrontImg from "@/assets/gold-coast-reasy-launch-platform.png"
 import buyerAvatar from "@/assets/avatar-2.jpg"
 import sellerAvatar from "@/assets/avatar-5.jpg"
 
-const paths = [
-  { label: "I’m a Seller", href: "/new-home?for=selling", icon: sellerIcon },
-  { label: "I’m a Buyer", href: "/new-home?for=buying", icon: buyerIcon },
+const paths: { label: string; href: string; icon: string; shape: NodeShape }[] = [
+  { label: "I’m a Seller", href: "/new-home?for=selling", icon: sellerIcon, shape: "sign" },
+  { label: "I’m a Buyer", href: "/new-home?for=buying", icon: buyerIcon, shape: "key" },
 ]
 
 /**
  * Full-screen "Agents are NOT welcome here" overlay. Appears `delay` ms after
  * mount and cannot be dismissed — the only way forward is the CTA.
  */
-export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
+export function WelcomeOverlay({
+  delay = 1200,
+  visual = "photo",
+}: {
+  delay?: number
+  // "photo": waterfront photo with chat and offer cards. "nodes": floating
+  // squares that form a For Sale sign or key when a card is hovered.
+  visual?: "photo" | "nodes"
+}) {
   const [visible, setVisible] = useState(false)
+  const [shape, setShape] = useState<NodeShape>(null)
   const [entered, setEntered] = useState(false)
 
   useEffect(() => {
@@ -51,7 +61,7 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
         entered ? "opacity-100" : "opacity-0"
       )}
     >
-      <LandingVisual />
+      {visual === "nodes" ? <LandingNodes shape={shape} /> : <LandingVisual />}
 
       <div
         className={cn(
@@ -75,10 +85,14 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
 
         {/* Buyer / seller splitter: each card opens the matching home page view */}
         <div className="mt-16 flex gap-4.5 pb-4 md:mt-22">
-          {paths.map(({ label, href, icon }) => (
+          {paths.map(({ label, href, icon, shape: cardShape }) => (
             <a
               key={label}
               href={href}
+              onMouseEnter={() => setShape(cardShape)}
+              onMouseLeave={() => setShape(null)}
+              onFocus={() => setShape(cardShape)}
+              onBlur={() => setShape(null)}
               className="flex h-41.5 w-43 flex-col items-center justify-center gap-6 rounded-xl border-2 border-gate-foreground bg-white px-6 py-5.5 text-center outline-none transition-transform hover:-translate-y-1 focus-visible:ring-3 focus-visible:ring-white/60 active:translate-y-0"
             >
               <img src={icon} alt="" />
