@@ -3,6 +3,7 @@ import { BuyersPage } from "@/components/buyers-page"
 import { PrivacyPage } from "@/components/privacy-page"
 import { TermsPage } from "@/components/terms-page"
 import { NewHomePage } from "@/components/new-home-page"
+import { BrowsePage, BrowseResultsPage } from "@/components/browse-pages"
 import { WelcomeOverlay } from "@/components/welcome-overlay"
 
 // TEMPORARY GATE: while the site is pre-launch, the only routes are the
@@ -27,6 +28,8 @@ function App() {
   if (path === "/privacy") return <PrivacyPage />
   if (path === "/terms") return <TermsPage />
   if (path === "/new-home") return <NewHomePage />
+  if (path === "/browse") return <BrowsePage />
+  if (path === "/browse/results") return <BrowseResultsPage />
 
   // Everything else lands on the temporary home gate.
   return (

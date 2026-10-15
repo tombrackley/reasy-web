@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import { IconSparkles2Filled } from "@tabler/icons-react"
 import logoImg from "@/assets/reasy-logo-gate.svg"
 import sellerIcon from "@/assets/icon-land-sale.svg"
 import buyerIcon from "@/assets/icon-keys.svg"
+import waterfrontImg from "@/assets/gold-coast-reasy-launch-platform.png"
+import buyerAvatar from "@/assets/avatar-2.jpg"
+import sellerAvatar from "@/assets/avatar-5.jpg"
 
 const paths = [
   { label: "I’m a Seller", href: "/new-home?for=selling", icon: sellerIcon },
@@ -47,9 +51,11 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
         entered ? "opacity-100" : "opacity-0"
       )}
     >
+      <LandingVisual />
+
       <div
         className={cn(
-          "flex min-h-full flex-col px-6 pb-12 pt-8 transition-all duration-500 md:px-16 md:pb-16 md:pt-9",
+          "relative flex min-h-full flex-col px-6 pb-12 pt-8 transition-all duration-500 md:px-16 md:pb-16 md:pt-9",
           entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
         )}
       >
@@ -79,6 +85,64 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
               <span className="text-lg font-bold leading-[1.4] text-gate-accent">{label}</span>
             </a>
           ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Waterfront photo melting into the blue on the right, with a buyer/seller
+// conversation and offer floating over it. Decorative, desktop only.
+function LandingVisual() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 hidden w-[45%] lg:block">
+      <img
+        src={waterfrontImg}
+        alt=""
+        className="landing-photo-mask absolute inset-0 size-full object-cover object-[70%_center]"
+      />
+
+      <div className="absolute bottom-[10%] right-[10%] flex w-80 flex-col gap-4 xl:right-[16%]">
+        {/* Buyer message */}
+        <div className="flex items-end gap-2.5 self-start">
+          <img src={buyerAvatar} alt="" className="size-9 rounded-full ring-2 ring-white" />
+          <div className="rounded-2xl rounded-bl-md bg-white px-4 py-3 text-sm leading-snug text-foreground shadow-xl">
+            Hi! Is the pool heated?
+            <span className="mt-1 block text-xs text-muted-foreground">Sam, buyer</span>
+          </div>
+        </div>
+
+        {/* Seller reply */}
+        <div className="flex items-end gap-2.5 self-end">
+          <div className="rounded-2xl rounded-br-md bg-brand-dark px-4 py-3 text-sm leading-snug text-white shadow-xl">
+            It is, solar heated all year.
+            <span className="mt-1 block text-xs text-white/70">Jess, owner</span>
+          </div>
+          <img src={sellerAvatar} alt="" className="size-9 rounded-full ring-2 ring-white" />
+        </div>
+
+        {/* Offer card */}
+        <div className="mt-2 rounded-2xl bg-white p-5 shadow-2xl">
+          <div className="flex items-center justify-between">
+            <span className="rounded-full bg-lime px-2.5 py-1 text-xs font-medium text-lime-foreground">
+              New offer
+            </span>
+            <span className="text-xs text-muted-foreground">Just now</span>
+          </div>
+          <p className="mt-4 text-3xl font-bold tracking-tight text-foreground">$1,450,000</p>
+          <p className="mt-1 text-sm text-muted-foreground">Subject to finance • 30 day settlement</p>
+          <div className="mt-5 grid grid-cols-2 gap-2">
+            <span className="rounded-full bg-primary py-2 text-center text-sm font-semibold text-primary-foreground">
+              Accept
+            </span>
+            <span className="rounded-full border border-border py-2 text-center text-sm font-semibold text-foreground">
+              Counter
+            </span>
+          </div>
+          <span className="mt-2 flex items-center justify-center gap-1.5 rounded-full border border-border py-2 text-sm font-semibold text-foreground">
+            <IconSparkles2Filled className="size-4 text-ai" />
+            Ask Reasy
+          </span>
         </div>
       </div>
     </div>

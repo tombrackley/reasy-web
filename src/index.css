@@ -63,6 +63,13 @@
     --gate: oklch(0.6805 0.169 259.79);
     --gate-foreground: oklch(0.4881 0.1467 258.26);
     --gate-accent: oklch(0.4426 0.1623 262.53);
+    /* Offer status badge (reasy-app "Unconditional"): rgba(197,255,201,0.7) / #14302b */
+    --lime: oklch(0.9467 0.0930 146.58 / 70%);
+    --lime-foreground: oklch(0.2855 0.0354 180.58);
+    /* Reasy AI accent (reasy-app uses Tailwind fuchsia-400 for its sparkle) */
+    --ai: oklch(0.74 0.238 322.16);
+    /* Darker step (fuchsia-700) for readable text on light AI tints */
+    --ai-foreground: oklch(0.518 0.253 323.95);
     /* Backup brand colours (from reasy-app): soft fill + readable ink */
     --pink: oklch(0.917 0.045 355);
     --pink-foreground: oklch(0.335 0.105 355);
@@ -137,6 +144,10 @@
     --color-lilac: var(--lilac);
     --color-sky: var(--sky);
     --color-sky-foreground: var(--sky-foreground);
+    --color-lime: var(--lime);
+    --color-lime-foreground: var(--lime-foreground);
+    --color-ai: var(--ai);
+    --color-ai-foreground: var(--ai-foreground);
     --color-gate: var(--gate);
     --color-gate-foreground: var(--gate-foreground);
     --color-gate-accent: var(--gate-accent);
@@ -371,16 +382,26 @@ body {
     linear-gradient(180deg, var(--canvas-deep) 0%, var(--canvas-deep) 55%, color-mix(in oklch, var(--blush) 35%, var(--canvas-deep)) 100%);
 }
 
-/* Green and pink takes on the same glow, for the buying and AI sections. */
+/* Browse hero (/browse): deep Reasy blue up top, lilac glowing in from the
+   sides and a sky-blue lift at the bottom, after Calendly's product heroes. */
+.browse-wash {
+  background:
+    radial-gradient(38% 55% at 0% 80%, color-mix(in srgb, var(--lilac) 85%, transparent) 0%, transparent 70%),
+    radial-gradient(38% 55% at 100% 70%, color-mix(in srgb, var(--ai) 30%, var(--lilac)) 0%, transparent 70%),
+    radial-gradient(60% 35% at 50% 105%, color-mix(in srgb, var(--sky) 90%, transparent) 0%, transparent 75%),
+    linear-gradient(180deg, var(--primary-strong) 0%, var(--primary) 55%, color-mix(in srgb, var(--primary) 70%, var(--sky)) 100%);
+}
+
+/* Green and AI-pink takes on the same glow, for the buying and AI sections. */
 .feature-glow-green {
   background:
     radial-gradient(70% 60% at 85% 10%, color-mix(in oklch, var(--green) 90%, transparent) 0%, transparent 70%),
     linear-gradient(160deg, color-mix(in oklch, var(--green-foreground) 45%, var(--green)) 0%, var(--green) 70%, var(--background) 100%);
 }
-.feature-glow-pink {
+.feature-glow-ai {
   background:
-    radial-gradient(70% 60% at 85% 10%, color-mix(in oklch, var(--pink) 90%, transparent) 0%, transparent 70%),
-    linear-gradient(160deg, color-mix(in oklch, var(--pink-foreground) 22%, var(--pink)) 0%, var(--pink) 65%, var(--background) 100%);
+    radial-gradient(70% 60% at 85% 10%, color-mix(in srgb, var(--ai) 22%, transparent) 0%, transparent 70%),
+    linear-gradient(160deg, color-mix(in srgb, var(--ai) 42%, var(--background)) 0%, color-mix(in srgb, var(--ai) 16%, var(--background)) 65%, var(--background) 100%);
 }
 
 /* Endless horizontal scroll for the status-card strip (content is duplicated
@@ -393,4 +414,17 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee { animation: none; }
+}
+
+/* Landing photo: fades out to the left (into the blue) and softly at the
+   bottom, so the image melts into the page instead of sitting in a box. */
+.landing-photo-mask {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 55%),
+    linear-gradient(to top, transparent 0%, #000 30%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 55%),
+    linear-gradient(to top, transparent 0%, #000 30%);
+  mask-composite: intersect;
 }

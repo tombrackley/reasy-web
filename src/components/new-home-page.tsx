@@ -7,7 +7,13 @@ import {
   IconChevronDown,
   IconHome,
   IconSearch,
-  IconSparkles,
+  IconSparkles2Filled,
+  IconEyeOff,
+  IconScale,
+  IconHomeSearch,
+  IconChartBar,
+  IconMessageChatbot,
+  IconLayoutDashboard,
   IconSpeakerphone,
   IconX,
   IconMenu2,
@@ -33,7 +39,7 @@ type TablerIcon = ComponentType<IconProps>
 // Where "join" style CTAs lead while the site is pre-launch.
 const WAITLIST_HREF = "/for-buyers#join"
 
-type Audience = "selling" | "buying"
+export type Audience = "selling" | "buying"
 
 // Reads ?for=buying|selling so a link can land on the right view.
 function initialAudience(): Audience {
@@ -50,6 +56,8 @@ type NavItem = {
   audience: Audience
   section?: string
   href?: string
+  // Uses the Reasy AI pink instead of the audience colour
+  ai?: boolean
 }
 
 const navMenus: { label: string; items: NavItem[] }[] = [
@@ -57,7 +65,7 @@ const navMenus: { label: string; items: NavItem[] }[] = [
     label: "For sellers",
     items: [
       { label: "How selling works", description: "List, talk to buyers and settle, step by step", icon: IconListCheck, audience: "selling", section: "selling" },
-      { label: "Reasy AI", description: "Pricing help and a selling assistant", icon: IconSparkles, audience: "selling", section: "reasy-ai" },
+      { label: "Reasy AI", description: "Pricing help and a selling assistant", icon: IconSparkles2Filled, audience: "selling", section: "reasy-ai", ai: true },
       { label: "What you could save", description: "See the commission you keep", icon: IconCoin, audience: "selling", section: "savings" },
       { label: "List your property", description: "Join the seller waitlist", icon: IconHome, audience: "selling", href: WAITLIST_HREF },
     ],
@@ -74,11 +82,16 @@ const navMenus: { label: string; items: NavItem[] }[] = [
 ]
 
 const navLinks = [
-  { label: "Browse properties", href: "/for-buyers" },
+  { label: "Browse properties", href: "/browse" },
   { label: "Pricing", audience: "selling" as Audience, section: "savings" },
 ]
 
-type NavigateTo = (audience: Audience, section?: string) => void
+export type NavigateTo = (audience: Audience, section?: string) => void
+
+// Off the home page, menu items load the home page in the right view.
+const goToHome: NavigateTo = (audience, section) => {
+  window.location.href = `/new-home?for=${audience}${section ? `#${section}` : ""}`
+}
 
 const audienceOptions: { value: Audience; label: string; icon: TablerIcon }[] = [
   { value: "selling", label: "I'm selling", icon: IconHome },
@@ -140,7 +153,7 @@ function AudienceToggle({
 
 // --- Announcement bar ---
 
-function AnnouncementBar() {
+export function AnnouncementBar() {
   const [open, setOpen] = useState(true)
   if (!open) return null
 
@@ -183,7 +196,11 @@ function NavMenuItem({ item, onNavigate, onDone }: { item: NavItem; onNavigate: 
       <span
         className={cn(
           "flex size-9 shrink-0 items-center justify-center rounded-full",
-          item.audience === "selling" ? "bg-secondary text-secondary-foreground" : "bg-green text-green-foreground"
+          item.ai
+            ? "bg-ai/15 text-ai"
+            : item.audience === "selling"
+              ? "bg-secondary text-secondary-foreground"
+              : "bg-green text-green-foreground"
         )}
       >
         <Icon className="size-4.5" stroke={1.75} />
@@ -289,7 +306,7 @@ function NavDropdown({ label, items, onNavigate }: { label: string; items: NavIt
   )
 }
 
-function Nav({ onNavigate }: { onNavigate: NavigateTo }) {
+export function Nav({ onNavigate = goToHome }: { onNavigate?: NavigateTo }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -301,17 +318,29 @@ function Nav({ onNavigate }: { onNavigate: NavigateTo }) {
   }, [])
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 bg-canvas/90 backdrop-blur-md transition-shadow duration-300",
-        scrolled && "shadow-sm"
-      )}
-    >
-      <nav className="flex h-16 items-center justify-between gap-6 px-4 md:h-20 md:px-8 lg:px-14">
+    // Fixed-height header so the page never jumps; the bar inside animates from
+    // full width into a floating rounded container once you scroll (Calendly-style).
+    <header className="sticky top-0 z-50 h-16 md:h-20">
+      <div
+        className={cn(
+          "absolute flex flex-col transition-all duration-300 ease-out",
+          scrolled
+            ? "inset-x-3 top-3 rounded-2xl bg-card/95 shadow-lg ring-1 ring-border backdrop-blur-md md:inset-x-6 md:top-4"
+            : "inset-x-0 top-0 rounded-none bg-canvas"
+        )}
+      >
+      <nav
+        className={cn(
+          "flex items-center justify-between gap-6 transition-all duration-300",
+          scrolled ? "h-16 px-4 md:px-5" : "h-16 px-4 md:h-20 md:px-8 lg:px-14"
+        )}
+      >
         <div className="flex items-center gap-8">
-          <a href="/new-home" aria-label="Reasy home">
-            <img src={logoImg} alt="Reasy" className="h-6 dark:hidden" />
-            <img src={logoWhiteImg} alt="Reasy" className="hidden h-6 dark:block" />
+          {/* Flex removes the inline baseline gap; the small nudge optically
+              centres the wordmark, whose "y" descender makes it sit high. */}
+          <a href="/new-home" aria-label="Reasy home" className="flex items-center">
+            <img src={logoImg} alt="Reasy" className="block h-6 translate-y-0.5 dark:hidden" />
+            <img src={logoWhiteImg} alt="Reasy" className="hidden h-6 translate-y-0.5 dark:block" />
           </a>
           <div className="hidden items-center gap-1 lg:flex">
             {navMenus.map((menu) => (
@@ -365,12 +394,12 @@ function Nav({ onNavigate }: { onNavigate: NavigateTo }) {
       <div
         inert={!menuOpen}
         className={cn(
-          "grid overflow-hidden border-border transition-all duration-300 lg:hidden",
+          "grid overflow-hidden rounded-b-2xl border-border transition-all duration-300 lg:hidden",
           menuOpen ? "grid-rows-[1fr] border-t" : "grid-rows-[0fr]"
         )}
       >
         <div className="min-h-0">
-          <div className="max-h-[calc(100dvh-8rem)] space-y-6 overflow-y-auto px-4 py-5">
+          <div className="max-h-[calc(100dvh-7rem)] space-y-6 overflow-y-auto px-4 py-5">
             {navMenus.map((menu) => (
               <div key={menu.label}>
                 <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{menu.label}</p>
@@ -380,7 +409,7 @@ function Nav({ onNavigate }: { onNavigate: NavigateTo }) {
               </div>
             ))}
             <div className="flex flex-col gap-1 border-t border-border pt-4">
-              <a href="/for-buyers" className="rounded-xl px-3 py-3 text-base font-medium text-foreground hover:bg-accent">
+              <a href="/browse" className="rounded-xl px-3 py-3 text-base font-medium text-foreground hover:bg-accent">
                 Browse properties
               </a>
               <button
@@ -402,6 +431,7 @@ function Nav({ onNavigate }: { onNavigate: NavigateTo }) {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </header>
   )
@@ -577,12 +607,13 @@ function Intro({ audience }: { audience: Audience }) {
 
 // Each showcase picks up one of the Reasy brand colours.
 const tones = {
-  blue: { chip: "bg-primary text-primary-foreground", glow: "feature-glow" },
-  green: { chip: "bg-green text-green-foreground", glow: "feature-glow-green" },
-  pink: { chip: "bg-pink text-pink-foreground", glow: "feature-glow-pink" },
+  blue: { chip: "bg-primary text-primary-foreground", glow: "feature-glow", icon: "text-primary" },
+  green: { chip: "bg-green text-green-foreground", glow: "feature-glow-green", icon: "text-green-foreground" },
+  ai: { chip: "bg-ai/15 text-ai", glow: "feature-glow-ai", icon: "text-ai" },
 }
 
 type FeatureItem = {
+  icon: TablerIcon
   title: string
   description: string
 }
@@ -596,6 +627,7 @@ function FeatureShowcase({
   items,
   cta,
   tone = "blue",
+  reverse = false,
 }: {
   id: string
   icon: TablerIcon
@@ -605,6 +637,8 @@ function FeatureShowcase({
   items: FeatureItem[]
   cta?: { label: string; href: string }
   tone?: keyof typeof tones
+  // Visual on the left, copy on the right (desktop only)
+  reverse?: boolean
 }) {
   const [active, setActive] = useState(0)
   const current = items[active]
@@ -613,14 +647,14 @@ function FeatureShowcase({
     <section id={id} className="scroll-mt-24 px-4 py-16 md:px-8 md:py-24">
       <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-x-20 gap-y-10 lg:grid-cols-2">
         {/* Heading */}
-        <div className="lg:col-start-1">
+        <div className={reverse ? "lg:col-start-2" : "lg:col-start-1"}>
           <div className="flex items-center gap-2">
             <span className={cn("flex size-7 items-center justify-center rounded-full", tones[tone].chip)}>
               <Icon className="size-4" stroke={2} />
             </span>
             <span className="text-sm font-medium text-foreground">{eyebrow}</span>
             {badge && (
-              <span className="rounded-full bg-pink px-2 py-0.5 text-xs font-semibold text-pink-foreground">
+              <span className="rounded-full bg-ai/15 px-2 py-0.5 text-xs font-semibold text-ai-foreground">
                 {badge}
               </span>
             )}
@@ -631,7 +665,7 @@ function FeatureShowcase({
         </div>
 
         {/* Visual */}
-        <div className="lg:sticky lg:top-28 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
+        <div className={cn("lg:sticky lg:top-28 lg:row-span-2 lg:row-start-1 lg:self-start", reverse ? "lg:col-start-1" : "lg:col-start-2")}>
           <div className={cn("flex aspect-[5/4] items-center justify-center overflow-hidden rounded-3xl p-6 md:p-12", tones[tone].glow)}>
             <div
               key={current.title}
@@ -641,7 +675,7 @@ function FeatureShowcase({
               <div className="space-y-5 rounded-2xl bg-card p-7 text-left shadow-xl">
                 <div className="flex items-center gap-3">
                   <span className={cn("flex size-10 items-center justify-center rounded-full", tones[tone].chip)}>
-                    <Icon className="size-5" stroke={1.75} />
+                    <current.icon className="size-5" stroke={1.75} />
                   </span>
                   <p className="font-semibold text-foreground">{current.title}</p>
                 </div>
@@ -664,7 +698,7 @@ function FeatureShowcase({
         </div>
 
         {/* Accordion */}
-        <div className="lg:col-start-1">
+        <div className={reverse ? "lg:col-start-2" : "lg:col-start-1"}>
           <ul className="border-t border-border">
             {items.map((item, i) => {
               const isOpen = i === active
@@ -678,10 +712,14 @@ function FeatureShowcase({
                   >
                     <span
                       className={cn(
-                        "text-lg font-medium transition-colors",
+                        "flex items-center gap-3 text-lg font-medium transition-colors",
                         isOpen ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                       )}
                     >
+                      <item.icon
+                        className={cn("size-5 shrink-0 transition-colors", isOpen && tones[tone].icon)}
+                        stroke={1.75}
+                      />
                       {item.title}
                     </span>
                     <span
@@ -702,7 +740,7 @@ function FeatureShowcase({
                     )}
                   >
                     <div className="min-h-0 overflow-hidden">
-                      <p className="max-w-[520px] pb-6 pr-12 leading-relaxed text-muted-foreground">
+                      <p className="max-w-[520px] pb-6 pl-8 pr-12 leading-relaxed text-muted-foreground">
                         {item.description}
                       </p>
                     </div>
@@ -728,21 +766,25 @@ function FeatureShowcase({
 
 const sellingItems: FeatureItem[] = [
   {
+    icon: IconEyeOff,
     title: "List publicly or quietly",
     description:
       "Go live to every buyer on Reasy, or keep your listing private so only buyers you invite can see it. Handy if you're just testing the waters.",
   },
   {
+    icon: IconMessageCircle,
     title: "Talk directly with buyers",
     description:
       "Answer questions, arrange inspections and negotiate in one secure chat. No middleman deciding which messages or offers you get to see.",
   },
   {
+    icon: IconListCheck,
     title: "Always know what's next",
     description:
       "A simple step-by-step checklist shows what's done, what's next and what each step means, from verifying ownership to settlement.",
   },
   {
+    icon: IconScale,
     title: "Legal help in the same place",
     description:
       "Invite your conveyancer (the licensed professional who handles the legal transfer of your property) into your Reasy workspace, so titles, contracts and settlement all live in one place.",
@@ -751,21 +793,25 @@ const sellingItems: FeatureItem[] = [
 
 const buyingItems: FeatureItem[] = [
   {
+    icon: IconHomeSearch,
     title: "Browse homes privately",
     description:
       "Explore homes listed directly by their owners, including private listings you won't find on the big portals.",
   },
   {
+    icon: IconMessageCircle,
     title: "Enquire with the owner",
     description:
       "Message the seller straight away and get answers from the person who knows the home best.",
   },
   {
+    icon: IconListCheck,
     title: "A checklist that keeps you on track",
     description:
       "Your buying checklist walks you through finance pre-approval, building and pest inspections, contract review and settlement, with a plain-English explanation of each one.",
   },
   {
+    icon: IconScale,
     title: "Bring your conveyancer along",
     description:
       "Invite your conveyancer (the licensed professional who handles the legal side of buying a home) into your Reasy workspace, so contracts, titles and settlement all live in one place.",
@@ -774,16 +820,19 @@ const buyingItems: FeatureItem[] = [
 
 const aiItems: FeatureItem[] = [
   {
+    icon: IconChartBar,
     title: "Price it with confidence",
     description:
       "Comparable sales, local demand and pricing suggestions, so you know what to list at and where you're likely to land.",
   },
   {
+    icon: IconMessageChatbot,
     title: "Your selling assistant",
     description:
       "Sorts enquiries by how serious each buyer is, suggests replies and reminds you to follow up so warm leads never go cold.",
   },
   {
+    icon: IconLayoutDashboard,
     title: "Everything at a glance",
     description:
       "Offers, enquiries and views in one summary, with suggestions on how to improve your listing when interest slows.",
@@ -1062,7 +1111,7 @@ function FooterLink({ href, children, external }: { href: string; children: Reac
   )
 }
 
-function Footer() {
+export function Footer() {
   const socials = [
     { icon: IconBrandInstagram, label: "Instagram", href: "https://www.instagram.com/agents_want_me_cancelled?igsh=aTBud3F5cHQzb2Iz&utm_source=qr" },
     { icon: IconBrandTiktok, label: "TikTok", href: "https://www.tiktok.com/@agentswantmecancelled?_r=1&_t=ZS-95xMn4ARczX" },
@@ -1179,12 +1228,13 @@ export function NewHomePage() {
             <Reveal key="reasy-ai">
               <FeatureShowcase
                 id="reasy-ai"
-                icon={IconSparkles}
+                icon={IconSparkles2Filled}
                 eyebrow="Reasy AI"
                 badge="Beta"
                 title="Meet your AI selling assistant"
                 items={aiItems}
-                tone="pink"
+                tone="ai"
+                reverse
               />
             </Reveal>
             <Reveal key="savings"><Savings /></Reveal>
