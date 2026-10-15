@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { IconArrowRight } from "@tabler/icons-react"
-import logoWhiteImg from "@/assets/reasy-logo-white.svg"
+import logoImg from "@/assets/reasy-logo-gate.svg"
+import sellerIcon from "@/assets/icon-land-sale.svg"
+import buyerIcon from "@/assets/icon-keys.svg"
+
+const paths = [
+  { label: "I’m a Seller", href: "/new-home?for=selling", icon: sellerIcon },
+  { label: "I’m a Buyer", href: "/new-home?for=buying", icon: buyerIcon },
+]
 
 /**
  * Full-screen "Agents are NOT welcome here" overlay. Appears `delay` ms after
@@ -37,60 +43,43 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
       aria-modal="true"
       aria-label="Welcome to Reasy"
       className={cn(
-        "fixed inset-0 z-[100] flex items-center justify-center px-6 transition-opacity duration-500",
-        "bg-[#050e1c]/92 backdrop-blur-md",
+        "fixed inset-0 z-[100] overflow-y-auto bg-gate transition-opacity duration-500",
         entered ? "opacity-100" : "opacity-0"
       )}
     >
-      {/* Soft radial glow behind the content */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(80,125,222,0.22),transparent_70%)]" />
-
-      {/* Reasy logo — matches the home-alt header treatment */}
-      <div className="absolute left-0 top-0 px-6 py-4 md:px-10">
-        <img src={logoWhiteImg} alt="Reasy" className="h-6" />
-      </div>
-
-      {/* Campaign hashtag */}
-      <div className="absolute right-0 top-0 flex h-6 items-center px-6 py-4 md:px-10 box-content">
-        <span className="text-[15px] font-medium text-white/50">#agentless</span>
-      </div>
-
       <div
         className={cn(
-          "max-w-[720px] text-center transition-all duration-500",
+          "flex min-h-full flex-col px-6 pb-12 pt-8 transition-all duration-500 md:px-16 md:pb-16 md:pt-9",
           entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
         )}
       >
-        <h2 className="font-serif text-[clamp(3rem,9vw,5rem)] leading-[1.05] text-white">
-          Agents are <span className="text-primary">NOT</span>
+        <img src={logoImg} alt="Reasy" className="self-start" />
+
+        <h2 className="mt-10 font-display text-[clamp(3.25rem,10vw,9rem)] uppercase leading-[0.9] tracking-[-0.02em] text-gate-foreground md:mt-7">
+          Agents are
           <br />
-          welcome here.
+          not welcome
+          <br />
+          here!
         </h2>
 
-        <p className="mx-auto mt-6 max-w-[520px] text-lg leading-relaxed text-white/70">
-          If you enjoy dealing with Real Estate Agents you are in the wrong
-          place… <span className="font-semibold text-primary">Stick with the old portals!</span>
+        <p className="mt-7 max-w-sm text-xl font-semibold leading-[1.4] tracking-[-0.02em] text-gate-foreground md:max-w-[22rem] md:text-2xl">
+          Buy and sell properties without real estate agents. Easy.
         </p>
 
-        <div className="mt-7 flex justify-center">
-          <span className="inline-flex items-center text-base font-semibold tracking-wide text-white">
-            Doors open 1 November 2026 · Australia
-          </span>
+        {/* Buyer / seller splitter: each card opens the matching home page view */}
+        <div className="mt-16 flex gap-4.5 pb-4 md:mt-22">
+          {paths.map(({ label, href, icon }) => (
+            <a
+              key={label}
+              href={href}
+              className="flex h-41.5 w-43 flex-col items-center justify-center gap-6 rounded-xl border-2 border-gate-foreground bg-white px-6 py-5.5 text-center outline-none transition-transform hover:-translate-y-1 focus-visible:ring-3 focus-visible:ring-white/60 active:translate-y-0"
+            >
+              <img src={icon} alt="" />
+              <span className="text-lg font-bold leading-[1.4] text-gate-accent">{label}</span>
+            </a>
+          ))}
         </div>
-
-        <div className="mt-8">
-          <a
-            href="/for-buyers"
-            className="shimmer-stroke inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(80,125,222,0.5)] transition-colors hover:bg-primary/90"
-          >
-            See what all the fuss is about
-            <IconArrowRight className="size-4" />
-          </a>
-        </div>
-
-        <p className="mt-5 text-sm text-white/40">
-          Limited spots available.
-        </p>
       </div>
     </div>
   )

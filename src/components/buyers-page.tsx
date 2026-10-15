@@ -605,7 +605,7 @@ function GuidanceGraphic() {
           inView ? "animate-msg-in" : "opacity-0"
         )}
       >
-        <p className="font-['Inter_Variable'] text-[18px] font-medium text-[#0a1628]">
+        <p className="text-[18px] font-medium text-[#0a1628]">
           Your buying checklist
         </p>
 
@@ -734,7 +734,7 @@ function WorkspaceGraphic() {
             inView ? "animate-msg-in" : "opacity-0"
           )}
         >
-          <p className="font-['Inter_Variable'] text-[18px] font-medium text-[#0a1628]">
+          <p className="text-[18px] font-medium text-[#0a1628]">
             Your Reasy workspace
           </p>
 
