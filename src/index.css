@@ -392,11 +392,11 @@ body {
     linear-gradient(180deg, var(--primary-strong) 0%, var(--primary) 55%, color-mix(in srgb, var(--primary) 70%, var(--sky)) 100%);
 }
 
-/* Green and AI-pink takes on the same glow, for the buying and AI sections. */
-.feature-glow-green {
+/* Lime and AI-pink takes on the same glow, for the buying and AI sections. */
+.feature-glow-lime {
   background:
-    radial-gradient(70% 60% at 85% 10%, color-mix(in oklch, var(--green) 90%, transparent) 0%, transparent 70%),
-    linear-gradient(160deg, color-mix(in oklch, var(--green-foreground) 45%, var(--green)) 0%, var(--green) 70%, var(--background) 100%);
+    radial-gradient(70% 60% at 85% 10%, color-mix(in srgb, var(--lime) 90%, transparent) 0%, transparent 70%),
+    linear-gradient(160deg, color-mix(in srgb, var(--lime) 100%, var(--lime-foreground) 6%) 0%, var(--lime) 70%, var(--background) 100%);
 }
 .feature-glow-ai {
   background:

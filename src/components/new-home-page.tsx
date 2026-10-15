@@ -37,7 +37,7 @@ import yahooFinanceLogo from "@/assets/yahoo-finance-logo.png"
 type TablerIcon = ComponentType<IconProps>
 
 // Where "join" style CTAs lead while the site is pre-launch.
-const WAITLIST_HREF = "/for-buyers#join"
+export const WAITLIST_HREF = "/for-buyers#join"
 
 export type Audience = "selling" | "buying"
 
@@ -83,7 +83,7 @@ const navMenus: { label: string; items: NavItem[] }[] = [
 
 const navLinks = [
   { label: "Browse properties", href: "/browse" },
-  { label: "Pricing", audience: "selling" as Audience, section: "savings" },
+  { label: "Pricing", href: "/pricing" },
 ]
 
 export type NavigateTo = (audience: Audience, section?: string) => void
@@ -100,7 +100,7 @@ const audienceOptions: { value: Audience; label: string; icon: TablerIcon }[] = 
 
 // --- Buyer / seller splitter ---
 
-function AudienceToggle({
+export function AudienceToggle({
   value,
   onChange,
   size = "lg",
@@ -125,7 +125,7 @@ function AudienceToggle({
         aria-hidden="true"
         className={cn(
           "absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full transition-all duration-300 ease-out",
-          value === "selling" ? "translate-x-0 bg-primary" : "translate-x-full bg-green-foreground"
+          value === "selling" ? "translate-x-0 bg-primary" : "translate-x-full bg-lime"
         )}
       />
       {audienceOptions.map(({ value: option, label, icon: Icon }) => {
@@ -139,7 +139,11 @@ function AudienceToggle({
             className={cn(
               "relative z-10 inline-flex items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
               size === "lg" ? "px-5 py-2.5 text-base" : "px-3.5 py-1.5 text-sm",
-              active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              active
+                ? option === "selling"
+                  ? "text-primary-foreground"
+                  : "text-lime-foreground"
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Icon className={size === "lg" ? "size-5" : "size-4"} stroke={1.75} />
@@ -200,7 +204,7 @@ function NavMenuItem({ item, onNavigate, onDone }: { item: NavItem; onNavigate: 
             ? "bg-ai/15 text-ai"
             : item.audience === "selling"
               ? "bg-secondary text-secondary-foreground"
-              : "bg-green text-green-foreground"
+              : "bg-lime text-lime-foreground"
         )}
       >
         <Icon className="size-4.5" stroke={1.75} />
@@ -346,22 +350,11 @@ export function Nav({ onNavigate = goToHome }: { onNavigate?: NavigateTo }) {
             {navMenus.map((menu) => (
               <NavDropdown key={menu.label} label={menu.label} items={menu.items} onNavigate={onNavigate} />
             ))}
-            {navLinks.map((link) =>
-              link.href ? (
-                <a key={link.label} href={link.href} className={navLinkClass}>
-                  {link.label}
-                </a>
-              ) : (
-                <button
-                  key={link.label}
-                  type="button"
-                  onClick={() => onNavigate(link.audience!, link.section)}
-                  className={navLinkClass}
-                >
-                  {link.label}
-                </button>
-              )
-            )}
+            {navLinks.map((link) => (
+              <a key={link.label} href={link.href} className={navLinkClass}>
+                {link.label}
+              </a>
+            ))}
           </div>
         </div>
 
@@ -412,16 +405,9 @@ export function Nav({ onNavigate = goToHome }: { onNavigate?: NavigateTo }) {
               <a href="/browse" className="rounded-xl px-3 py-3 text-base font-medium text-foreground hover:bg-accent">
                 Browse properties
               </a>
-              <button
-                type="button"
-                onClick={() => {
-                  onNavigate("selling", "savings")
-                  setMenuOpen(false)
-                }}
-                className="rounded-xl px-3 py-3 text-left text-base font-medium text-foreground hover:bg-accent"
-              >
+              <a href="/pricing" className="rounded-xl px-3 py-3 text-base font-medium text-foreground hover:bg-accent">
                 Pricing
-              </button>
+              </a>
               <a
                 href={WAITLIST_HREF}
                 className="mt-2 rounded-full border border-border bg-card px-3 py-3 text-center text-base font-medium text-foreground sm:hidden"
@@ -454,7 +440,7 @@ const heroContent: Record<
     body: "Reasy guides you from first enquiry to signed contract, for a flat fee instead of thousands in agent commission.",
     primary: { label: "List your property", href: WAITLIST_HREF, icon: IconHome },
     secondary: { label: "See what you could save", href: "#savings" },
-    note: { highlight: "$99 to list", rest: "No commission, ever" },
+    note: { highlight: "From $129 to list", rest: "No commission, ever" },
   },
   buying: {
     title: "Buying your next home, made easy.",
@@ -608,7 +594,7 @@ function Intro({ audience }: { audience: Audience }) {
 // Each showcase picks up one of the Reasy brand colours.
 const tones = {
   blue: { chip: "bg-primary text-primary-foreground", glow: "feature-glow", icon: "text-primary" },
-  green: { chip: "bg-green text-green-foreground", glow: "feature-glow-green", icon: "text-green-foreground" },
+  lime: { chip: "bg-lime text-lime-foreground", glow: "feature-glow-lime", icon: "text-lime-foreground" },
   ai: { chip: "bg-ai/15 text-ai", glow: "feature-glow-ai", icon: "text-ai" },
 }
 
@@ -910,7 +896,7 @@ function Savings() {
               <div className="mt-16 border-t border-border pt-6">
                 <p className="text-lg font-medium text-foreground">{place}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Selling for {formatAud(price)}. On Reasy, it's $99 to list.
+                  Selling for {formatAud(price)}. On Reasy, it's $129 to list, then $29 a month.
                 </p>
               </div>
             </article>
@@ -980,7 +966,7 @@ function BothSides({ audience, onAudienceChange }: { audience: Audience; onAudie
                   <span
                     className={cn(
                       "flex size-11 items-center justify-center rounded-full",
-                      value === "selling" ? "bg-primary text-primary-foreground" : "bg-green text-green-foreground"
+                      value === "selling" ? "bg-primary text-primary-foreground" : "bg-lime text-lime-foreground"
                     )}
                   >
                     <Icon className="size-5" stroke={1.75} />
@@ -1149,6 +1135,7 @@ export function Footer() {
             <FooterLink href="/new-home?for=buying">For buyers</FooterLink>
             <FooterLink href="/new-home?for=selling#reasy-ai">Reasy AI</FooterLink>
             <FooterLink href="/new-home?for=selling#savings">Savings</FooterLink>
+            <FooterLink href="/pricing">Pricing</FooterLink>
           </FooterColumn>
 
           <FooterColumn title="Get started">
@@ -1247,7 +1234,7 @@ export function NewHomePage() {
               eyebrow="Buying"
               title="Buy direct from the owner, with guidance"
               items={buyingItems}
-              tone="green"
+              tone="lime"
               cta={{ label: "Explore Reasy for buyers", href: "/for-buyers" }}
             />
           </Reveal>
