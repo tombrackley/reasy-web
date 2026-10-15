@@ -20,20 +20,6 @@ import {
 
 import logoImg from "@/assets/reasy-logo.svg"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
-import dashImg from "@/assets/reasy-dashboard.png"
-import mobileDashImg from "@/assets/Mobile-Dash-Reasy.png"
-import buyerDashImg from "@/assets/reasy-buyer-dashboard.png"
-import buyerDashMobileImg from "@/assets/reasy-buyer-dashboard-mobile.png"
-import keepTrackImg from "@/assets/keep-track-sale.png"
-import talkDirectlyImg from "@/assets/tak-directly-with-buyers.png"
-import conveyancerImg from "@/assets/Container-3.png"
-import summaryImg from "@/assets/everything in one place-1.png"
-import listQuietlyImg from "@/assets/private-listing-with-reasy.png"
-import browsePrivatelyImg from "@/assets/browse-privatley.png"
-import enquireDirectlyImg from "@/assets/enquire-directly.png"
-import buyingChecklistImg from "@/assets/reasy-buyers-card-3.png"
-import sellingAssistantImg from "@/assets/selling-assistant.png"
-import aiPricingImg from "@/assets/reasy-ai-pricing-tools.jpg"
 import dailyMailLogo from "@/assets/daily-mail-logo.png"
 import yahooFinanceLogo from "@/assets/yahoo-finance-logo.png"
 
@@ -127,14 +113,14 @@ function AnnouncementBar() {
   if (!open) return null
 
   return (
-    <div className="relative bg-secondary text-secondary-foreground">
-      <div className="mx-auto flex max-w-[1280px] items-center justify-center gap-3 px-12 py-2.5 text-sm">
+    <div className="relative bg-sky text-sky-foreground">
+      <div className="flex items-center justify-center gap-3 px-12 py-2.5 text-sm font-medium">
         <IconSpeakerphone className="hidden size-4 shrink-0 sm:block" stroke={1.75} />
         <p className="text-center">
           Reasy opens its doors on 1 November 2026.
           <a
             href={WAITLIST_HREF}
-            className="ml-2 inline-flex items-center gap-1 rounded-full bg-card px-2.5 py-0.5 text-xs font-semibold text-foreground transition-colors hover:bg-card/80 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="ml-2 inline-flex items-center gap-1 rounded-full bg-card/70 px-2.5 py-0.5 text-xs font-semibold text-foreground transition-colors hover:bg-card/80 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             Join the waitlist
             <IconArrowRight className="size-3" />
@@ -174,11 +160,11 @@ function Nav({ audience, onAudienceChange }: { audience: Audience; onAudienceCha
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 bg-background/90 backdrop-blur-md transition-shadow duration-300",
+        "sticky top-0 z-50 bg-canvas/90 backdrop-blur-md transition-shadow duration-300",
         scrolled && "shadow-sm"
       )}
     >
-      <nav className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-6 px-4 md:h-20 md:px-8">
+      <nav className="flex h-16 items-center justify-between gap-6 px-4 md:h-20 md:px-8 lg:px-14">
         <div className="flex items-center gap-10">
           <a href="/new-home" aria-label="Reasy home">
             <img src={logoImg} alt="Reasy" className="h-6 dark:hidden" />
@@ -283,7 +269,6 @@ const heroContent: Record<
     primary: { label: string; href: string; icon: TablerIcon }
     secondary: { label: string; href: string }
     note: { highlight: string; rest: string }
-    image: { desktop: string; mobile: string; alt: string }
   }
 > = {
   selling: {
@@ -292,11 +277,6 @@ const heroContent: Record<
     primary: { label: "List your property", href: WAITLIST_HREF, icon: IconHome },
     secondary: { label: "See what you could save", href: "#savings" },
     note: { highlight: "$99 to list", rest: "No commission, ever" },
-    image: {
-      desktop: dashImg,
-      mobile: mobileDashImg,
-      alt: "The Reasy seller dashboard showing enquiries, offers and next steps",
-    },
   },
   buying: {
     title: "Buying your next home, made easy.",
@@ -304,11 +284,6 @@ const heroContent: Record<
     primary: { label: "Get early access to listings", href: WAITLIST_HREF, icon: IconSearch },
     secondary: { label: "See how buying works", href: "#buying" },
     note: { highlight: "Every seller is verified", rest: "No agent in the middle" },
-    image: {
-      desktop: buyerDashImg,
-      mobile: buyerDashMobileImg,
-      alt: "The Reasy buyer dashboard showing saved homes and next steps",
-    },
   },
 }
 
@@ -317,64 +292,109 @@ function Hero({ audience, onAudienceChange }: { audience: Audience; onAudienceCh
   const PrimaryIcon = content.primary.icon
 
   return (
-    <section className="relative overflow-hidden px-4 pt-12 text-center md:pt-20">
-      <AudienceToggle value={audience} onChange={onAudienceChange} />
+    <section className="px-3 md:px-6">
+      {/* Rounded hero container with a pink / lilac wash, after Calendly */}
+      <div className="hero-wash relative overflow-hidden rounded-4xl px-4 pt-12 text-center md:pt-24">
+        <AudienceToggle value={audience} onChange={onAudienceChange} />
 
-      <div key={audience} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <h1 className="mx-auto mt-10 max-w-[900px] text-balance font-serif text-5xl leading-[1.05] tracking-tight text-brand-dark md:text-7xl lg:text-8xl dark:text-foreground">
-          {content.title}
-        </h1>
-        <p className="mx-auto mt-6 max-w-[560px] text-lg leading-relaxed text-muted-foreground">
-          {content.body}
-        </p>
+        <div key={audience} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <h1 className="mx-auto mt-10 max-w-[900px] text-balance text-5xl font-bold leading-[1.02] tracking-tighter text-brand-dark md:text-7xl lg:text-8xl dark:text-foreground">
+            {content.title}
+          </h1>
+          <p className="mx-auto mt-7 max-w-[600px] text-lg leading-relaxed text-muted-foreground md:text-xl">
+            {content.body}
+          </p>
 
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <a
-            href={content.primary.href}
-            className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-primary px-6 py-3.5 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-strong active:translate-y-px sm:w-auto outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-          >
-            <PrimaryIcon className="size-5" stroke={1.75} />
-            {content.primary.label}
-          </a>
-          <a
-            href={content.secondary.href}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-6 py-3.5 text-base font-semibold text-foreground shadow-xs transition-colors hover:bg-accent sm:w-auto outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-          >
-            {content.secondary.label}
-            <IconArrowRight className="size-4" />
-          </a>
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <a
+              href={content.primary.href}
+              className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-primary px-6 py-3.5 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-strong active:translate-y-px sm:w-auto outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <PrimaryIcon className="size-5" stroke={1.75} />
+              {content.primary.label}
+            </a>
+            <a
+              href={content.secondary.href}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-6 py-3.5 text-base font-semibold text-foreground shadow-xs transition-colors hover:bg-accent sm:w-auto outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              {content.secondary.label}
+              <IconArrowRight className="size-4" />
+            </a>
+          </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            <span className="font-semibold text-foreground underline underline-offset-2">{content.note.highlight}</span>
+            <span className="mx-2">•</span>
+            {content.note.rest}
+          </p>
         </div>
-        <p className="mt-4 text-sm text-muted-foreground">
-          <span className="font-semibold text-green-foreground">{content.note.highlight}</span>
-          <span className="mx-2">•</span>
-          {content.note.rest}
-        </p>
 
-        {/* Product preview on a soft gradient stage */}
-        <div className="relative mx-auto mt-14 max-w-[1200px] md:mt-20">
-          <div
-            className={cn(
-              "absolute inset-x-0 bottom-0 top-[18%] rounded-3xl md:top-1/4",
-              audience === "selling" ? "feature-glow" : "feature-glow-green"
-            )}
-          />
-          <div className="relative mx-auto max-w-[420px] px-4 pb-0 md:max-w-[1040px] md:px-10">
-            <div className="rounded-t-3xl border border-b-0 border-border bg-card p-2 shadow-2xl md:rounded-t-2xl md:p-2.5">
-              <img
-                src={content.image.mobile}
-                alt={content.image.alt}
-                className="max-h-[560px] w-full rounded-t-2xl object-cover object-top md:hidden"
-              />
-              <img
-                src={content.image.desktop}
-                alt={content.image.alt}
-                className="hidden w-full rounded-t-xl md:block"
-              />
+        <HeroPreview />
+      </div>
+    </section>
+  )
+}
+
+// Placeholder product preview (wireframe) until the new screenshots are ready.
+const sideBars = [
+  "h-72 w-20",
+  "h-64 w-14",
+  "h-56 w-10",
+  "h-48 w-7",
+  "h-40 w-5",
+  "h-32 w-3",
+  "h-24 w-2",
+]
+
+function SkeletonBar({ className }: { className?: string }) {
+  return <span className={cn("block h-3 rounded-full bg-muted", className)} />
+}
+
+function HeroPreview() {
+  return (
+    <div className="relative mt-16 md:mt-24" aria-hidden="true">
+      {/* Fading columns either side of the card */}
+      <div className="absolute bottom-0 right-[calc(50%+33rem)] hidden flex-row-reverse items-end gap-3 lg:flex">
+        {sideBars.map((size) => (
+          <span key={size} className={cn("rounded-t-3xl bg-card/60", size)} />
+        ))}
+      </div>
+      <div className="absolute bottom-0 left-[calc(50%+33rem)] hidden items-end gap-3 lg:flex">
+        {sideBars.map((size) => (
+          <span key={size} className={cn("rounded-t-3xl bg-card/60", size)} />
+        ))}
+      </div>
+
+      <div className="relative mx-auto max-w-[1040px] rounded-t-3xl border border-b-0 border-border bg-card shadow-2xl">
+        <div className="flex items-center justify-center gap-3 py-7">
+          <span className="size-8 rounded-lg bg-primary/30" />
+          <SkeletonBar className="h-4 w-28 bg-foreground/15" />
+        </div>
+        <div className="grid border-t border-border text-left md:grid-cols-[1fr_1.4fr]">
+          <div className="space-y-4 p-6 md:border-r md:border-border md:p-10">
+            <span className="block size-14 rounded-full bg-blush" />
+            <SkeletonBar className="w-24" />
+            <SkeletonBar className="h-5 w-48 bg-foreground/15" />
+            <div className="space-y-3 pt-2">
+              <SkeletonBar className="w-32" />
+              <SkeletonBar className="w-24" />
             </div>
+          </div>
+          <div className="hidden space-y-5 p-10 md:block">
+            <SkeletonBar className="h-4 w-40 bg-foreground/15" />
+            {[0, 1, 2].map((row) => (
+              <div key={row} className="flex items-center gap-4 rounded-2xl border border-border p-4">
+                <span className="size-10 shrink-0 rounded-full bg-muted" />
+                <div className="flex-1 space-y-2">
+                  <SkeletonBar className="w-2/3" />
+                  <SkeletonBar className="h-2.5 w-1/3" />
+                </div>
+                <span className="h-8 w-20 rounded-full bg-primary/20" />
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
 
@@ -417,8 +437,6 @@ const tones = {
 type FeatureItem = {
   title: string
   description: string
-  image: string
-  alt: string
 }
 
 function FeatureShowcase({
@@ -468,14 +486,31 @@ function FeatureShowcase({
         <div className="lg:sticky lg:top-28 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
           <div className={cn("flex aspect-[5/4] items-center justify-center overflow-hidden rounded-3xl p-6 md:p-12", tones[tone].glow)}>
             <div
-              key={current.image}
-              className="w-full max-w-[460px] animate-in fade-in zoom-in-95 duration-500"
+              key={current.title}
+              className="w-full max-w-[420px] animate-in fade-in zoom-in-95 duration-500"
+              aria-hidden="true"
             >
-              <img
-                src={current.image}
-                alt={current.alt}
-                className="max-h-[420px] w-full rounded-2xl bg-card object-contain shadow-xl"
-              />
+              <div className="space-y-5 rounded-2xl bg-card p-7 text-left shadow-xl">
+                <div className="flex items-center gap-3">
+                  <span className={cn("flex size-10 items-center justify-center rounded-full", tones[tone].chip)}>
+                    <Icon className="size-5" stroke={1.75} />
+                  </span>
+                  <p className="font-semibold text-foreground">{current.title}</p>
+                </div>
+                <div className="space-y-3">
+                  <SkeletonBar className="w-full" />
+                  <SkeletonBar className="w-5/6" />
+                  <SkeletonBar className="w-2/3" />
+                </div>
+                <div className="flex items-center gap-3 rounded-xl border border-border p-3">
+                  <span className="size-9 shrink-0 rounded-full bg-muted" />
+                  <div className="flex-1 space-y-2">
+                    <SkeletonBar className="w-1/2" />
+                    <SkeletonBar className="h-2.5 w-1/3" />
+                  </div>
+                </div>
+                <span className="block h-9 w-32 rounded-full bg-primary/20" />
+              </div>
             </div>
           </div>
         </div>
@@ -548,29 +583,21 @@ const sellingItems: FeatureItem[] = [
     title: "List publicly or quietly",
     description:
       "Go live to every buyer on Reasy, or keep your listing private so only buyers you invite can see it. Handy if you're just testing the waters.",
-    image: listQuietlyImg,
-    alt: "A listing card with the private listing switch turned on",
   },
   {
     title: "Talk directly with buyers",
     description:
       "Answer questions, arrange inspections and negotiate in one secure chat. No middleman deciding which messages or offers you get to see.",
-    image: talkDirectlyImg,
-    alt: "A buyer asking to arrange an inspection and the seller replying",
   },
   {
     title: "Always know what's next",
     description:
       "A simple step-by-step checklist shows what's done, what's next and what each step means, from verifying ownership to settlement.",
-    image: keepTrackImg,
-    alt: "The seller checklist with ownership verified and enquiries waiting",
   },
   {
     title: "Legal help in the same place",
     description:
       "Invite your conveyancer (the licensed professional who handles the legal transfer of your property) into your Reasy workspace, so titles, contracts and settlement all live in one place.",
-    image: conveyancerImg,
-    alt: "A conveyancer connected to titles, contracts and settlement documents",
   },
 ]
 
@@ -579,29 +606,21 @@ const buyingItems: FeatureItem[] = [
     title: "Browse homes privately",
     description:
       "Explore homes listed directly by their owners, including private listings you won't find on the big portals.",
-    image: browsePrivatelyImg,
-    alt: "Browsing private listings on Reasy",
   },
   {
     title: "Enquire with the owner",
     description:
       "Message the seller straight away and get answers from the person who knows the home best.",
-    image: enquireDirectlyImg,
-    alt: "Sending an enquiry directly to a home owner",
   },
   {
     title: "A checklist that keeps you on track",
     description:
       "Your buying checklist walks you through finance pre-approval, building and pest inspections, contract review and settlement, with a plain-English explanation of each one.",
-    image: buyingChecklistImg,
-    alt: "A buying checklist with finance and building and pest inspection ticked off",
   },
   {
     title: "Bring your conveyancer along",
     description:
       "Invite your conveyancer (the licensed professional who handles the legal side of buying a home) into your Reasy workspace, so contracts, titles and settlement all live in one place.",
-    image: conveyancerImg,
-    alt: "A conveyancer connected to titles, contracts and settlement documents",
   },
 ]
 
@@ -610,22 +629,16 @@ const aiItems: FeatureItem[] = [
     title: "Price it with confidence",
     description:
       "Comparable sales, local demand and pricing suggestions, so you know what to list at and where you're likely to land.",
-    image: aiPricingImg,
-    alt: "The Reasy AI pricing tool on a phone",
   },
   {
     title: "Your selling assistant",
     description:
       "Sorts enquiries by how serious each buyer is, suggests replies and reminds you to follow up so warm leads never go cold.",
-    image: sellingAssistantImg,
-    alt: "The selling assistant checklist for qualifying a buyer",
   },
   {
     title: "Everything at a glance",
     description:
       "Offers, enquiries and views in one summary, with suggestions on how to improve your listing when interest slows.",
-    image: summaryImg,
-    alt: "A summary of offers, enquiries and listing views",
   },
 ]
 
@@ -764,7 +777,7 @@ function BothSides({ audience, onAudienceChange }: { audience: Audience; onAudie
                     "group flex flex-col rounded-2xl p-7 text-left outline-none transition-shadow focus-visible:ring-3 focus-visible:ring-ring/50",
                     current
                       ? "bg-secondary ring-2 ring-primary"
-                      : "bg-background ring-1 ring-border hover:shadow-md"
+                      : "bg-canvas ring-1 ring-border hover:shadow-md"
                   )}
                 >
                   <span
@@ -869,8 +882,8 @@ function GetStarted({ audience }: { audience: Audience }) {
             <MilestoneCard key={i} {...m} />
           ))}
         </div>
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-linear-to-r from-background md:w-40" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-linear-to-l from-background md:w-40" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-linear-to-r from-canvas md:w-40" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-linear-to-l from-canvas md:w-40" />
       </div>
     </section>
   )
@@ -985,7 +998,7 @@ export function NewHomePage() {
   }
 
   return (
-    <div data-slot="new-home-page" className="min-h-screen bg-background text-foreground">
+    <div data-slot="new-home-page" className="min-h-screen bg-canvas text-foreground">
       <AnnouncementBar />
       <Nav audience={audience} onAudienceChange={changeAudience} />
       <main>

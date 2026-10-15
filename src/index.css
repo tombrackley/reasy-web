@@ -51,6 +51,14 @@
     --chart-4: oklch(0.535 0.176 266.516);
     --chart-5: oklch(0.482 0.177 268.212);
     --brand-dark: oklch(0.22 0.06 272);
+    /* Calendly-style canvas for /new-home: warm off-white page, a deeper
+       warm grey for the hero container, and soft pink / lilac washes. */
+    --canvas: oklch(0.985 0.003 85);
+    --canvas-deep: oklch(0.962 0.004 85);
+    --blush: oklch(0.925 0.045 10);
+    --lilac: oklch(0.92 0.045 300);
+    --sky: oklch(0.82 0.085 245);
+    --sky-foreground: oklch(0.25 0.06 262);
     /* Pre-launch "Agents are not welcome" gate */
     --gate: oklch(0.6805 0.169 259.79);
     --gate-foreground: oklch(0.4881 0.1467 258.26);
@@ -104,6 +112,12 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.703 0.116 259.246);
     --brand-dark: oklch(0.22 0.06 272);
+    --canvas: oklch(0.16 0.004 265);
+    --canvas-deep: oklch(0.2 0.006 265);
+    --blush: oklch(0.3 0.06 10);
+    --lilac: oklch(0.3 0.06 300);
+    --sky: oklch(0.35 0.08 245);
+    --sky-foreground: oklch(0.95 0.02 245);
     --primary-strong: oklch(0.54 0.1546 263.25);
     --pink: oklch(0.32 0.08 355);
     --pink-foreground: oklch(0.917 0.045 355);
@@ -117,6 +131,12 @@
     --font-serif: 'Gambarino', 'Playfair Display Variable', serif;
     --color-brand-dark: var(--brand-dark);
     --color-primary-strong: var(--primary-strong);
+    --color-canvas: var(--canvas);
+    --color-canvas-deep: var(--canvas-deep);
+    --color-blush: var(--blush);
+    --color-lilac: var(--lilac);
+    --color-sky: var(--sky);
+    --color-sky-foreground: var(--sky-foreground);
     --color-gate: var(--gate);
     --color-gate-foreground: var(--gate-foreground);
     --color-gate-accent: var(--gate-accent);
@@ -340,6 +360,15 @@ body {
     radial-gradient(70% 60% at 85% 10%, color-mix(in oklch, var(--chart-1) 70%, transparent) 0%, transparent 70%),
     radial-gradient(60% 55% at 10% 95%, color-mix(in oklch, var(--secondary) 90%, transparent) 0%, transparent 70%),
     linear-gradient(160deg, var(--chart-4) 0%, var(--chart-2) 45%, var(--secondary) 100%);
+}
+
+/* Hero container wash (/new-home): warm grey up top fading into a pink
+   glow bottom-left and a lilac glow bottom-right, like Calendly's hero. */
+.hero-wash {
+  background:
+    radial-gradient(55% 45% at 0% 100%, var(--blush) 0%, transparent 70%),
+    radial-gradient(55% 45% at 100% 100%, var(--lilac) 0%, transparent 70%),
+    linear-gradient(180deg, var(--canvas-deep) 0%, var(--canvas-deep) 55%, color-mix(in oklch, var(--blush) 35%, var(--canvas-deep)) 100%);
 }
 
 /* Green and pink takes on the same glow, for the buying and AI sections. */
