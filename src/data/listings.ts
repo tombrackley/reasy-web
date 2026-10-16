@@ -101,45 +101,140 @@ export function nextInspectionLabel(id: string): string {
   return `${day}, ${INSPECTION_TIMES[hash % INSPECTION_TIMES.length]}`
 }
 
+// Filters mirror reasy-app's src/data/browseFilters.ts, minus the separate
+// search area (the search box already covers suburbs and addresses).
 export type BrowseFilters = {
   query: string
-  type: PropertyType | ""
+  types: PropertyType[]
+  priceMin: number | null
+  priceMax: number | null
   beds: number
-  priceMax: number
+  baths: number
+  cars: number
+  landMin: number | null
+  landMax: number | null
+  attributes: string[]
+  keywords: string
 }
 
-export const EMPTY_FILTERS: BrowseFilters = { query: "", type: "", beds: 0, priceMax: 0 }
+export const EMPTY_FILTERS: BrowseFilters = {
+  query: "",
+  types: [],
+  priceMin: null,
+  priceMax: null,
+  beds: 0,
+  baths: 0,
+  cars: 0,
+  landMin: null,
+  landMax: null,
+  attributes: [],
+  keywords: "",
+}
 
-// Loose keyword match: every word in the query has to appear somewhere in the
-// listing's address, suburb, type, attributes or keywords. Numbers like
-// "4 bed" also set a minimum bedroom count.
-export function matches(l: Listing, f: BrowseFilters): boolean {
-  if (f.type && l.propertyType !== f.type) return false
-  if (f.beds && l.beds < f.beds) return false
-  if (f.priceMax && l.priceValue > f.priceMax) return false
+export const PRICE_STEPS = [400_000, 600_000, 800_000, 1_000_000, 1_250_000, 1_500_000, 2_000_000, 2_500_000, 3_000_000]
+export const LAND_STEPS = [200, 400, 600, 800, 1000, 1500, 2000, 4000]
 
-  const query = f.query.toLowerCase().trim()
+const LABEL_OVERRIDES: Record<string, string> = {
+  "ev-charger": "EV charger",
+  "walk-in-pantry": "Walk-in pantry",
+  "built-in-robes": "Built-in robes",
+  "art-deco": "Art deco",
+  "mid-century": "Mid-century",
+}
+
+export function attributeLabel(id: string): string {
+  if (LABEL_OVERRIDES[id]) return LABEL_OVERRIDES[id]
+  const words = id.replace(/-/g, " ")
+  return words.charAt(0).toUpperCase() + words.slice(1)
+}
+
+// Every feature used by at least one listing, most common first
+export const FEATURE_OPTIONS: string[] = (() => {
+  const counts = new Map<string, number>()
+  for (const l of LISTINGS) for (const a of l.attributes) counts.set(a, (counts.get(a) ?? 0) + 1)
+  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([id]) => id)
+})()
+
+/** How many of the overlay's controls are narrowing anything (not the search text). */
+export function activeCount(f: BrowseFilters): number {
+  let n = 0
+  if (f.types.length) n += 1
+  if (f.priceMin !== null || f.priceMax !== null) n += 1
+  if (f.beds) n += 1
+  if (f.baths) n += 1
+  if (f.cars) n += 1
+  if (f.landMin !== null || f.landMax !== null) n += 1
+  n += f.attributes.length
+  if (f.keywords.trim()) n += 1
+  return n
+}
+
+const IGNORE = new Set(["a", "an", "the", "in", "near", "with", "and", "to", "for", "of", "qld", "bed", "beds", "bedroom", "bedrooms", "bath", "baths", "home", "homes", "property", "properties"])
+
+function textMatches(l: Listing, text: string): boolean {
+  const query = text.toLowerCase().trim()
   if (!query) return true
 
+  // "4 bed" in the search box also sets a minimum bedroom count
   const bedMatch = query.match(/(\d)\s*(bed|br|bedroom)/)
   if (bedMatch && l.beds < Number(bedMatch[1])) return false
 
-  const haystack = [
-    l.address,
-    l.suburb,
-    PROPERTY_TYPE_LABEL[l.propertyType],
-    ...l.attributes.map((a) => a.replace(/-/g, " ")),
-    ...(l.keywords ?? []),
-  ]
+  const haystack = [l.address, l.suburb, PROPERTY_TYPE_LABEL[l.propertyType], ...l.attributes.map((a) => a.replace(/-/g, " ")), ...(l.keywords ?? [])]
     .join(" ")
     .toLowerCase()
 
-  const ignore = new Set(["a", "an", "the", "in", "near", "with", "and", "to", "for", "of", "qld", "bed", "beds", "bedroom", "bedrooms", "bath", "baths", "home", "homes", "property", "properties"])
   const words = query
     .replace(/(\d)\s*(bed|br|bedroom)s?/g, "")
     .split(/[^a-z0-9]+/)
-    .filter((w) => w && !ignore.has(w) && !/^\d+$/.test(w))
+    .filter((w) => w && !IGNORE.has(w) && !/^\d+$/.test(w))
 
   // "houses" should still match "house"
   return words.every((w) => haystack.includes(w) || haystack.includes(w.replace(/s$/, "")))
+}
+
+export function matches(l: Listing, f: BrowseFilters): boolean {
+  if (f.types.length > 0 && !f.types.includes(l.propertyType)) return false
+  if (f.priceMin !== null && l.priceValue < f.priceMin) return false
+  if (f.priceMax !== null && l.priceValue > f.priceMax) return false
+  if (f.beds > 0 && l.beds < f.beds) return false
+  if (f.baths > 0 && l.baths < f.baths) return false
+  if (f.cars > 0 && l.cars < f.cars) return false
+  if (f.landMin !== null && l.landSqm < f.landMin) return false
+  if (f.landMax !== null && l.landSqm > f.landMax) return false
+  if (f.attributes.length > 0 && !f.attributes.every((id) => l.attributes.includes(id))) return false
+  return textMatches(l, f.query) && textMatches(l, f.keywords)
+}
+
+// Filters live in the address bar so a search can be shared or refreshed
+export function filtersToParams(f: BrowseFilters, p = new URLSearchParams()): URLSearchParams {
+  if (f.query) p.set("q", f.query)
+  if (f.types.length) p.set("types", f.types.join(","))
+  if (f.priceMin !== null) p.set("pmin", String(f.priceMin))
+  if (f.priceMax !== null) p.set("pmax", String(f.priceMax))
+  if (f.beds) p.set("beds", String(f.beds))
+  if (f.baths) p.set("baths", String(f.baths))
+  if (f.cars) p.set("cars", String(f.cars))
+  if (f.landMin !== null) p.set("lmin", String(f.landMin))
+  if (f.landMax !== null) p.set("lmax", String(f.landMax))
+  if (f.attributes.length) p.set("feat", f.attributes.join(","))
+  if (f.keywords) p.set("kw", f.keywords)
+  return p
+}
+
+export function filtersFromParams(p: URLSearchParams): BrowseFilters {
+  const num = (k: string) => (p.get(k) ? Number(p.get(k)) || null : null)
+  const list = (k: string) => (p.get(k) ?? "").split(",").filter(Boolean)
+  return {
+    query: p.get("q") ?? "",
+    types: list("types").filter((t): t is PropertyType => t in PROPERTY_TYPE_LABEL),
+    priceMin: num("pmin"),
+    priceMax: num("pmax"),
+    beds: Number(p.get("beds")) || 0,
+    baths: Number(p.get("baths")) || 0,
+    cars: Number(p.get("cars")) || 0,
+    landMin: num("lmin"),
+    landMax: num("lmax"),
+    attributes: list("feat"),
+    keywords: p.get("kw") ?? "",
+  }
 }

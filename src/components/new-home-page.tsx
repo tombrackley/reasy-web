@@ -28,6 +28,12 @@ import {
   IconListCheck,
   IconMessageCircle,
   IconMail,
+  IconClipboardCheck,
+  IconPhoto,
+  IconFileText,
+  IconKey,
+  IconWallet,
+  IconCalendar,
   type IconProps,
 } from "@tabler/icons-react"
 
@@ -586,6 +592,210 @@ function Intro({ audience }: { audience: Audience }) {
   )
 }
 
+// --- Steps (horizontal carousel) ---
+
+// Five stages per side, from the journey both reasy-app dashboards are built
+// around (src/data/journey.ts there).
+type Step = { title: string; body: string; icon: TablerIcon; chip: string }
+
+const stepsContent: Record<
+  Audience,
+  { title: string; intro: string; cta: { label: string; href: string }; steps: Step[] }
+> = {
+  selling: {
+    title: "Steps to sell your home with Reasy",
+    intro: "Five clear stages from getting ready to handing over the keys, with a checklist for each one.",
+    cta: { label: "List your property", href: WAITLIST_HREF },
+    steps: [
+      {
+        title: "Prepare",
+        body: "Get ready before you go to market, from smoke alarm and pool safety certificates to a market appraisal showing what similar homes sold for.",
+        icon: IconClipboardCheck,
+        chip: "Certificates ready",
+      },
+      {
+        title: "List",
+        body: "Add photos, set your asking price, complete your seller disclosure and publish to verified buyers. Then set your open home times.",
+        icon: IconPhoto,
+        chip: "Listing published",
+      },
+      {
+        title: "Offers",
+        body: "Reply to buyers, run inspections and compare offers on more than price, including conditions and settlement timing.",
+        icon: IconMessageCircle,
+        chip: "3 offers to review",
+      },
+      {
+        title: "Contract",
+        body: "Your conveyancer manages the contract while Reasy tracks the finance and building and pest deadlines, so nothing slips.",
+        icon: IconFileText,
+        chip: "Finance approved",
+      },
+      {
+        title: "Settlement",
+        body: "Your conveyancer handles the final checks and transfer. You hand over the keys and keep the commission.",
+        icon: IconKey,
+        chip: "Settled",
+      },
+    ],
+  },
+  buying: {
+    title: "Steps to buy your home with Reasy",
+    intro: "Five clear stages from working out your budget to getting the keys, with guidance at every step.",
+    cta: { label: "Join the buyer waitlist", href: WAITLIST_HREF },
+    steps: [
+      {
+        title: "Get ready",
+        body: "Set your budget, sort your finance pre-approval and get verified, so sellers know you're ready to buy.",
+        icon: IconWallet,
+        chip: "Pre-approved",
+      },
+      {
+        title: "Search",
+        body: "Explore homes listed by their owners, matched to the suburbs, budget and must-haves in your brief.",
+        icon: IconSearch,
+        chip: "12 homes saved",
+      },
+      {
+        title: "Inspect",
+        body: "Book open homes or private inspections with the owner, and order your building and pest check before you commit.",
+        icon: IconCalendar,
+        chip: "Inspection booked",
+      },
+      {
+        title: "Make an offer",
+        body: "Understand your position, then send your price, conditions and settlement timing straight to the seller.",
+        icon: IconCoin,
+        chip: "Offer accepted",
+      },
+      {
+        title: "Contract and settle",
+        body: "Track your finance and building dates with your conveyancer, then pick up the keys to your new home.",
+        icon: IconKey,
+        chip: "Keys collected",
+      },
+    ],
+  },
+}
+
+function StepsSection({ audience }: { audience: Audience }) {
+  const content = stepsContent[audience]
+  const scroller = useRef<HTMLDivElement>(null)
+  const [progress, setProgress] = useState({ start: 0, size: 100, atStart: true, atEnd: false })
+
+  // Track how far through the steps we've scrolled, for the progress bar
+  // and to disable the arrows at either end.
+  const measure = () => {
+    const el = scroller.current
+    if (!el) return
+    const max = el.scrollWidth - el.clientWidth
+    const size = (el.clientWidth / el.scrollWidth) * 100
+    const ratio = max > 0 ? el.scrollLeft / max : 0
+    setProgress({ start: ratio * (100 - size), size, atStart: el.scrollLeft <= 4, atEnd: el.scrollLeft >= max - 4 })
+  }
+
+  useEffect(() => {
+    const el = scroller.current
+    if (!el) return
+    el.scrollLeft = 0
+    measure()
+    window.addEventListener("resize", measure)
+    return () => window.removeEventListener("resize", measure)
+  }, [audience])
+
+  const scrollByCard = (dir: 1 | -1) => {
+    const el = scroller.current
+    const card = el?.querySelector("article")
+    if (!el || !card) return
+    el.scrollBy({ left: dir * (card.clientWidth + 20), behavior: "smooth" })
+  }
+
+  const glow = audience === "selling" ? "feature-glow-seller" : "feature-glow-buyer"
+  const chipTone = audience === "selling" ? "bg-seller text-seller-foreground" : "bg-buyer text-buyer-foreground"
+
+  return (
+    <section className="py-16 md:py-24">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-8 px-4 md:px-8 lg:flex-row lg:items-start lg:justify-between">
+        <h2 className="max-w-xl text-balance font-serif text-4xl leading-[1.1] text-brand-dark md:text-5xl dark:text-foreground">
+          {content.title}
+        </h2>
+        <div className="max-w-sm">
+          <p className="text-lg leading-relaxed text-muted-foreground">{content.intro}</p>
+          <a
+            href={content.cta.href}
+            className="mt-6 inline-flex rounded-full bg-primary px-6 py-3.5 text-base font-semibold text-primary-foreground outline-none transition-colors hover:bg-primary-strong focus-visible:ring-3 focus-visible:ring-ring/50 active:translate-y-px"
+          >
+            {content.cta.label}
+          </a>
+        </div>
+      </div>
+
+      <div
+        ref={scroller}
+        onScroll={measure}
+        className="mt-12 flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto px-4 pb-2 [scrollbar-width:none] md:scroll-px-[max(2rem,calc((100vw-1280px)/2+2rem))] md:px-[max(2rem,calc((100vw-1280px)/2+2rem))] [&::-webkit-scrollbar]:hidden"
+      >
+        {content.steps.map((step, i) => {
+          const Icon = step.icon
+          return (
+            <article
+              key={step.title}
+              className="flex w-[85%] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-border bg-card sm:w-[380px] lg:w-[400px]"
+            >
+              <div className="p-7 md:p-8">
+                <p className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                  Step {String(i + 1).padStart(2, "0")}
+                </p>
+                <h3 className="mt-4 text-2xl font-semibold text-foreground">{step.title}</h3>
+                <p className="mt-3 leading-relaxed text-muted-foreground">{step.body}</p>
+              </div>
+              {/* Placeholder visual until the illustrations are ready */}
+              <div className={cn("relative mt-auto flex h-56 items-center justify-center", glow)} aria-hidden="true">
+                <div className="flex items-center gap-3 rounded-2xl bg-card px-5 py-4 shadow-xl">
+                  <span className={cn("flex size-11 items-center justify-center rounded-full", chipTone)}>
+                    <Icon className="size-5" stroke={1.75} />
+                  </span>
+                  <span className="text-base font-semibold text-foreground">{step.chip}</span>
+                  <IconCircleCheck className="size-5 text-green-foreground" stroke={2} />
+                </div>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      <div className="mx-auto mt-8 flex max-w-[1280px] items-center justify-between gap-6 px-4 md:px-8">
+        <div className="relative h-1.5 w-40 overflow-hidden rounded-full bg-border" aria-hidden="true">
+          <span
+            className="absolute inset-y-0 rounded-full bg-brand-dark transition-[left] duration-150"
+            style={{ left: `${progress.start}%`, width: `${progress.size}%` }}
+          />
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => scrollByCard(-1)}
+            disabled={progress.atStart}
+            aria-label="Previous step"
+            className="flex size-12 items-center justify-center rounded-full border border-border bg-card text-foreground outline-none transition-colors hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40"
+          >
+            <IconArrowLeft className="size-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollByCard(1)}
+            disabled={progress.atEnd}
+            aria-label="Next step"
+            className="flex size-12 items-center justify-center rounded-full bg-brand-dark text-white outline-none transition-colors hover:bg-brand-dark/90 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40"
+          >
+            <IconArrowRight className="size-5" />
+          </button>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // --- Feature showcase (accordion + visual) ---
 
 // Each showcase picks up one of the Reasy brand colours.
@@ -635,7 +845,7 @@ function FeatureShowcase({
             <span className={cn("flex size-7 items-center justify-center rounded-full", tones[tone].chip)}>
               <Icon className="size-4" stroke={2} />
             </span>
-            <span className="text-sm font-medium text-foreground">{eyebrow}</span>
+            <span className="text-sm font-semibold text-foreground">{eyebrow}</span>
             {badge && (
               <span className="rounded-full bg-ai/15 px-2 py-0.5 text-xs font-semibold text-ai-foreground">
                 {badge}
@@ -1219,6 +1429,7 @@ export function NewHomePage() {
       <main>
         <Hero audience={audience} onAudienceChange={changeAudience} />
         <Reveal key={`intro-${audience}`}><Intro audience={audience} /></Reveal>
+        <Reveal key={`steps-${audience}`}><StepsSection audience={audience} /></Reveal>
         {audience === "selling" ? (
           <>
             <Reveal key="selling">

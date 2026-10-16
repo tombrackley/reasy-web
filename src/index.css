@@ -473,3 +473,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-speck-drift { animation: none; }
 }
+
+/* Search inputs with suburb suggestions: hide the browser's dropdown arrow
+   (suggestions still appear as you type) */
+input[list]::-webkit-calendar-picker-indicator {
+  display: none !important;
+}
