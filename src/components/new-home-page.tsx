@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ComponentType, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import { Reveal } from "@/components/reveal"
+import { CommentMarquee, MobileCommentCarousel, Stat } from "@/components/instagram-comments"
 import {
   IconArrowRight,
   IconArrowLeft,
@@ -39,8 +40,6 @@ import {
 
 import logoImg from "@/assets/reasy-logo.svg"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
-import dailyMailLogo from "@/assets/daily-mail-logo.png"
-import yahooFinanceLogo from "@/assets/yahoo-finance-logo.png"
 
 type TablerIcon = ComponentType<IconProps>
 
@@ -72,7 +71,7 @@ const navMenus: { label: string; items: NavItem[] }[] = [
     items: [
       { label: "How selling works", description: "List, talk to buyers and settle, step by step", icon: IconListCheck, audience: "selling", section: "selling" },
       { label: "Reasy AI", description: "Pricing help and a selling assistant", icon: IconSparkles2Filled, audience: "selling", section: "reasy-ai" },
-      { label: "What you could save", description: "See the commission you keep", icon: IconCoin, audience: "selling", section: "savings" },
+      { label: "Pricing", description: "A flat fee, never commission", icon: IconCoin, audience: "selling", href: "/pricing" },
       { label: "List your property", description: "Join the seller waitlist", icon: IconHome, audience: "selling", href: WAITLIST_HREF },
     ],
   },
@@ -442,7 +441,7 @@ const heroContent: Record<
     title: "Sell without an agent. Easy.",
     body: "Keep the commission. We'll show you how, step by step.",
     primary: { label: "List your property", href: WAITLIST_HREF, icon: IconHome },
-    secondary: { label: "See what you could save", href: "#savings" },
+    secondary: { label: "See pricing", href: "/pricing" },
     note: { highlight: "From $129 to list", rest: "No commission, ever" },
   },
   buying: {
@@ -1053,178 +1052,31 @@ const aiItems: FeatureItem[] = [
   },
 ]
 
-// --- Savings (stat cards carousel) ---
+// --- What people are saying (Instagram comments) ---
 
-const AGENT_RATE = 0.025
-const savingsExamples = [
-  { price: 650_000, place: "A unit in Brisbane" },
-  { price: 950_000, place: "A family home in Geelong" },
-  { price: 1_450_000, place: "A house in Sydney's west" },
-  { price: 2_100_000, place: "A beachside home on the Gold Coast" },
-]
-
-const formatAud = (val: number) =>
-  new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(val)
-
-function Savings() {
-  const scroller = useRef<HTMLDivElement>(null)
-
-  const scrollBy = (dir: 1 | -1) => {
-    const el = scroller.current
-    if (!el) return
-    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: "smooth" })
-  }
-
+function PeopleHaveSpoken() {
   return (
-    <section id="savings" className="scroll-mt-24 py-16 md:py-24">
-      <div className="mx-auto max-w-[1280px] px-4 md:px-8">
-        <p className="text-sm font-medium uppercase tracking-wider text-primary">What you could keep</p>
-        <div className="mt-3 flex flex-wrap items-end justify-between gap-6">
-          <h2 className="max-w-[560px] font-serif text-4xl leading-[1.1] text-brand-dark md:text-5xl dark:text-foreground">
-            Real homes. Real savings.
-          </h2>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => scrollBy(-1)}
-              className="flex size-11 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-accent outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-              aria-label="Previous example"
-            >
-              <IconArrowLeft className="size-5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollBy(1)}
-              className="flex size-11 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-accent outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-              aria-label="Next example"
-            >
-              <IconArrowRight className="size-5" />
-            </button>
-          </div>
-        </div>
+    <section className="overflow-hidden py-16 md:py-24">
+      <div className="mx-auto max-w-[1280px] px-4 text-center md:px-8">
+        <h2 className="text-balance font-serif text-4xl leading-[1.1] text-brand-dark md:text-5xl dark:text-foreground">
+          The people have spoken
+        </h2>
+        <p className="mt-4 text-lg text-muted-foreground">(and this is what they want)</p>
       </div>
 
-      <div
-        ref={scroller}
-        className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] md:px-[max(2rem,calc((100vw-1280px)/2+2rem))] [&::-webkit-scrollbar]:hidden"
-      >
-        {savingsExamples.map(({ price, place }) => {
-          const commission = price * AGENT_RATE
-          return (
-            <article
-              key={price}
-              className="flex w-[85%] shrink-0 snap-start flex-col justify-between rounded-3xl border border-border bg-card p-8 sm:w-[420px] md:p-10"
-            >
-              <div>
-                <p className="font-serif text-5xl leading-none tracking-tight text-primary md:text-6xl">
-                  {formatAud(commission)}
-                </p>
-                <p className="mt-3 text-base text-muted-foreground">in agent commission you could keep*</p>
-              </div>
-              <div className="mt-16 border-t border-border pt-6">
-                <p className="text-lg font-medium text-foreground">{place}</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Selling for {formatAud(price)}. On Reasy, it's $129 to list, then $29 a month.
-                </p>
-              </div>
-            </article>
-          )
-        })}
+      {/* Same scroller as the For Buyers page: a drag-to-scrub marquee on
+          desktop, a swipeable one-at-a-time carousel on phones */}
+      <div className="mt-12 hidden md:block">
+        <CommentMarquee />
+      </div>
+      <div className="mt-10 md:hidden">
+        <MobileCommentCarousel tone="light" />
       </div>
 
-      <p className="mx-auto mt-6 max-w-[1280px] px-4 text-xs text-muted-foreground md:px-8">
-        *Illustrative examples based on a typical agent commission of 2.5%. Actual
-        commission rates vary by agent and location.
-      </p>
-    </section>
-  )
-}
-
-// --- Both sides of the sale (Calendly's integrations block) ---
-
-function BothSides({ audience, onAudienceChange }: { audience: Audience; onAudienceChange: (value: Audience) => void }) {
-  const cards = [
-    {
-      icon: IconHome,
-      value: "selling" as Audience,
-      title: "For sellers",
-      body: "List your home, talk to buyers, review offers and bring in your conveyancer, all from one dashboard.",
-      cta: "Switch to selling",
-    },
-    {
-      icon: IconSearch,
-      value: "buying" as Audience,
-      title: "For buyers",
-      body: "Find homes listed by their owners, enquire directly and follow a checklist that explains every step.",
-      cta: "Switch to buying",
-    },
-  ]
-
-  return (
-    <section className="px-4 py-16 md:px-8 md:py-24">
-      <div className="mx-auto max-w-[1280px] rounded-3xl bg-card p-8 shadow-xs ring-1 ring-border md:p-14">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wider text-primary">Buyers and sellers</p>
-            <h2 className="mt-3 font-serif text-4xl leading-[1.1] text-brand-dark md:text-5xl dark:text-foreground">
-              Built for both sides of the sale
-            </h2>
-            <p className="mt-5 max-w-[420px] leading-relaxed text-muted-foreground">
-              Reasy doesn't take sides. It connects buyers and sellers directly and
-              gives each of them clear, balanced guidance.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {cards.map(({ value, icon: Icon, title, body, cta }) => {
-              const current = value === audience
-              return (
-                <button
-                  key={title}
-                  type="button"
-                  disabled={current}
-                  onClick={() => onAudienceChange(value)}
-                  className={cn(
-                    "group flex flex-col rounded-2xl p-7 text-left outline-none transition-shadow focus-visible:ring-3 focus-visible:ring-ring/50",
-                    current
-                      ? "bg-secondary ring-2 ring-primary"
-                      : "bg-canvas ring-1 ring-border hover:shadow-md"
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "flex size-11 items-center justify-center rounded-full",
-                      value === "selling" ? "bg-seller text-seller-foreground" : "bg-buyer text-buyer-foreground"
-                    )}
-                  >
-                    <Icon className="size-5" stroke={1.75} />
-                  </span>
-                  <h3 className="mt-6 text-xl font-semibold text-foreground">{title}</h3>
-                  <p className="mt-2 flex-1 leading-relaxed text-muted-foreground">{body}</p>
-                  {current ? (
-                    <span className="mt-6 inline-flex items-center gap-1.5 text-base font-semibold text-primary">
-                      <IconCircleCheck className="size-4" />
-                      You're viewing this
-                    </span>
-                  ) : (
-                    <span className="mt-6 inline-flex items-center gap-1.5 text-base font-semibold text-primary">
-                      {cta}
-                      <IconArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-
-        <div className="mt-14 flex flex-col items-center gap-6 border-t border-border pt-10 sm:flex-row sm:justify-center sm:gap-12">
-          <p className="text-sm text-muted-foreground">As featured in</p>
-          <div className="flex items-center gap-10 opacity-70 grayscale dark:invert">
-            <img src={dailyMailLogo} alt="Daily Mail" className="h-6 w-auto" />
-            <img src={yahooFinanceLogo} alt="Yahoo Finance" className="h-5 w-auto" />
-          </div>
-        </div>
+      <div className="mt-12 flex items-start justify-center gap-10 md:gap-16">
+        <Stat tone="light" value="18K+" label="Followers" />
+        <Stat tone="light" value="1.5M+" label="Views" />
+        <Stat tone="light" value="500+" label="Comments" />
       </div>
     </section>
   )
@@ -1362,7 +1214,6 @@ export function Footer() {
             <FooterLink href="/new-home?for=selling">For sellers</FooterLink>
             <FooterLink href="/new-home?for=buying">For buyers</FooterLink>
             <FooterLink href="/new-home?for=selling#reasy-ai">Reasy AI</FooterLink>
-            <FooterLink href="/new-home?for=selling#savings">Savings</FooterLink>
             <FooterLink href="/pricing">Pricing</FooterLink>
           </FooterColumn>
 
@@ -1416,12 +1267,6 @@ export function NewHomePage() {
     }, 60)
   }
 
-  // Switching from further down the page brings you back to the top of the new view.
-  const switchAndScroll = (value: Audience) => {
-    changeAudience(value)
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
   return (
     <div data-slot="new-home-page" className="min-h-screen bg-canvas text-foreground">
       <AnnouncementBar />
@@ -1429,7 +1274,6 @@ export function NewHomePage() {
       <main>
         <Hero audience={audience} onAudienceChange={changeAudience} />
         <Reveal key={`intro-${audience}`}><Intro audience={audience} /></Reveal>
-        <Reveal key={`steps-${audience}`}><StepsSection audience={audience} /></Reveal>
         {audience === "selling" ? (
           <>
             <Reveal key="selling">
@@ -1453,7 +1297,6 @@ export function NewHomePage() {
                 reverse
               />
             </Reveal>
-            <Reveal key="savings"><Savings /></Reveal>
           </>
         ) : (
           <Reveal key="buying">
@@ -1482,7 +1325,8 @@ export function NewHomePage() {
             />
           </Reveal>
         )}
-        <Reveal><BothSides audience={audience} onAudienceChange={switchAndScroll} /></Reveal>
+        <Reveal><PeopleHaveSpoken /></Reveal>
+        <Reveal key={`steps-${audience}`}><StepsSection audience={audience} /></Reveal>
         <Reveal><GetStarted audience={audience} /></Reveal>
       </main>
       <Footer />
