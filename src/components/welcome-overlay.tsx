@@ -1,14 +1,34 @@
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { IconArrowRight } from "@tabler/icons-react"
-import logoWhiteImg from "@/assets/reasy-logo-white.svg"
+import { LandingNodes, type NodeShape } from "@/components/landing-nodes"
+import { IconSparkles2Filled } from "@tabler/icons-react"
+import logoImg from "@/assets/reasy-logo-gate.svg"
+import sellerIcon from "@/assets/icon-land-sale.svg"
+import buyerIcon from "@/assets/icon-keys.svg"
+import waterfrontImg from "@/assets/gold-coast-reasy-launch-platform.png"
+import buyerAvatar from "@/assets/avatar-2.jpg"
+import sellerAvatar from "@/assets/avatar-5.jpg"
+
+const paths: { label: string; href: string; icon: string; shape: NodeShape }[] = [
+  { label: "I’m a Seller", href: "/new-home?for=selling", icon: sellerIcon, shape: "sign" },
+  { label: "I’m a Buyer", href: "/new-home?for=buying", icon: buyerIcon, shape: "key" },
+]
 
 /**
  * Full-screen "Agents are NOT welcome here" overlay. Appears `delay` ms after
  * mount and cannot be dismissed — the only way forward is the CTA.
  */
-export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
+export function WelcomeOverlay({
+  delay = 1200,
+  visual = "photo",
+}: {
+  delay?: number
+  // "photo": waterfront photo with chat and offer cards. "nodes": floating
+  // squares that form a For Sale sign or key when a card is hovered.
+  visual?: "photo" | "nodes"
+}) {
   const [visible, setVisible] = useState(false)
+  const [shape, setShape] = useState<NodeShape>(null)
   const [entered, setEntered] = useState(false)
 
   useEffect(() => {
@@ -37,60 +57,107 @@ export function WelcomeOverlay({ delay = 1200 }: { delay?: number }) {
       aria-modal="true"
       aria-label="Welcome to Reasy"
       className={cn(
-        "fixed inset-0 z-[100] flex items-center justify-center px-6 transition-opacity duration-500",
-        "bg-[#050e1c]/92 backdrop-blur-md",
+        "fixed inset-0 z-[100] overflow-y-auto bg-gate transition-opacity duration-500",
         entered ? "opacity-100" : "opacity-0"
       )}
     >
-      {/* Soft radial glow behind the content */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(80,125,222,0.22),transparent_70%)]" />
-
-      {/* Reasy logo — matches the home-alt header treatment */}
-      <div className="absolute left-0 top-0 px-6 py-4 md:px-10">
-        <img src={logoWhiteImg} alt="Reasy" className="h-6" />
-      </div>
-
-      {/* Campaign hashtag */}
-      <div className="absolute right-0 top-0 flex h-6 items-center px-6 py-4 md:px-10 box-content">
-        <span className="text-[15px] font-medium text-white/50">#agentless</span>
-      </div>
+      {visual === "nodes" ? <LandingNodes shape={shape} /> : <LandingVisual />}
 
       <div
         className={cn(
-          "max-w-[720px] text-center transition-all duration-500",
+          "relative flex min-h-full flex-col px-6 pb-12 pt-8 transition-all duration-500 md:px-16 md:pb-16 md:pt-9",
           entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
         )}
       >
-        <h2 className="font-serif text-[clamp(3rem,9vw,5rem)] leading-[1.05] text-white">
-          Agents are <span className="text-primary">NOT</span>
+        <img src={logoImg} alt="Reasy" className="self-start" />
+
+        <h2 className="mt-10 font-display text-[clamp(3.25rem,10vw,9rem)] uppercase leading-[0.9] tracking-[-0.02em] text-gate-foreground md:mt-7">
+          Agents are
           <br />
-          welcome here.
+          not welcome
+          <br />
+          here!
         </h2>
 
-        <p className="mx-auto mt-6 max-w-[520px] text-lg leading-relaxed text-white/70">
-          If you enjoy dealing with Real Estate Agents you are in the wrong
-          place… <span className="font-semibold text-primary">Stick with the old portals!</span>
+        <p className="mt-7 max-w-sm text-xl font-semibold leading-[1.4] tracking-[-0.02em] text-gate-foreground md:max-w-[22rem] md:text-2xl">
+          Buy and sell properties without real estate agents. Easy.
         </p>
 
-        <div className="mt-7 flex justify-center">
-          <span className="inline-flex items-center text-base font-semibold tracking-wide text-white">
-            Doors open 1 November 2026 · Australia
+        {/* Buyer / seller splitter: each card opens the matching home page view */}
+        <div className="mt-16 flex gap-4.5 pb-4 md:mt-22">
+          {paths.map(({ label, href, icon, shape: cardShape }) => (
+            <a
+              key={label}
+              href={href}
+              onMouseEnter={() => setShape(cardShape)}
+              onMouseLeave={() => setShape(null)}
+              onFocus={() => setShape(cardShape)}
+              onBlur={() => setShape(null)}
+              className="flex h-41.5 w-43 flex-col items-center justify-center gap-6 rounded-xl border-2 border-gate-foreground bg-white px-6 py-5.5 text-center outline-none transition-transform hover:-translate-y-1 focus-visible:ring-3 focus-visible:ring-white/60 active:translate-y-0"
+            >
+              <img src={icon} alt="" />
+              <span className="text-lg font-bold leading-[1.4] text-gate-accent">{label}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Waterfront photo melting into the blue on the right, with a buyer/seller
+// conversation and offer floating over it. Decorative, desktop only.
+function LandingVisual() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 hidden w-[45%] lg:block">
+      <img
+        src={waterfrontImg}
+        alt=""
+        className="landing-photo-mask absolute inset-0 size-full object-cover object-[70%_center]"
+      />
+
+      <div className="absolute bottom-[10%] right-[10%] flex w-80 flex-col gap-4 xl:right-[16%]">
+        {/* Buyer message */}
+        <div className="flex items-end gap-2.5 self-start">
+          <img src={buyerAvatar} alt="" className="size-9 rounded-full ring-2 ring-white" />
+          <div className="rounded-2xl rounded-bl-md bg-white px-4 py-3 text-sm leading-snug text-foreground shadow-xl">
+            Hi! Is the pool heated?
+            <span className="mt-1 block text-xs text-muted-foreground">Sam, buyer</span>
+          </div>
+        </div>
+
+        {/* Seller reply */}
+        <div className="flex items-end gap-2.5 self-end">
+          <div className="rounded-2xl rounded-br-md bg-brand-dark px-4 py-3 text-sm leading-snug text-white shadow-xl">
+            It is, solar heated all year.
+            <span className="mt-1 block text-xs text-white/70">Jess, owner</span>
+          </div>
+          <img src={sellerAvatar} alt="" className="size-9 rounded-full ring-2 ring-white" />
+        </div>
+
+        {/* Offer card */}
+        <div className="mt-2 rounded-2xl bg-white p-5 shadow-2xl">
+          <div className="flex items-center justify-between">
+            <span className="rounded-full bg-lime px-2.5 py-1 text-xs font-medium text-lime-foreground">
+              New offer
+            </span>
+            <span className="text-xs text-muted-foreground">Just now</span>
+          </div>
+          <p className="mt-4 text-3xl font-bold tracking-tight text-foreground">$1,450,000</p>
+          <p className="mt-1 text-sm text-muted-foreground">Subject to finance • 30 day settlement</p>
+          <div className="mt-5 grid grid-cols-2 gap-2">
+            <span className="rounded-full bg-primary py-2 text-center text-sm font-semibold text-primary-foreground">
+              Accept
+            </span>
+            <span className="rounded-full border border-border py-2 text-center text-sm font-semibold text-foreground">
+              Counter
+            </span>
+          </div>
+          <span className="mt-2 flex items-center justify-center gap-1.5 rounded-full border border-border py-2 text-sm font-semibold text-foreground">
+            <IconSparkles2Filled className="size-4 text-ai" />
+            Ask Reasy
           </span>
         </div>
-
-        <div className="mt-8">
-          <a
-            href="/for-buyers"
-            className="shimmer-stroke inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(80,125,222,0.5)] transition-colors hover:bg-primary/90"
-          >
-            See what all the fuss is about
-            <IconArrowRight className="size-4" />
-          </a>
-        </div>
-
-        <p className="mt-5 text-sm text-white/40">
-          Limited spots available.
-        </p>
       </div>
     </div>
   )

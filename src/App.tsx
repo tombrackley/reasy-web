@@ -2,6 +2,9 @@ import { useState, useEffect } from "react"
 import { BuyersPage } from "@/components/buyers-page"
 import { PrivacyPage } from "@/components/privacy-page"
 import { TermsPage } from "@/components/terms-page"
+import { NewHomePage } from "@/components/new-home-page"
+import { BrowsePage, BrowseResultsPage } from "@/components/browse-pages"
+import { PricingPage } from "@/components/pricing-page"
 import { WelcomeOverlay } from "@/components/welcome-overlay"
 
 // TEMPORARY GATE: while the site is pre-launch, the only routes are the
@@ -25,10 +28,20 @@ function App() {
   if (path === "/for-buyers") return <BuyersPage />
   if (path === "/privacy") return <PrivacyPage />
   if (path === "/terms") return <TermsPage />
+  if (path === "/new-home") return <NewHomePage />
+  if (path === "/browse") return <BrowsePage />
+  if (path === "/browse/results") return <BrowseResultsPage />
+  if (path === "/pricing") return <PricingPage />
+  if (path === "/landing-nodes")
+    return (
+      <div className="min-h-screen bg-gate">
+        <WelcomeOverlay delay={0} visual="nodes" />
+      </div>
+    )
 
   // Everything else lands on the temporary home gate.
   return (
-    <div className="min-h-screen bg-[#050e1c]">
+    <div className="min-h-screen bg-gate">
       <WelcomeOverlay delay={0} />
     </div>
   )
