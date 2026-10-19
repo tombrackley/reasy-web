@@ -52,7 +52,7 @@ const COMMENT_IMAGES = [
 
 function CommentCard({ src, className }: { src: string; className?: string }) {
   return (
-    <div className={cn("w-[340px] shrink-0 overflow-hidden rounded-xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.18)]", className)}>
+    <div className={cn("w-[340px] shrink-0 overflow-hidden rounded-xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.06)]", className)}>
       {/* pointer-events-none + no callout so a long-press doesn't trigger the
           iOS "copy/save image" menu while slowing the marquee */}
       <img
@@ -147,7 +147,7 @@ export function CommentMarquee() {
       onPointerCancel={endDrag}
       onPointerLeave={endDrag}
     >
-      <div ref={trackRef} className="flex w-max gap-5 pb-4 will-change-transform">
+      <div ref={trackRef} className="flex w-max gap-5 py-6 will-change-transform">
         {[...COMMENT_IMAGES, ...COMMENT_IMAGES].map((src, i) => (
           <CommentCard key={i} src={src} />
         ))}
@@ -278,7 +278,7 @@ export function MobileCommentCarousel({ tone = "dark" }: { tone?: Tone } = {}) {
   }
 
   return (
-    <div className="overflow-hidden pb-4 md:hidden">
+    <div className="overflow-hidden py-6 md:hidden">
       <div className="px-14">
         <div
           ref={trackRef}

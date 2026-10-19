@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Reveal } from "@/components/reveal"
-import { AnnouncementBar, AudienceToggle, Footer, Nav, WAITLIST_HREF, type Audience } from "@/components/new-home-page"
+import { AnnouncementBar, AudienceToggle, Footer, Nav, type Audience } from "@/components/new-home-page"
+import { BUYER_WAITLIST_HREF, SELLER_WAITLIST_HREF } from "@/lib/waitlist"
 import { IconChevronDown, IconCoin } from "@tabler/icons-react"
 
 // Plans and prices come from reasy-app's src/data/plan.ts, which transcribes
@@ -49,7 +50,7 @@ const pricing: Record<Audience, Pricing> = {
         ],
         summary: "List for $129, then $29 a month from month two. Payments stop when your property sells.",
         cta: "List your property",
-        href: WAITLIST_HREF,
+        href: SELLER_WAITLIST_HREF,
         footnote: "Cancel when your property sells",
       },
       {
@@ -67,7 +68,7 @@ const pricing: Record<Audience, Pricing> = {
         ],
         summary: "One payment covers your listing and 12 months of access, with nothing more to pay.",
         cta: "List your property",
-        href: WAITLIST_HREF,
+        href: SELLER_WAITLIST_HREF,
         footnote: "Save $149 against paying monthly for a year",
       },
     ],
@@ -91,7 +92,7 @@ const pricing: Record<Audience, Pricing> = {
         ],
         summary: "Browse homes and message the seller of one property while you work out what you're after.",
         cta: "Join for free",
-        href: WAITLIST_HREF,
+        href: BUYER_WAITLIST_HREF,
         footnote: "No card required",
       },
       {
@@ -109,7 +110,7 @@ const pricing: Record<Audience, Pricing> = {
         ],
         summary: "Make offers, book inspections and bring your team in. No upfront fee, month to month.",
         cta: "Get Monthly",
-        href: WAITLIST_HREF,
+        href: BUYER_WAITLIST_HREF,
         footnote: "Renews automatically each month",
       },
       {
@@ -127,7 +128,7 @@ const pricing: Record<Audience, Pricing> = {
         ],
         summary: "Everything in Monthly for 12 months, paid once.",
         cta: "Get Annual",
-        href: WAITLIST_HREF,
+        href: BUYER_WAITLIST_HREF,
         footnote: "Saves $49 versus the monthly plan",
       },
     ],

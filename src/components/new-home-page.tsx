@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ComponentType, type ReactNode } from "react"
+import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
+import { WAITLIST_HREF } from "@/lib/waitlist"
 import { Reveal } from "@/components/reveal"
 import { CommentMarquee, MobileCommentCarousel, Stat } from "@/components/instagram-comments"
 import {
@@ -40,11 +42,22 @@ import {
 
 import logoImg from "@/assets/reasy-logo.svg"
 import logoWhiteImg from "@/assets/reasy-logo-white.svg"
+// Screens captured from reasy-app (seller /dashboard, buyer /buyer-dashboard,
+// Ask Reasy and the pricing analysis panel)
+import sellerDashImg from "@/assets/app/seller-dashboard.webp"
+import sellerDashMobileImg from "@/assets/app/seller-dashboard-mobile.webp"
+import buyerDashImg from "@/assets/app/buyer-dashboard.webp"
+import buyerDashMobileImg from "@/assets/app/buyer-dashboard-mobile.webp"
+import aiPricingImg from "@/assets/app/ai-pricing-analysis.webp"
+import aiSellerAskImg from "@/assets/app/ai-seller-ask.webp"
+import aiSellerGlanceImg from "@/assets/app/ai-seller-glance.webp"
+import aiBuyerAskImg from "@/assets/app/ai-buyer-ask.webp"
+import aiBuyerNextImg from "@/assets/app/ai-buyer-next.webp"
+import aiBuyerFinanceImg from "@/assets/app/ai-buyer-finance.webp"
 
 type TablerIcon = ComponentType<IconProps>
 
 // Where "join" style CTAs lead while the site is pre-launch.
-export const WAITLIST_HREF = "/for-buyers#join"
 
 export type Audience = "selling" | "buying"
 
@@ -72,7 +85,7 @@ const navMenus: { label: string; items: NavItem[] }[] = [
       { label: "How selling works", description: "List, talk to buyers and settle, step by step", icon: IconListCheck, audience: "selling", section: "selling" },
       { label: "Reasy AI", description: "Pricing help and a selling assistant", icon: IconSparkles2Filled, audience: "selling", section: "reasy-ai" },
       { label: "Pricing", description: "A flat fee, never commission", icon: IconCoin, audience: "selling", href: "/pricing" },
-      { label: "List your property", description: "Join the seller waitlist", icon: IconHome, audience: "selling", href: WAITLIST_HREF },
+      { label: "List your property", description: "Join the seller waitlist", icon: IconHome, audience: "selling", section: "get-started" },
     ],
   },
   {
@@ -82,7 +95,7 @@ const navMenus: { label: string; items: NavItem[] }[] = [
       { label: "Reasy AI", description: "Answers and next steps, any time", icon: IconSparkles2Filled, audience: "buying", section: "reasy-ai-buying" },
       { label: "Talk to sellers directly", description: "No agent in the middle", icon: IconMessageCircle, audience: "buying", section: "buying" },
       { label: "Buyer guide", description: "What to expect when buying privately", icon: IconBook, audience: "buying", href: "/for-buyers" },
-      { label: "Join the buyer waitlist", description: "Be first to see new listings", icon: IconMail, audience: "buying", href: WAITLIST_HREF },
+      { label: "Join the buyer waitlist", description: "Be first to see new listings", icon: IconMail, audience: "buying", section: "get-started" },
     ],
   },
 ]
@@ -315,6 +328,7 @@ function NavDropdown({ label, items, onNavigate }: { label: string; items: NavIt
 export function Nav({ onNavigate = goToHome }: { onNavigate?: NavigateTo }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [waitlistOpen, setWaitlistOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -367,12 +381,14 @@ export function Nav({ onNavigate = goToHome }: { onNavigate?: NavigateTo }) {
           >
             Log in
           </a>
-          <a
-            href={WAITLIST_HREF}
+          <button
+            type="button"
+            onClick={() => setWaitlistOpen(true)}
+            aria-haspopup="dialog"
             className="inline-flex rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-strong active:translate-y-px outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             Get early access
-          </a>
+          </button>
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
@@ -421,6 +437,7 @@ export function Nav({ onNavigate = goToHome }: { onNavigate?: NavigateTo }) {
         </div>
       </div>
       </div>
+      {waitlistOpen && <WaitlistDialog onClose={() => setWaitlistOpen(false)} />}
     </header>
   )
 }
@@ -494,71 +511,41 @@ function Hero({ audience, onAudienceChange }: { audience: Audience; onAudienceCh
           </p>
         </div>
 
-        <HeroPreview />
+        <HeroPreview audience={audience} />
       </div>
     </section>
   )
 }
 
-// Placeholder product preview (wireframe) until the new screenshots are ready.
-const sideBars = [
-  "h-72 w-20",
-  "h-64 w-14",
-  "h-56 w-10",
-  "h-48 w-7",
-  "h-40 w-5",
-  "h-32 w-3",
-  "h-24 w-2",
-]
-
+// Grey bar used by the wireframe placeholders that still lack real screens
 function SkeletonBar({ className }: { className?: string }) {
   return <span className={cn("block h-3 rounded-full bg-muted", className)} />
 }
 
-function HeroPreview() {
-  return (
-    <div className="relative mt-16 md:mt-24" aria-hidden="true">
-      {/* Fading columns either side of the card */}
-      <div className="absolute bottom-0 right-[calc(50%+33rem)] hidden flex-row-reverse items-end gap-3 lg:flex">
-        {sideBars.map((size) => (
-          <span key={size} className={cn("rounded-t-3xl bg-card/60", size)} />
-        ))}
-      </div>
-      <div className="absolute bottom-0 left-[calc(50%+33rem)] hidden items-end gap-3 lg:flex">
-        {sideBars.map((size) => (
-          <span key={size} className={cn("rounded-t-3xl bg-card/60", size)} />
-        ))}
-      </div>
+const heroScreens: Record<Audience, { desktop: string; mobile: string; alt: string }> = {
+  selling: {
+    desktop: sellerDashImg,
+    mobile: sellerDashMobileImg,
+    alt: "The Reasy seller dashboard showing your listing, offers, inspections and Ask Reasy",
+  },
+  buying: {
+    desktop: buyerDashImg,
+    mobile: buyerDashMobileImg,
+    alt: "The Reasy buyer dashboard with property search, saved searches and Ask Reasy",
+  },
+}
 
-      <div className="relative mx-auto max-w-[1040px] rounded-t-3xl border border-b-0 border-border bg-card shadow-2xl">
-        <div className="flex items-center justify-center gap-3 py-7">
-          <span className="size-8 rounded-lg bg-primary/30" />
-          <SkeletonBar className="h-4 w-28 bg-foreground/15" />
-        </div>
-        <div className="grid border-t border-border text-left md:grid-cols-[1fr_1.4fr]">
-          <div className="space-y-4 p-6 md:border-r md:border-border md:p-10">
-            <span className="block size-14 rounded-full bg-blush" />
-            <SkeletonBar className="w-24" />
-            <SkeletonBar className="h-5 w-48 bg-foreground/15" />
-            <div className="space-y-3 pt-2">
-              <SkeletonBar className="w-32" />
-              <SkeletonBar className="w-24" />
-            </div>
-          </div>
-          <div className="hidden space-y-5 p-10 md:block">
-            <SkeletonBar className="h-4 w-40 bg-foreground/15" />
-            {[0, 1, 2].map((row) => (
-              <div key={row} className="flex items-center gap-4 rounded-2xl border border-border p-4">
-                <span className="size-10 shrink-0 rounded-full bg-muted" />
-                <div className="flex-1 space-y-2">
-                  <SkeletonBar className="w-2/3" />
-                  <SkeletonBar className="h-2.5 w-1/3" />
-                </div>
-                <span className="h-8 w-20 rounded-full bg-primary/20" />
-              </div>
-            ))}
-          </div>
-        </div>
+function HeroPreview({ audience }: { audience: Audience }) {
+  const screen = heroScreens[audience]
+  return (
+    <div className="relative mt-16 md:mt-24">
+      {/* The real app, cropped by the bottom of the hero like Calendly's */}
+      <div
+        key={audience}
+        className="relative mx-auto max-w-[340px] animate-in fade-in overflow-hidden rounded-t-3xl border border-b-0 border-border bg-card p-1.5 pb-0 shadow-2xl duration-500 md:max-w-[1040px] md:p-2 md:pb-0"
+      >
+        <img src={screen.mobile} alt={screen.alt} className="block max-h-[520px] w-full rounded-t-[1.25rem] object-cover object-top md:hidden" />
+        <img src={screen.desktop} alt={screen.alt} className="hidden max-h-[560px] w-full rounded-t-2xl object-cover object-top md:block" />
       </div>
     </div>
   )
@@ -807,6 +794,8 @@ const tones = {
 type FeatureItem = {
   icon: TablerIcon
   title: string
+  // Real app screen; items without one show a wireframe placeholder
+  image?: { src: string; alt: string }
   description: string
 }
 
@@ -859,6 +848,14 @@ function FeatureShowcase({
         {/* Visual */}
         <div className={cn("lg:sticky lg:top-28 lg:row-span-2 lg:row-start-1 lg:self-start", reverse ? "lg:col-start-1" : "lg:col-start-2")}>
           <div className={cn("flex aspect-[5/4] items-center justify-center overflow-hidden rounded-3xl p-6 md:p-12", tones[tone].glow)}>
+            {current.image ? (
+              <img
+                key={current.title}
+                src={current.image.src}
+                alt={current.image.alt}
+                className="max-h-full max-w-full animate-in rounded-2xl bg-card object-contain shadow-xl fade-in zoom-in-95 duration-500"
+              />
+            ) : (
             <div
               key={current.title}
               className="w-full max-w-[420px] animate-in fade-in zoom-in-95 duration-500"
@@ -886,6 +883,7 @@ function FeatureShowcase({
                 <span className="block h-9 w-32 rounded-full bg-primary/20" />
               </div>
             </div>
+            )}
           </div>
         </div>
 
@@ -1014,18 +1012,21 @@ const buyerAiItems: FeatureItem[] = [
   {
     icon: IconMessageChatbot,
     title: "Ask anything, any time",
+    image: { src: aiBuyerAskImg, alt: "Ask Reasy explaining why a buyer needs a conveyancer" },
     description:
       "Why do I need a conveyancer? How do open homes work? Ask Reasy and get a plain-English answer straight away, day or night.",
   },
   {
     icon: IconRoute,
     title: "Know what to do next",
+    image: { src: aiBuyerNextImg, alt: "Ask Reasy suggesting a buyer get verified and sort finance next" },
     description:
       "Reasy looks at where you're up to and suggests your next step, from booking an inspection to what happens after you make an offer.",
   },
   {
     icon: IconBuildingBank,
     title: "Get your finance straight",
+    image: { src: aiBuyerFinanceImg, alt: "Ask Reasy explaining finance pre-approval" },
     description:
       "Understand pre-approval, deposits and settlement before you need them, so you can move quickly when the right home comes up.",
   },
@@ -1035,18 +1036,21 @@ const aiItems: FeatureItem[] = [
   {
     icon: IconChartBar,
     title: "Price it with confidence",
+    image: { src: aiPricingImg, alt: "Reasy pricing analysis with a suggested price range and comparable sales" },
     description:
       "Comparable sales, local demand and pricing suggestions, so you know what to list at and where you're likely to land.",
   },
   {
     icon: IconMessageChatbot,
     title: "Your selling assistant",
+    image: { src: aiSellerAskImg, alt: "Ask Reasy answering how to price a property" },
     description:
       "Sorts enquiries by how serious each buyer is, suggests replies and reminds you to follow up so warm leads never go cold.",
   },
   {
     icon: IconLayoutDashboard,
     title: "Everything at a glance",
+    image: { src: aiSellerGlanceImg, alt: "Seller dashboard metrics: offers, unread messages, upcoming inspections and highest offer" },
     description:
       "Offers, enquiries and views in one summary, with suggestions on how to improve your listing when interest slows.",
   },
@@ -1066,14 +1070,14 @@ function PeopleHaveSpoken() {
 
       {/* Same scroller as the For Buyers page: a drag-to-scrub marquee on
           desktop, a swipeable one-at-a-time carousel on phones */}
-      <div className="mt-12 hidden md:block">
+      <div className="mt-6 hidden md:block">
         <CommentMarquee />
       </div>
-      <div className="mt-10 md:hidden">
+      <div className="mt-4 md:hidden">
         <MobileCommentCarousel tone="light" />
       </div>
 
-      <div className="mt-12 flex items-start justify-center gap-10 md:gap-16">
+      <div className="mt-6 flex items-start justify-center gap-10 md:gap-16">
         <Stat tone="light" value="18K+" label="Followers" />
         <Stat tone="light" value="1.5M+" label="Views" />
         <Stat tone="light" value="500+" label="Comments" />
@@ -1084,71 +1088,191 @@ function PeopleHaveSpoken() {
 
 // --- Final CTA with status marquee ---
 
-const milestones = [
-  { stage: "Enquiry", status: "Received" },
-  { stage: "Inspection", status: "Booked" },
-  { stage: "Offer", status: "Accepted" },
-  { stage: "Conveyancer", status: "Connected" },
-  { stage: "Contract", status: "Signed" },
-  { stage: "Settlement", status: "Complete" },
-]
-
-function MilestoneCard({ stage, status }: { stage: string; status: string }) {
-  return (
-    <div className="feature-glow flex h-44 w-64 shrink-0 items-end rounded-2xl p-4 md:h-52 md:w-72">
-      <div className="flex w-full items-center gap-3 rounded-xl bg-card/95 px-4 py-3 shadow-lg backdrop-blur">
-        <IconCircleCheck className="size-6 shrink-0 text-green-foreground" stroke={1.75} />
-        <div className="leading-tight">
-          <p className="text-base font-semibold text-foreground">{stage}</p>
-          <p className="text-sm text-muted-foreground">{status}</p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const getStartedContent: Record<Audience, { body: string; cta: string }> = {
+const getStartedContent: Record<Audience, { title: string; body: string; cta: string }> = {
   selling: {
-    body: "Everything around selling your home, handled in one place. Founding members get priority access when Reasy opens on 1 November 2026.",
+    title: "Join the seller waitlist",
+    body: "Founding members get priority access to list when Reasy opens on 1 November 2026. Tell us a little about you and we'll be in touch.",
     cta: "Join the seller waitlist",
   },
   buying: {
-    body: "Everything around buying your next home, handled in one place. Join the waitlist to be first to see homes when Reasy opens on 1 November 2026.",
-    cta: "Join the buyer waitlist",
+    title: "Join the buyer waitlist",
+    body: "Be first to see homes listed by their owners when Reasy opens on 1 November 2026. Tell us where you're looking and we'll let you know when matching homes go live.",
+    cta: "Get early access",
   },
 }
 
-function GetStarted({ audience }: { audience: Audience }) {
+const fieldLabel = "mb-2 block text-sm font-semibold text-foreground"
+const fieldInput =
+  "h-12 w-full rounded-xl border border-border bg-card px-4 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-ring/50"
+
+// Prototype only: like the live waitlist on the For Buyers page, nothing is
+// sent anywhere yet. Submitting shows the confirmation state.
+function WaitlistForm({ audience, idPrefix = "" }: { audience: Audience; idPrefix?: string }) {
+  const [done, setDone] = useState(false)
   const content = getStartedContent[audience]
-  return (
-    <section id="get-started" className="overflow-hidden pb-24 pt-16 text-center md:pb-32 md:pt-24">
-      <div className="px-4">
-        <p className="text-sm font-medium uppercase tracking-wider text-primary">Get started</p>
-        <h2 className="mx-auto mt-3 max-w-[720px] text-balance font-serif text-4xl leading-[1.1] text-brand-dark md:text-6xl dark:text-foreground">
-          From first enquiry to signed contract
-        </h2>
-        <p className="mx-auto mt-6 max-w-[560px] text-lg leading-relaxed text-muted-foreground">
-          {content.body}
+  const id = (name: string) => `${idPrefix}${audience}-${name}`
+
+  if (done) {
+    return (
+      <div role="status" className="flex flex-col items-center px-6 py-12 text-center">
+        <span className={cn("flex size-14 items-center justify-center rounded-full", audience === "selling" ? "bg-seller text-seller-foreground" : "bg-buyer text-buyer-foreground")}>
+          <IconCircleCheck className="size-7" stroke={1.75} />
+        </span>
+        <h3 className="mt-5 text-2xl font-semibold text-foreground">You're on the list</h3>
+        <p className="mt-2 max-w-sm leading-relaxed text-muted-foreground">
+          We'll email you before Reasy opens on 1 November 2026
+          {audience === "selling" ? " with everything you need to list your home." : " so you can be first to see new homes."}
         </p>
-        <a
-          href={WAITLIST_HREF}
-          className="mt-10 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-strong active:translate-y-px outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          {content.cta}
-          <IconArrowRight className="size-4" />
-        </a>
+      </div>
+    )
+  }
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        setDone(true)
+      }}
+      className="space-y-5 text-left"
+    >
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div>
+          <label htmlFor={id("first")} className={fieldLabel}>First name</label>
+          <input id={id("first")} required type="text" autoComplete="given-name" placeholder="Jane" className={fieldInput} />
+        </div>
+        <div>
+          <label htmlFor={id("last")} className={fieldLabel}>Last name</label>
+          <input id={id("last")} type="text" autoComplete="family-name" placeholder="Smith" className={fieldInput} />
+        </div>
+      </div>
+      <div>
+        <label htmlFor={id("email")} className={fieldLabel}>Email</label>
+        <input id={id("email")} required type="email" autoComplete="email" placeholder="you@example.com" className={fieldInput} />
+      </div>
+      <div>
+        <label htmlFor={id("mobile")} className={fieldLabel}>Mobile number</label>
+        <input id={id("mobile")} type="tel" autoComplete="tel" inputMode="tel" placeholder="0412 345 678" className={fieldInput} />
       </div>
 
-      <div className="relative mt-16 md:mt-20" aria-hidden="true">
-        <div className="flex w-max animate-marquee gap-4 hover:[animation-play-state:paused]">
-          {[...milestones, ...milestones].map((m, i) => (
-            <MilestoneCard key={i} {...m} />
-          ))}
+      {audience === "selling" ? (
+        <div>
+          <label htmlFor={id("postcode")} className={fieldLabel}>Postcode of the property you're selling</label>
+          <input id={id("postcode")} type="text" inputMode="numeric" pattern="[0-9]{4}" maxLength={4} placeholder="e.g. 4573" className={fieldInput} />
         </div>
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-linear-to-r from-canvas md:w-40" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-linear-to-l from-canvas md:w-40" />
+      ) : (
+        <div>
+          <p className={fieldLabel}>Top cities you'd like to buy in</p>
+          <p className="-mt-1 mb-3 text-sm text-muted-foreground">
+            We'll let you know when matching homes go live.
+          </p>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {[1, 2, 3].map((n) => (
+              <input
+                key={n}
+                id={id(`city-${n}`)}
+                aria-label={`City ${n}`}
+                type="text"
+                autoComplete="off"
+                placeholder={n === 1 ? "e.g. Brisbane" : `City ${n}`}
+                className={fieldInput}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <button
+        type="submit"
+        className="flex h-13 w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground outline-none transition-colors hover:bg-primary-strong focus-visible:ring-3 focus-visible:ring-ring/50 active:translate-y-px"
+      >
+        {content.cta}
+        <IconArrowRight className="size-4" />
+      </button>
+      <p className="text-center text-sm text-muted-foreground">Free to join. We respect your privacy.</p>
+    </form>
+  )
+}
+
+function GetStarted({ audience }: { audience: Audience }) {
+  // Starts on the page's view, but the toggle here only switches the form,
+  // so the page doesn't jump around underneath it.
+  const [formAudience, setFormAudience] = useState(audience)
+  const content = getStartedContent[formAudience]
+  return (
+    <section id="get-started" className="scroll-mt-24 px-4 pb-24 pt-16 md:pb-32 md:pt-24">
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-sm font-medium uppercase tracking-wider text-primary">Get started</p>
+        <h2 className="mt-3 text-balance font-serif text-4xl leading-[1.1] text-brand-dark md:text-6xl dark:text-foreground">
+          {content.title}
+        </h2>
+        <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">{content.body}</p>
+        <div className="mt-8">
+          <AudienceToggle value={formAudience} onChange={setFormAudience} />
+        </div>
+      </div>
+      <div className="mx-auto mt-8 max-w-2xl rounded-3xl bg-card p-6 shadow-xs ring-1 ring-border md:p-10">
+        {/* key resets the form (and its confirmation) when switching */}
+        <WaitlistForm key={formAudience} audience={formAudience} />
       </div>
     </section>
+  )
+}
+
+// Overlay version of the waitlist, opened from "Get early access" in the nav
+// on any page. Starts on the current view (from ?for=) and has its own toggle.
+export function WaitlistDialog({ onClose }: { onClose: () => void }) {
+  const [formAudience, setFormAudience] = useState<Audience>(initialAudience)
+  const content = getStartedContent[formAudience]
+
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", onKey)
+    return () => {
+      document.body.style.overflow = prev
+      document.removeEventListener("keydown", onKey)
+    }
+  }, [onClose])
+
+  // Portalled to body: the nav's backdrop blur would otherwise trap a fixed overlay
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[120] flex animate-in fade-in items-end justify-center bg-brand-dark/40 backdrop-blur-sm duration-200 sm:items-center sm:p-4"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="waitlist-dialog-title"
+        onClick={(e) => e.stopPropagation()}
+        className="relative max-h-[92dvh] w-full animate-in slide-in-from-bottom-4 overflow-y-auto rounded-t-3xl bg-card p-6 shadow-2xl duration-300 sm:max-w-xl sm:rounded-3xl md:p-10"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 inline-flex size-10 items-center justify-center rounded-full bg-muted text-foreground outline-none transition-colors hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          <IconX className="size-5" />
+        </button>
+        <div className="pr-10">
+          <h2 id="waitlist-dialog-title" className="font-display text-3xl leading-tight text-foreground md:text-4xl">
+            Get early access
+          </h2>
+          <p className="mt-2 leading-relaxed text-muted-foreground">{content.body}</p>
+        </div>
+        <div className="mt-6">
+          <AudienceToggle value={formAudience} onChange={setFormAudience} size="sm" />
+        </div>
+        <div className="mt-6">
+          <WaitlistForm key={formAudience} audience={formAudience} idPrefix="dialog-" />
+        </div>
+      </div>
+    </div>,
+    document.body
   )
 }
 
@@ -1327,7 +1451,7 @@ export function NewHomePage() {
         )}
         <Reveal><PeopleHaveSpoken /></Reveal>
         <Reveal key={`steps-${audience}`}><StepsSection audience={audience} /></Reveal>
-        <Reveal><GetStarted audience={audience} /></Reveal>
+        <Reveal key={`get-started-${audience}`}><GetStarted audience={audience} /></Reveal>
       </main>
       <Footer />
     </div>
